@@ -1,0 +1,26 @@
+spring:
+    datasource:
+        driver-class-name: ${connection.driver}
+        url: ${connection.url}
+        username: ${connection.username}
+        password: ${connection.password}
+        hikari:
+            auto-commit: true
+    jpa:
+        database-platform: org.hibernate.dialect.MySQL57Dialect
+        generate-ddl: true
+        show-sql: true
+        database: mysql
+        properties:
+            hibernate:
+                show_sql: true
+                format_sql: true
+        hibernate:
+            ddl-auto: create-drop
+        defer-datasource-initialization: true
+    sql:
+        init:
+            data-locations: classpath:sql/dml.sql
+            mode: never
+            platform: mysql
+            encoding: UTF-8

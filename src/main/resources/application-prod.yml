@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    driver-class-name: ${connection.driver}
+    url: ${connection.url}
+    username: ${connection.username}
+    password: ${connection.password}
+    hikari:
+      auto-commit: false
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL57Dialect
+    generate-ddl: true
+    show-sql: true
+    database: mysql
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+    hibernate:
+      ddl-auto: none
+    defer-datasource-initialization: true
+  sql:
+    init:
+      data-locations: classpath:db/data/data.sql
+      mode: never
+      platform: mysql
+      encoding: UTF-8
+
+logging:
+  level:
+    org.mybatis: INFO
+    org.thymeleaf: INFO
+    org.quartz.core: INFO
+    org.hibernate.SQL: INFO
+    org.h2.server.web: INFO
+    com.sixesSense.recorder: INFO
+    org.springframework.web: INFO
