@@ -1,38 +1,34 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
+title: "[Bug]"
+labels: bug
+assignees: myrhymetree
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+✏️Description
+-
+버그를 입력해주세요
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+✅버그 재현
+다음과 같은 예시를 참고하고, 재현 과정을 입력하세요.
+1. ... 이동
+2. ... 클릭
+3. ... 스크롤 내리기
+4. ... 에러 확인 
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+예상 결과
+명확하고 간결하게 예상되는 결과를 입력하세요.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+스크린샷
+서비스 중에 발생한 버그 스크린샷을 올려주세요.
 
+유저 환경
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
  - Browser [e.g. chrome, safari]
  - Version [e.g. 22]
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
-
-**Additional context**
-Add any other context about the problem here.
+**ETC **
+추가로 입력할 내용이나 문제점을 입력하세요
