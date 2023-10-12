@@ -1,6 +1,6 @@
 ---
 name: "✅FEATURE"
-about: feature 작업사항을 입력해주세요.
+about: 기능 추가, 작업사항을 입력해주세요.
 title: "[Feature]"
 labels: enhancement
 assignees: myrhymetree
