@@ -18,6 +18,8 @@ assignees: myrhymetree
 3. ... 스크롤 내리기
 4. ... 에러 확인 
 
+:bug:
+
 예상 결과
 명확하고 간결하게 예상되는 결과를 입력하세요.
 
@@ -32,3 +34,9 @@ assignees: myrhymetree
 
 **ETC **
 추가로 입력할 내용이나 문제점을 입력하세요
+
+✅TODO
+-
+- [ ] todo
+- [ ] todo
+- [ ] todo
