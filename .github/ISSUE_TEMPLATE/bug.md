@@ -1,6 +1,6 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Bug
+about: 버그 리포트를 작성하거나 버그 수정 작업 사항을 입력하세요
 title: "[Bug]"
 labels: bug
 assignees: myrhymetree
