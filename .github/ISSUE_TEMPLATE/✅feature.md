@@ -11,17 +11,15 @@ assignees: myrhymetree
 -
 작업사항을 입력해주세요
 
-
-
 ✅TODO
 -
 - [ ] todo
 - [ ] todo
 - [ ] todo
 
-:airplane: Alternative Solution
+✈️대체수단
 - 
-고려할만한 대체수단을 입력해주세요
+고려할만한 솔루션, 대체수단을 입력해주세요.(없으시면 입력 X)
 
 🐾ETC
 -
