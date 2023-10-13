@@ -8,7 +8,8 @@ import javax.persistence.*;
 
 
 @Entity
-@Table(appliesTo = "TB_PLAYER", comment = "플레이어")
+@javax.persistence.Table(name = "tb_player")
+@Table(appliesTo = "tb_player", comment = "플레이어")
 @Data
 public class Player {
 
@@ -17,6 +18,10 @@ public class Player {
     @Column(name = "PLAYER_ID")
     @Comment("플레이어 식별자")
     private Long playerId;
+
+    @Column(name = "PLAYER_STEAM_KEY")
+    @Comment("플레이어 스팀 식별 키")
+    private String playerSteamKey;
 
     @Column(name = "PLAYER_NICKNAME")
     @Comment("닉네임")
