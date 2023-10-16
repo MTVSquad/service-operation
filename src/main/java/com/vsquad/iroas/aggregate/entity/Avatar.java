@@ -7,8 +7,8 @@ import org.hibernate.annotations.Table;
 import javax.persistence.*;
 
 @Entity
-@javax.persistence.Table(name = "TB_AVATAR")
-@Table(appliesTo = "TB_AVATAR", comment = "플레이어 아바타")
+@javax.persistence.Table(name = "tb_avatar")
+@Table(appliesTo = "tb_avatar", comment = "플레이어 아바타")
 @Data
 public class Avatar {
 
