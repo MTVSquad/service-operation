@@ -28,6 +28,10 @@ public class Player {
     @Embedded
     private Nickname nickname;
 
+    @Column(name = "PLYER_AVATAR")
+    @Comment("플레이어 아바타")
+    private Long playerAvatar;
+
     @Column(name = "PLAYER_MONEY")
     @Comment("플레이어 소지금")
     private Long playerMoney;

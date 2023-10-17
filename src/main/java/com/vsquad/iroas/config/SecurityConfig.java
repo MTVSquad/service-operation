@@ -41,7 +41,7 @@ public class SecurityConfig {
             )
             .oauth2Login(withDefaults());
 
-        http.addFilterBefore(customOncePerRequestFilter(), UsernamePasswordAuthenticationFilter.class);
+       // http.addFilterBefore(customOncePerRequestFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
