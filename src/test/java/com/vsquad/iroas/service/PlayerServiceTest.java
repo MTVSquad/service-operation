@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-//@Transactional
+@Transactional
 class PlayerServiceTest {
 
     @Autowired
@@ -45,8 +45,6 @@ class PlayerServiceTest {
 
         // 저장
         playerRepository.save(newPlayer);
-
-
 
         // 저장된 플레이어 조회
         Player foundPlayer = playerRepository.findByPlayerSteamKey(playerKey);
@@ -268,7 +266,6 @@ class PlayerServiceTest {
             throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
         });
 
-
         Assertions.assertThrows(NoSuchElementException.class, () -> {
            avatarRepository.findByPlayerId(foundPlayer.getPlayerId()).orElseThrow();
         }, "에러 출력 되지 않음...");
@@ -277,5 +274,4 @@ class PlayerServiceTest {
         assertEquals(null, changedPlayer.getPlayerItems());
         assertEquals(0L, changedPlayer.getPlayerMoney());
     }
-
 }

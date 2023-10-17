@@ -6,6 +6,7 @@ import org.hibernate.annotations.Comment;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
 @Embeddable
 public class Nickname {
 
+    @NotNull
     @Column(name = "PLAYER_NICKNAME", length = 40)
     @Comment("닉네임")
     private String playerNickname;
