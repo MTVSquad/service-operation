@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -40,7 +39,7 @@ class PlayerControllerTest {
     }
 
     @Test
-    @DisplayName("플레이어 생성")
+    @DisplayName("플레이어 추가")
     void addPlayerTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/player"))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
