@@ -13,14 +13,14 @@ import org.apache.catalina.User;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import java.nio.file.attribute.UserPrincipal;
 import java.security.Key;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @RequiredArgsConstructor
+@Component
 @Slf4j
 public class CustomTokenProviderService {
 

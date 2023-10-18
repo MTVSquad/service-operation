@@ -24,3 +24,13 @@ spring:
             mode: never
             platform: mysql
             encoding: UTF-8
+
+logging:
+    level:
+        org.mybatis: INFO
+        org.thymeleaf: INFO
+        org.quartz.core: INFO
+        org.hibernate.SQL: INFO
+        org.h2.server.web: INFO
+        com.vsquad.iroas: trace
+        org.springframework.web: trace

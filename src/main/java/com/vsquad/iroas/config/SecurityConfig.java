@@ -4,7 +4,11 @@ package com.vsquad.iroas.config;
 import com.vsquad.iroas.config.token.CustomAuthenticationEntryPoint;
 import com.vsquad.iroas.config.token.CustomOncePerRequestFilter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -19,29 +23,37 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Order(0)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
             .cors()
-                .and()
+                .disable()
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
             .csrf()
-                .and()
+                .disable()
             .formLogin()
                 .disable()
             .httpBasic()
                 .disable()
-                .exceptionHandling()
-                    .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+            .exceptionHandling()
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+            .and()
+            .authorizeRequests()
+                .antMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v1/api-docs/**")
+                    .permitAll()
+                .anyRequest()
+                    .authenticated()
                 .and()
-            .authorizeHttpRequests(authorize -> authorize
-                            .anyRequest().permitAll()
-            )
-            .oauth2Login(withDefaults());
+            .oauth2Login();
+//            .authorizeHttpRequests(authorize -> authorize
+//                            .antMatchers("/swagger-ui").permitAll()
+//                            .anyRequest().permitAll()
+//            )
 
-       // http.addFilterBefore(customOncePerRequestFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(customOncePerRequestFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

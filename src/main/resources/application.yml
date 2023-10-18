@@ -1,6 +1,6 @@
 # server config
 server:
-  port: 8080
+  port: 8001
   servlet:
     session:
       timeout: 360000s
@@ -10,6 +10,8 @@ server:
       enabled: true
       force: true
 spring:
+  autoconfigure:
+    exclude=spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
   application:
     name: iroas
   config:

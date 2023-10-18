@@ -59,10 +59,11 @@ class PlayerServiceTest {
     void addPlayerNicknameTest() {
 
         // given
+        String playerKey = "key";
         // 최소 2자, 최대 8자, 특수 문자x, 한글 / 영문
         String inputData = "아바라abcf";
 
-        ReqPlayerDto reqPlayerDto = new ReqPlayerDto(inputData);
+        ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
 
         Player player = new Player();
 
@@ -110,9 +111,10 @@ class PlayerServiceTest {
     void changePlayerNicknameSuccessTest() {
 
         // given
+        String playerKey = "key";
         // 최소 2자, 최대 8자, 특수 문자x, 한글 / 영문
         String inputData = "아바라abcf";
-        ReqPlayerDto reqPlayerDto = new ReqPlayerDto(inputData);
+        ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
         Player player = new Player();
         Nickname nickname = new Nickname(reqPlayerDto.getPlayerNickName());
         player.setNickname(nickname);
@@ -138,8 +140,9 @@ class PlayerServiceTest {
     void changePlayerNicknameFailTest() {
 
         // given
+        String playerKey = "key";
         String inputData = "바닐라라떼";
-        ReqPlayerDto reqPlayerDto = new ReqPlayerDto(inputData);
+        ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
         Player player = new Player();
         Nickname nickname = new Nickname(reqPlayerDto.getPlayerNickName());
         player.setNickname(nickname);
