@@ -40,6 +40,9 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.projectlombok:lombok:1.18.26'
 
+    implementation 'javax.inject:javax.inject:1'
+    implementation 'org.springframework.security:spring-security-openid'
+
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
@@ -48,6 +51,7 @@ dependencies {
     implementation group: 'org.springdoc', name: 'springdoc-openapi-security', version: '1.7.0'
     testImplementation group: 'org.springdoc', name: 'springdoc-openapi-webmvc-core', version: '1.7.0'
 }
+
 
 dependencyManagement {
     imports {

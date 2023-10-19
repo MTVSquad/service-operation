@@ -1,6 +1,7 @@
 package com.vsquad.iroas.aggregate.entity;
 
 import com.vsquad.iroas.aggregate.vo.Nickname;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.Table;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 
 @Entity
@@ -17,6 +19,8 @@ import javax.validation.constraints.NotNull;
 @Table(appliesTo = "tb_player", comment = "플레이어")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Player {
 
     @Id
