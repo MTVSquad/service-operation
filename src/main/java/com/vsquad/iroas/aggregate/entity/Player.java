@@ -15,7 +15,13 @@ import java.util.List;
 
 
 @Entity
-@javax.persistence.Table(name = "tb_player")
+@javax.persistence.Table(name = "tb_player", indexes = {
+        @Index(name = "IDX_PLAYER_STEAM_KEY", columnList = "PLAYER_STEAM_KEY", unique = true),
+        @Index(name = "IDX_PLAYER_NICKNAME", columnList = "PLAYER_NICKNAME", unique = true)
+}, uniqueConstraints = {
+        @UniqueConstraint(name = "UK_PLAYER_STEAM_KEY", columnNames = {"PLAYER_STEAM_KEY"}),
+        @UniqueConstraint(name = "UK_PLAYER_NICKNAME", columnNames = {"PLAYER_NICKNAME"})
+})
 @Table(appliesTo = "tb_player", comment = "플레이어")
 @Data
 @NoArgsConstructor

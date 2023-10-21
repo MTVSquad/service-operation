@@ -24,7 +24,7 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String steamKey) throws UsernameNotFoundException {
 
-        Player player = playerRepository.findByPlayerSteamKey(steamKey);
+        Player player = playerRepository.findByPlayerSteamKey(steamKey).orElseThrow();
 
         if(player == null) {
             throw new UsernameNotFoundException("플레이어 정보를 찾을 수 없습니다.");

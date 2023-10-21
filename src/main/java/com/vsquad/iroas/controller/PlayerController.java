@@ -1,7 +1,9 @@
 package com.vsquad.iroas.controller;
 
+import com.vsquad.iroas.aggregate.dto.ReqAvatarDto;
 import com.vsquad.iroas.aggregate.dto.ReqPlayerDto;
-import com.vsquad.iroas.aggregate.dto.ResPlayerDto;
+import com.vsquad.iroas.aggregate.dto.ResMessageDto;
+import com.vsquad.iroas.aggregate.dto.ResPlayerInfoDto;
 import com.vsquad.iroas.service.PlayerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,25 +39,74 @@ public class PlayerController {
 
     @PostMapping("/add")
     @Operation(summary = "플레이어 추가", description = "스팀에서 받아온 식별 정보와 닉네임을 가지고 플레이어를 생성 합니다.", responses = {
-            @ApiResponse(responseCode = "201", description = "플레이어 추가 성공", content = @Content(schema = @Schema(implementation = ResPlayerDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "201", description = "플레이어 추가 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "플레이어 추가 실패", content = @Content(schema = @Schema(name = "플레이어 추가 실패", example = "에러 메시지(닉네임 중복 등)"), mediaType = "application/json"))
     })
-    public ResponseEntity<ResPlayerDto> addPlayer(@RequestBody ReqPlayerDto reqBody) {
+    public ResponseEntity<ResMessageDto> addPlayer(@RequestBody ReqPlayerDto reqBody) {
 
         String steamKey = reqBody.getSteamKey();
         String nickname = reqBody.getPlayerNickName();
 
         try {
+
+            if(steamKey == null || steamKey.isEmpty()) {
+                throw new IllegalArgumentException("스팀에서 받아온 회원 식별 정보가 없습니다.");
+            }
+
             playerService.addPlayer(steamKey, nickname);
 
-            ResPlayerDto resDto = new ResPlayerDto("플레이어가 추가되었습니다.");
+            ResMessageDto resDto = new ResMessageDto("플레이어가 추가되었습니다.");
             return new ResponseEntity<>(resDto, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             log.warn(e.getMessage());
 
-            ResPlayerDto resDto = new ResPlayerDto(e.getMessage());
+            ResMessageDto resDto = new ResMessageDto(e.getMessage());
 
             return new ResponseEntity<>(resDto, HttpStatus.BAD_REQUEST);
+        } catch (DataIntegrityViolationException e) {
+            log.warn(e.getMessage());
+
+            ResMessageDto resDto = new ResMessageDto("중복된 닉네임 혹은 스팀 키");
+
+            return new ResponseEntity<>(resDto, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/avatar")
+    @Operation(summary = "플레이어 아바타 추가", description = "플레이어 아바타를 추가 합니다.", responses = {
+            @ApiResponse(responseCode = "201", description = "플레이어 아바타 추가 성공", content = @Content(schema = @Schema(name = "플레이어 아바타 추가 성공", example = "성공 메시지(문자열)"), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "플레이어 아바타 추가 실패", content = @Content(schema = @Schema(name = "플레이어 아바타 추가 실패", example = "에러 메시지(플레이어 정보 없음 등)"), mediaType = "application/json"))
+    })
+    public ResponseEntity<ResMessageDto> addPlayerAvatar(@RequestBody ReqAvatarDto reqBody) {
+
+        Long playerId = reqBody.getPlayerId();
+        String maskColor = reqBody.getMaskColor();
+
+        try {
+            playerService.addPlayerAvatar(playerId, maskColor);
+
+            ResMessageDto resDto = new ResMessageDto("플레이어 아바타가 추가되었습니다.");
+            return new ResponseEntity<>(resDto, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            log.warn(e.getMessage());
+
+            ResMessageDto resDto = new ResMessageDto(e.getMessage());
+
+            return new ResponseEntity<>(resDto, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/info/{steamKey}")
+    public ResponseEntity<ResPlayerInfoDto> readPlayerInfo(@PathVariable String steamKey) {
+
+        try {
+            ResPlayerInfoDto resDto = playerService.readPlayerInfo(steamKey);
+
+            return new ResponseEntity<>(resDto, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            log.warn(e.getMessage());
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

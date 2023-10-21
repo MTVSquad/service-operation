@@ -5,10 +5,12 @@ import com.vsquad.iroas.aggregate.vo.Nickname;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Long> {
 
-    Player findByPlayerSteamKey(String playerSteamKey);
+    Optional<Player> findByPlayerSteamKey(String playerSteamKey);
 
-    Player findByNickname(Nickname nickname);
+    Optional<Player> findByNickname(Nickname nickname);
 }

@@ -1,7 +1,10 @@
 package com.vsquad.iroas.service;
 
+import com.vsquad.iroas.aggregate.dto.AvatarDto;
+import com.vsquad.iroas.aggregate.dto.ResPlayerInfoDto;
 import com.vsquad.iroas.aggregate.entity.Avatar;
 import com.vsquad.iroas.aggregate.entity.Player;
+import com.vsquad.iroas.aggregate.vo.Nickname;
 import com.vsquad.iroas.repository.AvatarRepository;
 import com.vsquad.iroas.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,18 @@ public class PlayerService {
 
     @Transactional
     public void addPlayer(String steamKey, String nickname) {
+
+        // 스팀 키 중복 체크
+        playerRepository.findByPlayerSteamKey(steamKey).ifPresent(player -> {
+            throw new IllegalArgumentException("중복된 스팀 키");
+        });
+
+        // 닉네임 중복 체크
+        Nickname newNickname = new Nickname(nickname);
+        playerRepository.findByNickname(newNickname).ifPresent(player -> {
+            throw new IllegalArgumentException("중복된 닉네임");
+        });
+
         Player newPlayer = new Player(steamKey, nickname);
         playerRepository.save(newPlayer);
     }
@@ -44,6 +59,28 @@ public class PlayerService {
         });
 
         foundAvatar.setMask(maskColor);
+    }
+
+    public ResPlayerInfoDto readPlayerInfo(String steamKey) {
+
+        Player foundPlayer = playerRepository.findByPlayerSteamKey(steamKey).orElseThrow(() -> {
+            throw new NoSuchElementException("저장된 플레이어가 없습니다.");
+        });
+
+        Long playerId = foundPlayer.getPlayerId();
+
+        Avatar foundAvatar = avatarRepository.findByPlayerId(playerId).orElseThrow(() -> {
+            throw new NoSuchElementException("저장된 아바타가 없습니다.");
+        });
+
+        String resPlayerNickname = foundPlayer.getNickname().getPlayerNickname();
+        String resPlayerSteamKey = foundPlayer.getPlayerSteamKey();
+        AvatarDto resPlayerAvatar = new AvatarDto(foundAvatar.getAvatarId(), foundAvatar.getMask());
+
+        // player 정보 반환 하기 위해 dto로 변환
+        ResPlayerInfoDto resPlayerDto = new ResPlayerInfoDto(playerId, resPlayerNickname, resPlayerSteamKey, resPlayerAvatar);
+
+        return resPlayerDto;
     }
 
     @Transactional
