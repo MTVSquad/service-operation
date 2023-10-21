@@ -11,8 +11,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.NonUniqueResultException;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,7 +49,7 @@ class PlayerServiceTest {
         playerRepository.save(newPlayer);
 
         // 저장된 플레이어 조회
-        Player foundPlayer = playerRepository.findByPlayerSteamKey(playerKey);
+        Player foundPlayer = playerRepository.findByPlayerSteamKey(playerKey).orElseThrow();
 
         // then
         // 조회한 값이 있는지 조회
@@ -76,13 +78,13 @@ class PlayerServiceTest {
 
         //then
         Nickname foundNickname = new Nickname(inputData);
-        Player foundPlayer = playerRepository.findByNickname(foundNickname);
+        Player foundPlayer = playerRepository.findByNickname(foundNickname).orElseThrow();
 
         assertNotNull(foundPlayer);
     }
 
     @Test
-    @DisplayName("플레이어 닉네임 추가 실패")
+    @DisplayName("플레이어 닉네임 추가 실패, 글자 수 8자 이상")
     void addPlayerNicknameFailTest() {
 
         // given
@@ -100,8 +102,36 @@ class PlayerServiceTest {
             playerRepository.save(player);
 
             //then
-            Player foundPlayer =  playerRepository.findByNickname(nickname);
+            Player foundPlayer =  playerRepository.findByNickname(nickname).orElseThrow();
             assertNotNull(foundPlayer);
+
+        }, "에러 출력 되지 않음...");
+    }
+
+    @Test
+    @DisplayName("플레이어 닉네임 추가 실패, 닉네임 중복")
+    void addPlayerDuplicatedNicknameFailTest() {
+
+        // given
+        // 최소 2자, 최대 8자, 특수 문자x, 한글 / 영문
+        String inputNickname = "테스트닉네임";
+        String steamKey1 = "testKey";
+
+        String inputNickname2 = "테스트닉네임";
+        String steamKey2 = "testKey2";
+
+        Player player1 = new Player(steamKey1, inputNickname);
+        playerRepository.save(player1);
+
+
+        // then
+        // unique constraint 위반으로 에러 출력 되지만, DataIntegrityViolationException은 닉네임, 스팀, 다른 에러를 구분할 수 없음
+        Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
+
+            playerRepository.findByNickname(new Nickname(inputNickname)).orElseThrow();
+
+            Player player2 = new Player(steamKey2, inputNickname2);
+            playerRepository.save(player2);
 
         }, "에러 출력 되지 않음...");
     }
@@ -122,14 +152,14 @@ class PlayerServiceTest {
 
         // when
         Nickname foundNickname = new Nickname(inputData);
-        Player foundPlayer = playerRepository.findByNickname(foundNickname);
+        Player foundPlayer = playerRepository.findByNickname(foundNickname).orElseThrow();
 
         Nickname nicknameToChange = new Nickname("바닐라라떼");
         foundPlayer.setNickname(nicknameToChange);
         playerRepository.save(foundPlayer);
 
         // then
-        Player changedPlayer =  playerRepository.findByNickname(nicknameToChange);
+        Player changedPlayer =  playerRepository.findByNickname(nicknameToChange).orElseThrow();
         String changedNickname = changedPlayer.getNickname().getPlayerNickname();
 
         assertEquals("바닐라라떼", changedNickname);
@@ -150,7 +180,7 @@ class PlayerServiceTest {
 
         // when
         Nickname foundNickname = new Nickname(inputData);
-        Player foundPlayer = playerRepository.findByNickname(foundNickname);
+        Player foundPlayer = playerRepository.findByNickname(foundNickname).orElseThrow();
 
         Nickname nicknameToChange = new Nickname("바닐라라떼");
         foundPlayer.setNickname(nicknameToChange);
@@ -167,7 +197,7 @@ class PlayerServiceTest {
             playerRepository.save(player);
 
             //then
-            Player changedPlayer =  playerRepository.findByNickname(changedNickname);
+            Player changedPlayer =  playerRepository.findByNickname(changedNickname).orElseThrow();
             assertNotNull(changedPlayer);
 
         }, "에러 출력 되지 않음...");
@@ -276,5 +306,87 @@ class PlayerServiceTest {
         assertNull(changedPlayer.getPlayerAvatar());
         assertEquals(null, changedPlayer.getPlayerItems());
         assertEquals(0L, changedPlayer.getPlayerMoney());
+    }
+
+    @Test
+    @DisplayName("플레이어 정보 조회 성공")
+    void readPlayerInfSuccessTest() {
+
+        // given
+        String playerKey = "key";
+
+        Player newPlayer = new Player();
+        newPlayer.setPlayerSteamKey(playerKey);
+
+        Player savedPlayer = playerRepository.save(newPlayer);
+
+        // 플레이어 아바타 추가
+        Long playerId = savedPlayer.getPlayerId();
+        String playerMaskColor = "red";
+
+        Avatar avatar = new Avatar(playerId, playerMaskColor);
+        avatarRepository.save(avatar);
+
+        // when
+        Player foundPlayer = playerRepository.findById(savedPlayer.getPlayerId()).orElseThrow(() -> {
+            throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
+        });
+
+        // then
+        assertNotNull(foundPlayer);
+    }
+
+    @Test
+    @DisplayName("중복된 닉네임 체크")
+    void duplicatedNicknameCheckTest() {
+
+            // given
+            String playerKey = "key";
+            String nickname = "히에로스";
+
+            Player player1 = new Player(playerKey, nickname);
+            playerRepository.save(player1);
+
+            Player player2 = new Player(playerKey, nickname);
+            playerRepository.save(player2);
+
+            // when
+            Nickname testNickname = new Nickname("히에로스");
+            Player foundPlayer = playerRepository.findByNickname(testNickname).orElseThrow(() -> {
+                throw new IllegalArgumentException("중복된 닉네임 입니다.");
+            });
+
+            // then
+            assertNotNull(foundPlayer);
+    }
+
+    @Test
+    @DisplayName("회원 정보 조회 실패, 닉네임 불일치")
+    void readPlayerInfoFailTest() {
+
+            // given
+            String playerKey = "key";
+            String nickname = "히에로스";
+
+            Player newPlayer = new Player(playerKey, nickname);
+
+            Player savedPlayer = playerRepository.save(newPlayer);
+
+            // 플레이어 아바타 추가
+            Long playerId = savedPlayer.getPlayerId();
+            String playerMaskColor = "red";
+
+            Avatar avatar = new Avatar(playerId, playerMaskColor);
+            avatarRepository.save(avatar);
+
+            // then
+            Assertions.assertThrows(IllegalArgumentException.class, () -> {
+                Nickname testNickname = new Nickname("테스트1");
+                playerRepository.findByNickname(testNickname).orElseThrow(() -> {
+                    throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
+                });
+            }, "에러 출력 되지 않음...");
+
+
     }
 }

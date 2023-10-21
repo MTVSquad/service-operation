@@ -1,5 +1,6 @@
 package com.vsquad.iroas.controller;
 
+import com.vsquad.iroas.aggregate.dto.ReqPlayerDto;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.vo.Nickname;
 import com.vsquad.iroas.repository.PlayerRepository;
@@ -80,9 +81,12 @@ class PlayerControllerTest {
     @MethodSource("getPlayerInfo")
     @DisplayName("플레이어 추가 성공")
     void addPlayerTest(String steamKey, String nickname) throws Exception {
+
+        ReqPlayerDto request = new ReqPlayerDto(steamKey, nickname);
+
         mvc.perform(MockMvcRequestBuilders
-                        .post("/player")
-                        .param("playerSteamKey", steamKey)
+                        .post("/api/v1/player/add")
+                        .param("steamKey", steamKey)
                         .param("playerNickName", nickname)
                 )
                 .andExpect(MockMvcResultMatchers.status().isCreated())
