@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.BeforeTransaction;
@@ -32,7 +33,6 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 @SpringBootTest
 @ContextConfiguration
 @AutoConfigureMockMvc
-@Transactional
 class PlayerControllerTest {
 
     private MockMvc mvc;
@@ -48,8 +48,17 @@ class PlayerControllerTest {
     private static Stream<Arguments> getPlayerInfo() {
         return Stream.of(
                 Arguments.of(
-                        "12345678901234567",
-                        "히에로스"
+                        "123456789",
+                        "히에로"
+                    )
+                );
+    }
+
+    private static Stream<Arguments> getAvatarInfo() {
+        return Stream.of(
+                Arguments.of(
+                        "red",
+                        "1L"
                     )
                 );
     }
@@ -65,31 +74,64 @@ class PlayerControllerTest {
     @BeforeTransaction
     public void accountSetup() {
         player = Player.builder()
-                .playerSteamKey("12345678901234567")
+                .playerSteamKey("123456789012345678")
                 .nickname(new Nickname("히에로스"))
                 .build();
 
-        playerRepository.save(player);
+        player = playerRepository.save(player);
     }
 
     @AfterTransaction
     public void clear() {
-        playerRepository.delete(player);
+        playerRepository.deleteById(player.getPlayerId());
     }
 
     @ParameterizedTest
     @MethodSource("getPlayerInfo")
+    @Transactional
     @DisplayName("플레이어 추가 성공")
     void addPlayerTest(String steamKey, String nickname) throws Exception {
 
-        ReqPlayerDto request = new ReqPlayerDto(steamKey, nickname);
+        String requestJson = "{\"steamKey\":\"" + steamKey + "\",\"playerNickName\":\"" + nickname + "\"}";
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/api/v1/player/add")
-                        .param("steamKey", steamKey)
-                        .param("playerNickName", nickname)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson)
                 )
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    @DisplayName("아바타 추가 성공")
+    void addPlayerAvatar() throws Exception {
+
+        Long playerId = 99L;
+        String maskColor = "red";
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/v1/player/avatar")
+                        .param("playerId", String.valueOf(playerId))
+                        .param("maskColor", maskColor)
+                )
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("플레이어 정보 조회 성공")
+    void readPlayerInfoTest() throws Exception {
+
+        addPlayerTest("12345678901234567", "readTest");
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/api/v1/player/info")
+                        .param("playerId", "1")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
 }
