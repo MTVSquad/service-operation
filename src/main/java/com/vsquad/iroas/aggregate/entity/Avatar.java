@@ -21,7 +21,7 @@ public class Avatar {
     private Long avatarId;
 
     @Column(name = "AVATAR_MASK")
-    @Comment("아바타 마스크")
+    @Comment("아바타 마스크 컬러")
     private String mask;
 
     @Column(name = "PLAYER_ID")

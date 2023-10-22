@@ -29,4 +29,8 @@ public class EnemySpawner {
     @Column(name = "ENEMY_SPAWNER_GRADE")
     @Comment("에너미 스포너 소환 종류(보스, 엘리트, 일반몹")
     private String enemySpawnerGrade;
+
+    @Column(name = "CREATOR_MAP_ID")
+    @Comment("크리에이터 툴에 의해 생성된 맵 식별자")
+    private String creatorMapId;
 }

@@ -41,4 +41,8 @@ public class Enemy {
     @Column(name = "ENEMY_DAMAGE")
     @Comment("에너미 공격력")
     private Long enemyDamage;
+
+    @Column(name = "ENEMY_SPAWNER")
+    @Comment("에너미 스포너")
+    private Integer enemySpawnerId;
 }

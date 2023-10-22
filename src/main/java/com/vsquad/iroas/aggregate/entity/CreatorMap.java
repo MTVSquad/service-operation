@@ -1,6 +1,5 @@
 package com.vsquad.iroas.aggregate.entity;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -10,7 +9,7 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
-@javax.persistence.Table(name = "tb_channel")
+@Table(name = "tb_creator_map")
 @org.hibernate.annotations.Table(appliesTo = "tb_creator_map", comment = "크리에이터 툴에 의해 생성된 맵")
 @Data
 public class CreatorMap {
