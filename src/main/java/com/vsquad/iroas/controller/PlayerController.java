@@ -96,11 +96,15 @@ public class PlayerController {
         }
     }
 
-    @GetMapping("/info/{steamKey}")
-    public ResponseEntity<ResPlayerInfoDto> readPlayerInfo(@PathVariable String steamKey) {
+    @GetMapping("/info")
+    @Operation(summary = "플레이어 정보 조회", description = "플레이어 정보를 조회 합니다.", responses = {
+            @ApiResponse(responseCode = "200", description = "플레이어 정보 조회 성공", content = @Content(schema = @Schema(implementation = ResPlayerInfoDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "플레이어 정보 조회 실패", content = @Content(schema = @Schema(name = "플레이어 정보 조회 실패", example = "에러 메시지(플레이어 정보 없음 등)"), mediaType = "application/json"))
+    })
+    public ResponseEntity<ResPlayerInfoDto> readPlayerInfo(@RequestParam Long playerId) {
 
         try {
-            ResPlayerInfoDto resDto = playerService.readPlayerInfo(steamKey);
+            ResPlayerInfoDto resDto = playerService.readPlayerInfo(playerId);
 
             return new ResponseEntity<>(resDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {

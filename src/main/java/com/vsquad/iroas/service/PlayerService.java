@@ -61,15 +61,15 @@ public class PlayerService {
         foundAvatar.setMask(maskColor);
     }
 
-    public ResPlayerInfoDto readPlayerInfo(String steamKey) {
+    public ResPlayerInfoDto readPlayerInfo(Long playerId) {
 
-        Player foundPlayer = playerRepository.findByPlayerSteamKey(steamKey).orElseThrow(() -> {
+        Player foundPlayer = playerRepository.findById(playerId).orElseThrow(() -> {
             throw new NoSuchElementException("저장된 플레이어가 없습니다.");
         });
 
-        Long playerId = foundPlayer.getPlayerId();
+        Long foundPlayerId = foundPlayer.getPlayerId();
 
-        Avatar foundAvatar = avatarRepository.findByPlayerId(playerId).orElseThrow(() -> {
+        Avatar foundAvatar = avatarRepository.findByPlayerId(foundPlayerId).orElseThrow(() -> {
             throw new NoSuchElementException("저장된 아바타가 없습니다.");
         });
 
@@ -78,7 +78,7 @@ public class PlayerService {
         AvatarDto resPlayerAvatar = new AvatarDto(foundAvatar.getAvatarId(), foundAvatar.getMask());
 
         // player 정보 반환 하기 위해 dto로 변환
-        ResPlayerInfoDto resPlayerDto = new ResPlayerInfoDto(playerId, resPlayerNickname, resPlayerSteamKey, resPlayerAvatar);
+        ResPlayerInfoDto resPlayerDto = new ResPlayerInfoDto(foundPlayerId, resPlayerNickname, resPlayerSteamKey, resPlayerAvatar);
 
         return resPlayerDto;
     }
