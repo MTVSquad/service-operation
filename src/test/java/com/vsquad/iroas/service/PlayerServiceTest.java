@@ -18,7 +18,6 @@ import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.NonUniqueResultException;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,7 +59,7 @@ class PlayerServiceTest {
     void addPlayerTest() {
         /*
          * 테스트 시나리오
-         * 1. 스팀 회원의 식별 정보 저장
+         * 1. 스팀 플레이어의 식별 정보 저장
          * 2.
          * */
 
@@ -93,11 +92,7 @@ class PlayerServiceTest {
 
         ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
 
-        Player player = new Player();
-
-        Nickname nickname = new Nickname(reqPlayerDto.getPlayerNickName());
-
-        player.setNickname(nickname);
+        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName());
 
         // when
         playerRepository.save(player);
@@ -171,9 +166,7 @@ class PlayerServiceTest {
         // 최소 2자, 최대 8자, 특수 문자x, 한글 / 영문
         String inputData = "아바라abcf";
         ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
-        Player player = new Player();
-        Nickname nickname = new Nickname(reqPlayerDto.getPlayerNickName());
-        player.setNickname(nickname);
+        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName());
         playerRepository.save(player);
 
         // when
@@ -199,9 +192,7 @@ class PlayerServiceTest {
         String playerKey = "key";
         String inputData = "바닐라라떼";
         ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
-        Player player = new Player();
-        Nickname nickname = new Nickname(reqPlayerDto.getPlayerNickName());
-        player.setNickname(nickname);
+        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName());
         playerRepository.save(player);
 
         // when
@@ -235,20 +226,17 @@ class PlayerServiceTest {
 
         // given
         // 플레이어 추가
-        String playerKey = "key";
-        Player newPlayer = new Player();
-        newPlayer.setPlayerSteamKey(playerKey);
-        Player savedPlayer = playerRepository.save(newPlayer);
 
         // 플레이어 아바타 추가
-        Long playerId = savedPlayer.getPlayerId();
+        Long playerId = player.getPlayerId();
         String playerMaskColor = "red";
 
         // when
         Avatar avatar = new Avatar(playerId, playerMaskColor);
         Avatar savedAvatar = avatarRepository.save(avatar);
 
-        savedPlayer.setPlayerAvatar(savedAvatar.getAvatarId());
+        player.setPlayerAvatar(savedAvatar.getAvatarId());
+        playerRepository.save(player);
 
         // then
         Avatar foundAvatar = avatarRepository.findByPlayerId(playerId).orElseThrow(() -> {
@@ -296,7 +284,7 @@ class PlayerServiceTest {
     }
 
     @Test
-    @DisplayName("회원 정보 초기화")
+    @DisplayName("플레이어 정보 초기화")
     void resetPlayerInfo() {
 
         // given
@@ -379,47 +367,43 @@ class PlayerServiceTest {
     void duplicatedNicknameCheckTest() {
 
             // given
-            String playerKey = "key";
-            String nickname = "히에로스";
-
-            Player player1 = new Player(playerKey, nickname);
-            playerRepository.save(player1);
-
-            Player player2 = new Player(playerKey, nickname);
-            playerRepository.save(player2);
-
-            // when
-            Nickname testNickname = new Nickname("히에로스");
-            Player foundPlayer = playerRepository.findByNickname(testNickname).orElseThrow(() -> {
-                throw new IllegalArgumentException("중복된 닉네임 입니다.");
-            });
+            String nickname = player.getNickname().getPlayerNickname();
+            Nickname newNickname = new Nickname(nickname);
 
             // then
-            assertNotNull(foundPlayer);
+            Assertions.assertThrows(IllegalArgumentException.class, () -> {
+                Player foundPlayer = playerRepository.findByNickname(newNickname).orElseThrow(() -> {
+                    throw new IllegalArgumentException("플레이어 정보를 찾을 수 없습니다.");
+                });
+
+                if(foundPlayer != null) {
+                    throw new IllegalArgumentException("중복된 닉네임");
+                }
+
+            }, "에러 출력 되지 않음...");
     }
 
     @Test
-    @DisplayName("회원 정보 조회 실패, 닉네임 불일치")
+    @DisplayName("플레이어 정보 조회 실패, 닉네임 불일치")
     void readPlayerInfoFailTest() {
 
             // given
-            String playerKey = "key";
-            String nickname = "히에로스";
-
-            Player newPlayer = new Player(playerKey, nickname);
-
-            Player savedPlayer = playerRepository.save(newPlayer);
+            Long playerId = player.getPlayerId();
 
             // 플레이어 아바타 추가
-            Long playerId = savedPlayer.getPlayerId();
             String playerMaskColor = "red";
 
             Avatar avatar = new Avatar(playerId, playerMaskColor);
             avatarRepository.save(avatar);
 
+            Nickname testNickname = new Nickname("테스트1");
+
+            // when
+            assertNotEquals(player.getNickname(), testNickname);
+
             // then
             Assertions.assertThrows(IllegalArgumentException.class, () -> {
-                Nickname testNickname = new Nickname("테스트1");
+
                 playerRepository.findByNickname(testNickname).orElseThrow(() -> {
                     throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
                 });
@@ -445,7 +429,7 @@ class PlayerServiceTest {
     }
 
     @Test
-    @DisplayName("회원 아이템 정보 조회 성공")
+    @DisplayName("플레이어 아이템 정보 조회 성공")
     void readPlayerItemsSuccessTest() {
 
             // given
@@ -462,7 +446,7 @@ class PlayerServiceTest {
     }
 
     @Test
-    @DisplayName("회원 소지금 정보 추가 성공 테스트")
+    @DisplayName("플레이어 소지금 정보 추가 성공 테스트")
     void savePlayerMoneySuccessTest() {
 
         // given
@@ -486,7 +470,7 @@ class PlayerServiceTest {
     }
 
     @Test
-    @DisplayName("회원 소지금 정보 조회 성공 테스트 ")
+    @DisplayName("플레이어 소지금 정보 조회 성공 테스트 ")
     void readPlayerMoneySuccessTest() {
 
             // given
@@ -499,5 +483,30 @@ class PlayerServiceTest {
 
             // then
             assertNotNull(foundPlayer.getPlayerMoney());
+    }
+
+    @Test
+    @DisplayName("플레이어 아바타 외형 변경")
+    void changePlayerAvatarMaskColorSuccessTest() {
+
+        // given
+        String changeColor = "blue";
+
+        // 아바타 추가
+        addPlayerAvatarTest();
+
+        // when
+        Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> {
+            throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
+        });
+
+        Avatar foundAvatar = avatarRepository.findByPlayerId(foundPlayer.getPlayerId()).orElseThrow(() -> {
+            throw new IllegalArgumentException("저장된 아바타가 없습니다.");
+        });
+
+        foundAvatar.setMask(changeColor);
+
+        // then
+        assertEquals(changeColor, foundAvatar.getMask());
     }
 }

@@ -52,13 +52,35 @@ public class PlayerService {
     }
 
     @Transactional
-    public void changePlayerAvatar(Long playerId, String maskColor) {
+    public ResPlayerInfoDto changePlayerAvatar(Long playerId, String maskColor) {
 
         Avatar foundAvatar = avatarRepository.findByPlayerId(playerId).orElseThrow(() -> {
             throw new NoSuchElementException("아바타 정보를 찾을 수 없습니다.");
         });
 
         foundAvatar.setMask(maskColor);
+
+        return readPlayerInfo(playerId);
+    }
+
+    @Transactional
+    public ResPlayerInfoDto changePlayerNickname(Long playerId, String nickname) {
+
+        Nickname newNickname = new Nickname(nickname);
+
+        playerRepository.findByNickname(newNickname).ifPresent(player -> {
+            throw new IllegalArgumentException("중복된 닉네임");
+        });
+
+        Player foundPlayer = playerRepository.findById(playerId).orElseThrow(() -> {
+            throw new NoSuchElementException("플레이어 정보를 찾을 수 없습니다.");
+        });
+
+        foundPlayer.setNickname(newNickname);
+
+        ResPlayerInfoDto resPlayerDto = new ResPlayerInfoDto(foundPlayer.getPlayerId(), foundPlayer.getNickname().getPlayerNickname(), foundPlayer.getPlayerSteamKey(), null);
+
+        return resPlayerDto;
     }
 
     public ResPlayerInfoDto readPlayerInfo(Long playerId) {
