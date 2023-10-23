@@ -125,11 +125,13 @@ class PlayerControllerTest {
     @DisplayName("플레이어 정보 조회 성공 테스트")
     void readPlayerInfoTest() throws Exception {
 
-        addPlayerTest("12345678901234567", "readTest");
+        String playerId = player.getPlayerId().toString();
+
+        addPlayerAvatarSuccessTest();
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/player/info")
-                        .param("playerId", "1")
+                        .param("playerId", playerId)
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
@@ -138,11 +140,12 @@ class PlayerControllerTest {
     @Test
     @DisplayName("플레이어 닉네임 변경 성공 테스트")
     void changePlayerNicknameSuccessTest() throws Exception {
-        addPlayerTest("12345678901234567", "tester");
+
+        String playerId = player.getPlayerId().toString();
 
         mvc.perform(MockMvcRequestBuilders
                         .patch("/api/v1/player/nickname")
-                        .param("playerId", "1")
+                        .param("playerId", playerId)
                         .param("nickname", "변경된닉네임")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())

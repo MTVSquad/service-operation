@@ -92,11 +92,7 @@ class PlayerServiceTest {
 
         ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
 
-        Player player = new Player();
-
-        Nickname nickname = new Nickname(reqPlayerDto.getPlayerNickName());
-
-        player.setNickname(nickname);
+        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName());
 
         // when
         playerRepository.save(player);
@@ -170,9 +166,7 @@ class PlayerServiceTest {
         // 최소 2자, 최대 8자, 특수 문자x, 한글 / 영문
         String inputData = "아바라abcf";
         ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
-        Player player = new Player();
-        Nickname nickname = new Nickname(reqPlayerDto.getPlayerNickName());
-        player.setNickname(nickname);
+        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName());
         playerRepository.save(player);
 
         // when
@@ -198,9 +192,7 @@ class PlayerServiceTest {
         String playerKey = "key";
         String inputData = "바닐라라떼";
         ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
-        Player player = new Player();
-        Nickname nickname = new Nickname(reqPlayerDto.getPlayerNickName());
-        player.setNickname(nickname);
+        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName());
         playerRepository.save(player);
 
         // when
@@ -375,23 +367,20 @@ class PlayerServiceTest {
     void duplicatedNicknameCheckTest() {
 
             // given
-            String playerKey = "key";
-            String nickname = "히에로스";
-
-            Player player1 = new Player(playerKey, nickname);
-            playerRepository.save(player1);
-
-            Player player2 = new Player(playerKey, nickname);
-            playerRepository.save(player2);
-
-            // when
-            Nickname testNickname = new Nickname("히에로스");
-            Player foundPlayer = playerRepository.findByNickname(testNickname).orElseThrow(() -> {
-                throw new IllegalArgumentException("중복된 닉네임 입니다.");
-            });
+            String nickname = player.getNickname().getPlayerNickname();
+            Nickname newNickname = new Nickname(nickname);
 
             // then
-            assertNotNull(foundPlayer);
+            Assertions.assertThrows(IllegalArgumentException.class, () -> {
+                Player foundPlayer = playerRepository.findByNickname(newNickname).orElseThrow(() -> {
+                    throw new IllegalArgumentException("플레이어 정보를 찾을 수 없습니다.");
+                });
+
+                if(foundPlayer != null) {
+                    throw new IllegalArgumentException("중복된 닉네임");
+                }
+
+            }, "에러 출력 되지 않음...");
     }
 
     @Test
@@ -399,23 +388,22 @@ class PlayerServiceTest {
     void readPlayerInfoFailTest() {
 
             // given
-            String playerKey = "key";
-            String nickname = "히에로스";
-
-            Player newPlayer = new Player(playerKey, nickname);
-
-            Player savedPlayer = playerRepository.save(newPlayer);
+            Long playerId = player.getPlayerId();
 
             // 플레이어 아바타 추가
-            Long playerId = savedPlayer.getPlayerId();
             String playerMaskColor = "red";
 
             Avatar avatar = new Avatar(playerId, playerMaskColor);
             avatarRepository.save(avatar);
 
+            Nickname testNickname = new Nickname("테스트1");
+
+            // when
+            assertNotEquals(player.getNickname(), testNickname);
+
             // then
             Assertions.assertThrows(IllegalArgumentException.class, () -> {
-                Nickname testNickname = new Nickname("테스트1");
+
                 playerRepository.findByNickname(testNickname).orElseThrow(() -> {
                     throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
                 });

@@ -29,7 +29,7 @@ public class Nickname {
 
     private void validateNickname(String nickname) {
 
-        String isRegExp = "^[가-힣a-zA-Z]{2,8}$";
+        String isRegExp = "^[가-힣a-zA-Z0-9]{2,8}$";
 
         Pattern pattern = Pattern.compile(isRegExp);
 
