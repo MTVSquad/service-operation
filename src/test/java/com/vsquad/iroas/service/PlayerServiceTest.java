@@ -2,9 +2,11 @@ package com.vsquad.iroas.service;
 
 import com.vsquad.iroas.aggregate.dto.ReqPlayerDto;
 import com.vsquad.iroas.aggregate.entity.Avatar;
+import com.vsquad.iroas.aggregate.entity.Item;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.vo.Nickname;
 import com.vsquad.iroas.repository.AvatarRepository;
+import com.vsquad.iroas.repository.ItemRepository;
 import com.vsquad.iroas.repository.PlayerRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.context.transaction.AfterTransaction;
+import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NonUniqueResultException;
@@ -28,6 +32,28 @@ class PlayerServiceTest {
 
     @Autowired
     private AvatarRepository avatarRepository;
+
+    @Autowired
+    private ItemRepository itemRepository;
+
+    private Player player;
+
+    @BeforeTransaction
+    public void accountSetup() {
+        player = Player.builder()
+                .playerSteamKey("123456789012345678")
+                .nickname(new Nickname("히에로스"))
+                .playerMoney(1000L)
+                .playerItems("[1,2,3]")
+                .build();
+
+        player = playerRepository.save(player);
+    }
+
+    @AfterTransaction
+    public void clear() {
+        playerRepository.deleteById(player.getPlayerId());
+    }
 
     @Test
     @DisplayName("플레이어 추가")
@@ -204,8 +230,8 @@ class PlayerServiceTest {
     }
 
     @Test
-    @DisplayName("아바타 추가 성공")
-    void addPlyerAvatarTest() {
+    @DisplayName("아바타 추가 및 조회 성공")
+    void addPlayerAvatarTest() {
 
         // given
         // 플레이어 추가
@@ -220,14 +246,21 @@ class PlayerServiceTest {
 
         // when
         Avatar avatar = new Avatar(playerId, playerMaskColor);
-        avatarRepository.save(avatar);
+        Avatar savedAvatar = avatarRepository.save(avatar);
+
+        savedPlayer.setPlayerAvatar(savedAvatar.getAvatarId());
 
         // then
         Avatar foundAvatar = avatarRepository.findByPlayerId(playerId).orElseThrow(() -> {
             throw new IllegalArgumentException("플레이어 정보가 일치하지 않습니다.");
         });
 
+        Player foundPlayer = playerRepository.findById(playerId).orElseThrow(() -> {
+            throw new IllegalArgumentException("플레이어 정보가 일치하지 않습니다.");
+        });
+
         assertNotNull(foundAvatar);
+        assertEquals(savedAvatar.getAvatarId(), foundPlayer.getPlayerAvatar());
     }
 
     @Test
@@ -309,7 +342,7 @@ class PlayerServiceTest {
     }
 
     @Test
-    @DisplayName("플레이어 정보 조회 성공")
+    @DisplayName("플레이어 닉네임, 아이템, 돈, 아바타 조회 성공")
     void readPlayerInfSuccessTest() {
 
         // given
@@ -332,8 +365,13 @@ class PlayerServiceTest {
             throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
         });
 
+        Avatar foundAvatar = avatarRepository.findByPlayerId(foundPlayer.getPlayerId()).orElseThrow(() -> {
+            throw new IllegalArgumentException("저장된 아바타가 없습니다.");
+        });
+
         // then
         assertNotNull(foundPlayer);
+        assertNotNull(foundAvatar);
     }
 
     @Test
@@ -386,7 +424,80 @@ class PlayerServiceTest {
                     throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
                 });
             }, "에러 출력 되지 않음...");
+    }
+
+    @Test
+    @DisplayName("아이템 추가")
+    void saveItemTest() {
+
+            // given
+            Item item = new Item("기관총", "총", 100);
+
+            // when
+            itemRepository.save(item);
+
+            // then
+            Item foundItem = itemRepository.findById(item.getItemId()).orElseThrow(() -> {
+                throw new IllegalArgumentException("저장된 아이템이 없습니다.");
+            });
+
+            assertNotNull(foundItem);
+    }
+
+    @Test
+    @DisplayName("회원 아이템 정보 조회 성공")
+    void readPlayerItemsSuccessTest() {
+
+            // given
+            // 아이템 정보 추가
+            saveItemTest();
+
+            // when
+            Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> {
+                throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
+            });
+
+            // then
+            assertNotNull(foundPlayer.getPlayerItems());
+    }
+
+    @Test
+    @DisplayName("회원 소지금 정보 추가 성공 테스트")
+    void savePlayerMoneySuccessTest() {
+
+        // given
+        Long playerId = player.getPlayerId();
+        Long playerMoney = 1000L;
+
+        // when
+        Player foundPlayer = playerRepository.findById(playerId).orElseThrow(() -> {
+            throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
+        });
+
+        foundPlayer.setPlayerMoney(playerMoney);
+
+        // then
+        Player changedPlayer = playerRepository.findById(playerId).orElseThrow(() -> {
+            throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
+        });
 
 
+        assertEquals(playerMoney, changedPlayer.getPlayerMoney());
+    }
+
+    @Test
+    @DisplayName("회원 소지금 정보 조회 성공 테스트 ")
+    void readPlayerMoneySuccessTest() {
+
+            // given
+            savePlayerMoneySuccessTest();
+
+            // when
+            Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> {
+                throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
+            });
+
+            // then
+            assertNotNull(foundPlayer.getPlayerMoney());
     }
 }
