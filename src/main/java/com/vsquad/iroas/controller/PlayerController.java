@@ -6,6 +6,9 @@ import com.vsquad.iroas.aggregate.dto.ResMessageDto;
 import com.vsquad.iroas.aggregate.dto.ResPlayerInfoDto;
 import com.vsquad.iroas.service.PlayerService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -96,6 +99,25 @@ public class PlayerController {
         }
     }
 
+    @PatchMapping("/avatar")
+    @Operation(summary = "플레이어 아바타 변경", description = "플레이어 아바타에서 마스크 컬러를 변경 합니다.", responses = {
+            @ApiResponse(responseCode = "200", description = "플레이어 아바타 변경 성공", content = @Content(schema = @Schema(implementation = ResPlayerInfoDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "플레이어 아바타 변경 실패", content = @Content(schema = @Schema(name = "플레이어 아바타 변경 실패", example = "에러 메시지(플레이어 정보 없음 등)"), mediaType = "application/json"))
+    })
+    public ResponseEntity<ResPlayerInfoDto> changePlayerAvatar(@RequestBody ReqAvatarDto reqBody) {
+
+        Long playerId = reqBody.getPlayerId();
+        String maskColor = reqBody.getMaskColor();
+
+        try {
+            ResPlayerInfoDto resDto = playerService.changePlayerAvatar(playerId, maskColor);
+            return new ResponseEntity<>(resDto, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            log.warn(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/info")
     @Operation(summary = "플레이어 정보 조회", description = "플레이어 정보를 조회 합니다.", responses = {
             @ApiResponse(responseCode = "200", description = "플레이어 정보 조회 성공", content = @Content(schema = @Schema(implementation = ResPlayerInfoDto.class), mediaType = "application/json")),
@@ -105,11 +127,31 @@ public class PlayerController {
 
         try {
             ResPlayerInfoDto resDto = playerService.readPlayerInfo(playerId);
-
             return new ResponseEntity<>(resDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             log.warn(e.getMessage());
 
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PatchMapping("/nickname")
+    @Operation(summary = "플레이어 닉네임 변경", description = "플레이어 닉네임을 수정합니다.", responses = {
+            @ApiResponse(responseCode = "200", description = "플레이어 닉네임 수정 성공", content = @Content(schema = @Schema(implementation = ResPlayerInfoDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "플레이어 닉네임 수정 실패", content = @Content(schema = @Schema(name = "플레이어 닉네임 수정 실패", example = "에러 메시지(닉네임 중복)"), mediaType = "application/json"))
+    })
+    @Parameters({
+        @Parameter(name = "playerId", description = "플레이어 식별자", example = "1", in = ParameterIn.QUERY),
+        @Parameter(name = "nickname", description = "플레이어 닉네임", example = "test", in = ParameterIn.QUERY)
+    })
+    public ResponseEntity<ResPlayerInfoDto> changePlayerNickname(@RequestParam Long playerId, @RequestParam String nickname) {
+
+        try {
+            log.info("플레이어 닉네임 수정");
+            ResPlayerInfoDto resDto = playerService.changePlayerNickname(playerId, nickname);
+            return new ResponseEntity<>(resDto, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            log.warn(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

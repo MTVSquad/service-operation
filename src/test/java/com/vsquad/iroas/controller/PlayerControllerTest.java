@@ -1,6 +1,5 @@
 package com.vsquad.iroas.controller;
 
-import com.vsquad.iroas.aggregate.dto.ReqPlayerDto;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.vo.Nickname;
 import com.vsquad.iroas.repository.PlayerRepository;
@@ -25,7 +24,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -33,6 +31,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 @SpringBootTest
 @ContextConfiguration
 @AutoConfigureMockMvc
+@Transactional
 class PlayerControllerTest {
 
     private MockMvc mvc;
@@ -82,14 +81,14 @@ class PlayerControllerTest {
     }
 
     @AfterTransaction
-    public void clear() {
+    public void clear()
+    {
         playerRepository.deleteById(player.getPlayerId());
     }
 
     @ParameterizedTest
     @MethodSource("getPlayerInfo")
-    @Transactional
-    @DisplayName("플레이어 추가 성공")
+    @DisplayName("플레이어 추가 성공 테스트")
     void addPlayerTest(String steamKey, String nickname) throws Exception {
 
         String requestJson = "{\"steamKey\":\"" + steamKey + "\",\"playerNickName\":\"" + nickname + "\"}";
@@ -103,24 +102,27 @@ class PlayerControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-    @Test
-    @DisplayName("아바타 추가 성공")
-    void addPlayerAvatar() throws Exception {
+    @ParameterizedTest
+    @MethodSource("getPlayerInfo")
+    @DisplayName("아바타 추가 성공 테스트")
+    void addPlayerAvatarSuccessTest() throws Exception {
 
-        Long playerId = 99L;
+        String playerId = player.getPlayerId().toString();
         String maskColor = "red";
+
+        String requestJson = "{\"playerId\":\"" + playerId + "\",\"maskColor\":\"" + maskColor + "\"}";
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/api/v1/player/avatar")
-                        .param("playerId", String.valueOf(playerId))
-                        .param("maskColor", maskColor)
+                        .content(requestJson)
+                        .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andDo(MockMvcResultHandlers.print());
     }
 
     @Test
-    @DisplayName("플레이어 정보 조회 성공")
+    @DisplayName("플레이어 정보 조회 성공 테스트")
     void readPlayerInfoTest() throws Exception {
 
         addPlayerTest("12345678901234567", "readTest");
@@ -133,5 +135,50 @@ class PlayerControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    @DisplayName("플레이어 닉네임 변경 성공 테스트")
+    void changePlayerNicknameSuccessTest() throws Exception {
+        addPlayerTest("12345678901234567", "tester");
 
+        mvc.perform(MockMvcRequestBuilders
+                        .patch("/api/v1/player/nickname")
+                        .param("playerId", "1")
+                        .param("nickname", "변경된닉네임")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("플레이어 닉네임 변경 실패 테스트")
+    void changePlayerNicknameFailTest() throws Exception {
+        addPlayerTest("12345678901234567", "tester");
+
+        mvc.perform(MockMvcRequestBuilders
+                        .patch("/api/v1/player/nickname")
+                        .param("playerId", "1")
+                        .param("nickname", "변경된닉네임111")
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("플레이어 아바타 변경 성공 테스트")
+    void changePlayerAvatarSuccessTest() throws Exception {
+
+        addPlayerAvatarSuccessTest();
+
+        String playerId =   player.getPlayerId().toString();
+        String maskColor = "green";
+        String requestJson = "{\"playerId\":\"" + playerId + "\",\"maskColor\":\"" + maskColor + "\"}";
+
+        mvc.perform(MockMvcRequestBuilders
+                        .patch("/api/v1/player/avatar")
+                        .content(requestJson)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
 }
