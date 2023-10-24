@@ -46,17 +46,17 @@ public class Enemy {
     @Comment("에너미 스포너")
     private Integer enemySpawnerId;
 
-    @Column(name = "CREATOR_MAP")
-    @Comment("크리에이터 맵")
-    private String creatorMap;
+    @Column(name = "CREATOR_MAP_ID")
+    @Comment("크리에이터 맵 식별자")
+    private String creatorMapId;
 
-    public Enemy(String enemyCode, String enemyName, String enemyType, Long enemyHp, String enemySkill, Long enemyPower, Integer enemySpawnerId, String creatorMap) {
+    public Enemy(String enemyCode, String enemyName, String enemyType, Long enemyHp, Long enemyPower, Integer enemySpawnerId, String creatorMap) {
         this.enemyCode = enemyCode;
         this.enemyName = enemyName;
         this.enemyType = enemyType;
         this.enemyHp = enemyHp;
         this.enemyPower = enemyPower;
         this.enemySpawnerId = enemySpawnerId;
-        this.creatorMap = creatorMap;
+        this.creatorMapId = creatorMap;
     }
 }
