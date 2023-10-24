@@ -184,4 +184,20 @@ class PlayerControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    @DisplayName("플레이어 아바타, 아이템, 돈 초기화")
+    void resetPlayerInfoSuccessTest() throws Exception {
+
+        addPlayerAvatarSuccessTest();
+
+        String playerId =   player.getPlayerId().toString();
+
+        mvc.perform(MockMvcRequestBuilders
+                        .delete("/api/v1/player/avatar")
+                        .param("playerId", playerId)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
 }

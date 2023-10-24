@@ -1,6 +1,8 @@
 package com.vsquad.iroas.aggregate.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.Table;
 
@@ -10,6 +12,8 @@ import javax.persistence.*;
 @javax.persistence.Table(name = "tb_enemy")
 @Table(appliesTo = "tb_enemy", comment = "에너미(몬스터)")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Enemy {
 
     @Id
@@ -17,6 +21,10 @@ public class Enemy {
     @Column(name = "ENEMY_ID")
     @Comment("에너미 식별자")
     private Long enemyId;
+
+    @Column(name = "ENEMY_CODE")
+    @Comment("클라이언트에서 보내준 에네미 식별 코드")
+    private String enemyCode;
 
     @Column(name = "ENEMY_NAME")
     @Comment("에너미 이름")
@@ -45,4 +53,20 @@ public class Enemy {
     @Column(name = "ENEMY_SPAWNER")
     @Comment("에너미 스포너")
     private Integer enemySpawnerId;
+
+    @Column(name = "CREATOR_MAP")
+    @Comment("크리에이터 맵")
+    private String creatorMap;
+
+    public Enemy(String enemyCode, String enemyName, String enemyType, String enemyGrade, Long enemyHp, String enemySkill, Long enemyDamage, Integer enemySpawnerId, String creatorMap) {
+        this.enemyCode = enemyCode;
+        this.enemyName = enemyName;
+        this.enemyType = enemyType;
+        this.enemyGrade = enemyGrade;
+        this.enemyHp = enemyHp;
+        this.enemySkill = enemySkill;
+        this.enemyDamage = enemyDamage;
+        this.enemySpawnerId = enemySpawnerId;
+        this.creatorMap = creatorMap;
+    }
 }
