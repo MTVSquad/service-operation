@@ -16,21 +16,34 @@ public class EnemySpawner {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ENEMY_SPAWNER_ID")
     @Comment("에너미 스포너 식별자")
-    private Integer enemySpawnerId;
+    private Long enemySpawnerId;
 
     @Column(name = "ENEMY_SPAWNER_NAME")
     @Comment("에너미 스포너 이름")
     private String enemySpawnerName;
 
-    @Column(name = "ENEMY_SPAWNER_TYPE")
-    @Comment("에너미 스포너 종류(근접, 원거리)")
-    private String enemySpawnerType;
-
-    @Column(name = "ENEMY_SPAWNER_GRADE")
-    @Comment("에너미 스포너 소환 종류(보스, 엘리트, 일반몹")
-    private String enemySpawnerGrade;
-
     @Column(name = "CREATOR_MAP_ID")
     @Comment("크리에이터 툴에 의해 생성된 맵 식별자")
     private String creatorMapId;
+
+    @Column(name = "PLAYER_START_POINT")
+    @Comment("에네미 스포너 시작 지점 [x, y, z]")
+    private String spawnerStartPoint;
+
+    @JoinColumn(name = "ENEMY_ID")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Comment("에너미 식별자")
+    private Enemy enemy;
+
+    @Column(name = "SPAWNER_AMOUNT")
+    @Comment("에너미 스포너 소환 수")
+    private Integer spawnerAmount;
+
+    @Column(name = "SPAWNER_START_DELAY")
+    @Comment("에너미 스포너 시작 딜레이")
+    private Float spawnerStartDelay;
+
+    @Column(name = "SPAWNER_INTERVAL")
+    @Comment("에너미 스포너 소환 간격")
+    private Float spawnerInterval;
 }

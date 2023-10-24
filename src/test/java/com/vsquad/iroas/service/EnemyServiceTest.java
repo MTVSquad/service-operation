@@ -23,7 +23,7 @@ class EnemyServiceTest {
     @DisplayName("근접 에너미 추가")
     void addEnemy() {
         // given
-        enemy = new Enemy("close_range_1", "근거리1", "close range", "normal", 100L, null, 10L, 1, "map1");
+        enemy = new Enemy("close_range_1", "근거리1", "close range", 100L, null, 10L, 1, "map1");
         enemyRepository.save(enemy);
 
         // when

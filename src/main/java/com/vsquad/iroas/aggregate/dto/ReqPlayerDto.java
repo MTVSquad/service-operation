@@ -18,6 +18,6 @@ public class ReqPlayerDto {
 
     @Schema(name = "playerNickName", description = "닉네임은 2~8자 한글, 영문 대소문자, 숫자만 가능", example = "히에로스")
     @NonNull
-    @Pattern(regexp = "^[가-힣a-zA-Z]{2,8}$")
+    @Pattern(regexp = "^[가-힣a-zA-Z0-9]{2,8}$")
     private String playerNickName;
 }
