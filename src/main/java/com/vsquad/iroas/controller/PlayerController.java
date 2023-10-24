@@ -155,4 +155,25 @@ public class PlayerController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @DeleteMapping("/avatar")
+    @Operation(summary = "플레이어 아바타 초기화", description = "플레이어 아바타를 초기화 합니다.", responses = {
+            @ApiResponse(responseCode = "200", description = "플레이어 아바타 초기화 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "플레이어 아바타 초기화 실패", content = @Content(schema = @Schema(name = "플레이어 아바타 제거 실패", example = "에러 메시지(플레이어 정보 없음 등)"), mediaType = "application/json"))
+    })
+    @Parameter(name = "playerId", description = "플레이어 식별자", example = "1", in = ParameterIn.QUERY)
+    public ResponseEntity<ResMessageDto> deletePlayerAvatar(@RequestParam Long playerId) {
+
+        try {
+            log.info("플레이어 아바타 제거");
+
+            playerService.resetPlayerInfo(playerId);
+            ResMessageDto resDto = new ResMessageDto("플레이어 아바타가 초기화 되었습니다.");
+            return new ResponseEntity<>(resDto, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            log.warn(e.getMessage());
+            ResMessageDto resDto = new ResMessageDto(e.getMessage());
+            return new ResponseEntity<>(resDto, HttpStatus.BAD_REQUEST);
+        }
+    }
 }
