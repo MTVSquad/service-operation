@@ -8,7 +8,8 @@ import javax.persistence.*;
 import java.time.LocalTime;
 
 @Entity
-@Table(appliesTo = "TB_Ranking", comment = "랭킹")
+@javax.persistence.Table(name = "tb_ranking")
+@Table(appliesTo = "tb_ranking", comment = "랭킹")
 @Data
 public class Ranking {
 

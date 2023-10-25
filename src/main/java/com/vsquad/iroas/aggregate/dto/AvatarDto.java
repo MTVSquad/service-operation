@@ -1,0 +1,14 @@
+package com.vsquad.iroas.aggregate.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class AvatarDto {
+
+    private Long avatarId;
+    private String maskColor;
+}
