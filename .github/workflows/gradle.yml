@@ -28,6 +28,10 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
+
+    - name: print env
+      run: echo "${{ secrets.OCCUPY_SECRET }}"
+
     - name: Copy Secret
       env:
         OCCUPY_SECRETS: ${{ secrets.OCCUPY_SECRET }}
