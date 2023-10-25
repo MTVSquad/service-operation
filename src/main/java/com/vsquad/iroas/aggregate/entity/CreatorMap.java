@@ -1,5 +1,11 @@
 package com.vsquad.iroas.aggregate.entity;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
+import com.vsquad.iroas.aggregate.dto.EnemySpawnerDto;
+import com.vsquad.iroas.aggregate.dto.PropDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,6 +13,7 @@ import lombok.NonNull;
 import org.hibernate.annotations.Comment;
 
 import javax.persistence.*;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -56,4 +63,28 @@ public class CreatorMap {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Comment("구조물 목록")
     private List<Prop> propList;
+
+    public static CreatorMapDto convertToDto(CreatorMap map) throws JsonProcessingException {
+
+        if(map == null) return null;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        List<Float> startPoint = objectMapper.readValue(map.getPlayerStartPoint(), List.class);
+        try {
+            List<EnemySpawnerDto>  enemySpawnerDtos = objectMapper.readValue((JsonParser) map.getEnemySpawnerList(), List.class);
+
+            List<PropDto> propDtos = objectMapper.readValue((JsonParser) map.getPropList(), List.class);
+
+            return new CreatorMapDto(map.getCreatorMapId(), map.getCreatorMapName(), map.getCreatorMapType(), map.getCreator(),
+                map.getCreateTime(), startPoint, map.getTimezone(), enemySpawnerDtos, propDtos);
+
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            System.err.println("Error: " + errorMessage);
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

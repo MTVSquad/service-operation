@@ -26,9 +26,17 @@ public class EnemySpawner {
     @Comment("크리에이터 툴에 의해 생성된 맵 식별자")
     private String creatorMapId;
 
-    @Column(name = "PLAYER_START_POINT")
-    @Comment("에네미 스포너 시작 지점 [x, y, z]")
-    private String spawnerStartPoint;
+    @Column(name = "ENEMY_START_POINT_X_LOCATION")
+    @Comment("에네미 시작 지점 x 좌표")
+    private Float enemyStartPointXLocation;
+
+    @Column(name = "ENEMY_START_POINT_Y_LOCATION")
+    @Comment("에네미 시작 지점 y 좌표")
+    private Float enemyStartPointYLocation;
+
+    @Column(name = "ENEMY_START_POINT_Z_LOCATION")
+    @Comment("에네미 시작 지점 z 좌표")
+    private Float enemyStartPointZLocation;
 
     @JoinColumn(name = "ENEMY_ID")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

@@ -12,6 +12,6 @@ import lombok.ToString;
 @ToString
 public class ResMessageDto {
 
-    @Schema(name = "응답 메시지", example = "플레이어가 추가 되었습니다.")
+    @Schema(name = "응답 메시지")
     private String message;
 }

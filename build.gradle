@@ -52,6 +52,9 @@ dependencies {
     implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.7.0'
     implementation group: 'org.springdoc', name: 'springdoc-openapi-security', version: '1.7.0'
     testImplementation group: 'org.springdoc', name: 'springdoc-openapi-webmvc-core', version: '1.7.0'
+
+    // https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.2.0'
 }
 
 

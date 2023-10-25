@@ -4,14 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vsquad.iroas.aggregate.dto.EnemyDto;
 import com.vsquad.iroas.aggregate.dto.EnemySpawnerDto;
 import com.vsquad.iroas.aggregate.dto.PropDto;
-import com.vsquad.iroas.aggregate.dto.ReqCreatorMapDto;
+import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
 import com.vsquad.iroas.aggregate.entity.CreatorMap;
 import com.vsquad.iroas.repository.CreatorMapRepository;
-import com.vsquad.iroas.repository.EnemyRepository;
 import com.vsquad.iroas.repository.EnemySpawnerRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,12 +45,9 @@ class CreatorMapServiceTest {
 
         EnemyDto enemyDto = new EnemyDto("close_range_0", "근거리1", "Melee", 100L, 10L);
 
-        List<Float> enemyStartPoint1 = new ArrayList<>();
-        enemyStartPoint1.addAll(List.of(100.00F, 160.00F, 90.00F));
-
         List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
         enemySpawnerList.addAll(List.of(
-                new EnemySpawnerDto("근접 에네미 스포너", enemyStartPoint1, 100, 10F, 10F, enemyDto)
+                new EnemySpawnerDto("근접 에네미 스포너", 100.00F, 160.00F, 90.00F, 100, 10F, 10F, enemyDto)
         ));
 
         List<PropDto> propList = new ArrayList<>();
@@ -65,7 +60,7 @@ class CreatorMapServiceTest {
         List<Float> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00F, 160.00F, 90.00F));
 
-        ReqCreatorMapDto mapDto = new ReqCreatorMapDto(uuid, "testMap", "MELEE", 1L, LocalDateTime.now(),
+        CreatorMapDto mapDto = new CreatorMapDto(uuid, "testMap", "MELEE", 1L, LocalDateTime.now(),
                 startPoint, "Morning", enemySpawnerList, propList);
 
         CreatorMap map = mapDto.convertToEntity(mapDto);
@@ -89,12 +84,9 @@ class CreatorMapServiceTest {
 
         EnemyDto enemyDto = new EnemyDto("close_range_1", "근거리1", "Melee", 100L, 10L);
 
-        List<Float> enemyStartPoint1 = new ArrayList<>();
-        enemyStartPoint1.addAll(List.of(100.00F, 160.00F, 90.00F));
-
         List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
         enemySpawnerList.addAll(List.of(
-                new EnemySpawnerDto("근접 에네미 스포너", enemyStartPoint1, 100, 10F, 10F, enemyDto)
+                new EnemySpawnerDto("근접 에네미 스포너", 100.00F, 160.00F, 90.00F, 100, 10F, 10F, enemyDto)
         ));
 
         List<PropDto> propList = new ArrayList<>();
@@ -107,7 +99,7 @@ class CreatorMapServiceTest {
         List<Float> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00F, 160.00F, 90.00F));
 
-        ReqCreatorMapDto mapDto = new ReqCreatorMapDto(uuid, "myAwesomeMap", "MELEE", 1L, LocalDateTime.now(),
+        CreatorMapDto mapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", 1L, LocalDateTime.now(),
                 startPoint, "Morning", enemySpawnerList, propList);
 
         CreatorMap map = mapDto.convertToEntity(mapDto);

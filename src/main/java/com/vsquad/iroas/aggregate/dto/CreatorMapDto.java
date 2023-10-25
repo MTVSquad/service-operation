@@ -4,13 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vsquad.iroas.aggregate.entity.CreatorMap;
-import com.vsquad.iroas.aggregate.entity.Enemy;
 import com.vsquad.iroas.aggregate.entity.EnemySpawner;
 import com.vsquad.iroas.aggregate.entity.Prop;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,7 +17,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReqCreatorMapDto {
+public class CreatorMapDto {
 
     @Schema(name = "creatorMapId", description = "맵 식별자")
     private String creatorMapId;
@@ -34,7 +32,7 @@ public class ReqCreatorMapDto {
     @Schema(name = "creator", description = "맵 생성자")
     private Long creator;
 
-    @Schema(name = "createTime", description = "맵 생성 시간")
+    @Schema(name = "createTime", description = "맵 생성 시간", example = "2023-10-25 06:25:56")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
@@ -50,7 +48,7 @@ public class ReqCreatorMapDto {
     @Schema(name = "propList", description = "구조물 목록")
     private List<PropDto> propList;
 
-    public CreatorMap convertToEntity(ReqCreatorMapDto creatorMapDto) throws JsonProcessingException {
+    public CreatorMap convertToEntity(CreatorMapDto creatorMapDto) throws JsonProcessingException {
 
         if(creatorMapDto == null) {
             return null;
