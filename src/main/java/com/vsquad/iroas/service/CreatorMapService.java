@@ -35,11 +35,14 @@ public class CreatorMapService {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
+        List<Float> convertedStartPoint = null;
+
         if(startPoint != null) {
-            objectMapper.readValue(startPoint, List.class);
+            convertedStartPoint = objectMapper.readValue(startPoint, List.class);
         }
+
+        creatorMapDto.setPlayerStartPoint(convertedStartPoint);
 
         return creatorMapDto;
     }
-
 }

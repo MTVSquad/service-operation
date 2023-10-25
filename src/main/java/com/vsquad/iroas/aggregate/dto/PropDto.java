@@ -7,7 +7,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 
+import javax.persistence.Column;
 import java.util.List;
 
 @Data
@@ -21,8 +23,17 @@ public class PropDto {
     @Schema(name = "propName", description = "구조물 이름")
     private String propName;
 
-    @Schema(name = "propLocation", description = "구조물 위치(x, y, z 좌표값, 회전값 포함)", example = "[0.0, 0.0, 0.0, 0.0]")
-    private List<Float> propLocation;
+    @Schema(name = "propLocationX", description = "구조물 위치 x 좌표값")
+    private Float propLocationX;
+
+    @Schema(name = "propLocationY", description = "구조물 위치 y 좌표값")
+    private Float propLocationY;
+
+    @Schema(name = "propLocationZ", description = "구조물 위치 z 좌표값")
+    private Float propLocationZ;
+
+    @Schema(name = "propYawValue", description = "구조물 회전값")
+    private Float propYawValue;
 
     public static Prop convertToEntity(PropDto propDto) throws JsonProcessingException {
 
@@ -30,13 +41,13 @@ public class PropDto {
             return null;
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String propLocation = objectMapper.writeValueAsString(propDto.getPropLocation());
-
         Prop prop = new Prop();
         prop.setPropId(propDto.getPropId());
         prop.setPropName(propDto.getPropName());
-        prop.setPropLocation(propLocation);
+        prop.setPropLocationX(propDto.getPropLocationX());
+        prop.setPropLocationY(propDto.getPropLocationY());
+        prop.setPropLocationZ(propDto.getPropLocationZ());
+        prop.setPropYawValue(propDto.getPropYawValue());
 
         return prop;
     }

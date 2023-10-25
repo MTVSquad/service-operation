@@ -20,9 +20,21 @@ public class Prop {
     @Comment("PROP 이름")
     private String propName;
 
-    @Column(name = "PROP_LOCATION")
-    @Comment("PROP 위치 값")
-    private String propLocation;
+    @Column(name = "PROP_LOCATION_X")
+    @Comment("PROP 위치 값 x")
+    private Float propLocationX;
+
+    @Column(name = "PROP_LOCATION_Y")
+    @Comment("PROP 위치 값 y")
+    private Float propLocationY;
+
+    @Column(name = "PROP_LOCATION_Z")
+    @Comment("PROP 위치 값 z")
+    private Float propLocationZ;
+
+    @Column(name = "PROP_YAW_VALUE")
+    @Comment("Z축을 기준 회전 값")
+    private Float propYawValue;
 
     @Column(name = "CREATOR_MAP_ID")
     @Comment("크리에이터 툴에 의해 생성된 맵 식별자")

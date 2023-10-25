@@ -71,9 +71,9 @@ class CreatorMapControllerTest {
 
         List<PropDto> propList = new ArrayList<>();
         propList.addAll(List.of(
-                new PropDto("prop1", "prop", List.of(100.00F, 160.00F, 90.00F)),
-                new PropDto("prop2", "prop", List.of(100.00F, 160.00F, 90.00F)),
-                new PropDto("prop3", "prop", List.of(100.00F, 160.00F, 90.00F))
+                new PropDto("prop1", "prop", 100.00F, 160.00F, 90.00F, 90.00F),
+                new PropDto("prop2", "prop", 100.00F, 160.00F, 90.00F, 90.00F),
+                new PropDto("prop3", "prop", 100.00F, 160.00F, 90.00F, 90.00F)
         ));
 
         List<Float> startPoint = new ArrayList<>();
@@ -90,7 +90,7 @@ class CreatorMapControllerTest {
         System.out.println("json = " + json);
 
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/v1/map")
+                        .post("/api/v1/maps")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                 )
