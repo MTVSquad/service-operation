@@ -30,43 +30,33 @@ public class Enemy {
     @Comment("에너미 이름")
     private String enemyName;
 
-    @Column(name = "ENEMY_TYPE")
+    @Column(name = "ENEMY_TYPE", columnDefinition = "ENUM('Melee', 'Ranged_Ground', 'Ranged_Air', 'Elite')")
     @Comment("에너미 종류(근접, 원거리)")
     private String enemyType;
-
-    @Column(name = "ENEMY_GRADE")
-    @Comment("에너미 등급(보스, 엘리트, 일반몹)")
-    private String enemyGrade;
 
     @Column(name = "ENEMY_HP")
     @Comment("에너미 체력")
     private Long enemyHp;
 
-    @Column(name = "ENEMY_SKILL")
-    @Comment("에너미 특수스킬")
-    private String enemySkill;
-
-    @Column(name = "ENEMY_DAMAGE")
+    @Column(name = "ENEMY_POWER")
     @Comment("에너미 공격력")
-    private Long enemyDamage;
+    private Long enemyPower;
 
     @Column(name = "ENEMY_SPAWNER")
     @Comment("에너미 스포너")
     private Integer enemySpawnerId;
 
-    @Column(name = "CREATOR_MAP")
-    @Comment("크리에이터 맵")
-    private String creatorMap;
+    @Column(name = "CREATOR_MAP_ID")
+    @Comment("크리에이터 맵 식별자")
+    private String creatorMapId;
 
-    public Enemy(String enemyCode, String enemyName, String enemyType, String enemyGrade, Long enemyHp, String enemySkill, Long enemyDamage, Integer enemySpawnerId, String creatorMap) {
+    public Enemy(String enemyCode, String enemyName, String enemyType, Long enemyHp, Long enemyPower, Integer enemySpawnerId, String creatorMap) {
         this.enemyCode = enemyCode;
         this.enemyName = enemyName;
         this.enemyType = enemyType;
-        this.enemyGrade = enemyGrade;
         this.enemyHp = enemyHp;
-        this.enemySkill = enemySkill;
-        this.enemyDamage = enemyDamage;
+        this.enemyPower = enemyPower;
         this.enemySpawnerId = enemySpawnerId;
-        this.creatorMap = creatorMap;
+        this.creatorMapId = creatorMap;
     }
 }

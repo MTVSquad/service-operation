@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface EnemyRepository extends JpaRepository<Enemy, Long> {
 
-    Optional<Enemy> findByEnemyCodeAndCreatorMap(String enemyCode, String creatorMap);
+    Optional<Enemy> findByEnemyCodeAndCreatorMapId(String enemyCode, String creatorMapId);
 }
