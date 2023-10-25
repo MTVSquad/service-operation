@@ -37,12 +37,12 @@ jobs:
         OCCUPY_SECRET_DEV_FILE: application-dev.yml
       run: |
           echo $OCCUPY_SECRETS | base64 -d > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_FILE &&
-          echo OCCUPY_DEV_SECRET | base64 -d > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DEV_FILE
+          echo $OCCUPY_DEV_SECRET | base64 -d > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DEV_FILE
 
     - name: Setup MySQL
       uses: samin/mysql-action@v1
       with:
-        #character set server: 'utf8'
+        character set server: 'utf8'
         mysql database: 'iroas'
         mysql user: ${{ secrets.MYSQL_USERNAME }}
         mysql password: ${{ secrets.MYSQL_PASSWORD }}
