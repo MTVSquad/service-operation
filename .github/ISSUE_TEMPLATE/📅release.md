@@ -7,17 +7,15 @@ assignees: myrhymetree
 
 ---
 
-#### Description
+#### 설명
 A clear and concise description of what the issue is about.
 
-#### Screenshots
+#### 빌드
 
+#### 스크린샷
 
-#### Files
-A list of relevant files for this issue. This will help people navigate the project and offer some clues of where to start.
-
-#### To Reproduce
-If this issue is describing a bug, include some steps to reproduce the behavior.
+#### 배포 방법
+ex) AWS EC2 배포, AWS Elastic Beanstalk 배포
 
 #### Tasks
 Include specific tasks in the order they need to be done in. Include links to specific lines of code where the task should happen at.
