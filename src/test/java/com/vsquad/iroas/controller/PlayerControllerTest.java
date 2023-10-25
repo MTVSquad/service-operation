@@ -94,7 +94,7 @@ class PlayerControllerTest {
         String requestJson = "{\"steamKey\":\"" + steamKey + "\",\"playerNickName\":\"" + nickname + "\"}";
 
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/v1/player/add")
+                        .post("/api/v1/player")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson)
                 )
