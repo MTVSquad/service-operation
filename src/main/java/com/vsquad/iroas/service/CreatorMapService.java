@@ -35,7 +35,7 @@ public class CreatorMapService {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        List<Float> convertedStartPoint = null;
+        List<Double> convertedStartPoint = null;
 
         if(startPoint != null) {
             convertedStartPoint = objectMapper.readValue(startPoint, List.class);

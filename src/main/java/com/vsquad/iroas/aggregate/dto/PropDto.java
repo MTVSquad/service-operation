@@ -24,16 +24,16 @@ public class PropDto {
     private String propName;
 
     @Schema(name = "propLocationX", description = "구조물 위치 x 좌표값")
-    private Float propLocationX;
+    private Double propLocationX;
 
     @Schema(name = "propLocationY", description = "구조물 위치 y 좌표값")
-    private Float propLocationY;
+    private Double propLocationY;
 
     @Schema(name = "propLocationZ", description = "구조물 위치 z 좌표값")
-    private Float propLocationZ;
+    private Double propLocationZ;
 
     @Schema(name = "propYawValue", description = "구조물 회전값")
-    private Float propYawValue;
+    private Double propYawValue;
 
     public static Prop convertToEntity(PropDto propDto) throws JsonProcessingException {
 

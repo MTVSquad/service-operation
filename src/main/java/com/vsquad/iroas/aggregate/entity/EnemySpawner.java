@@ -28,15 +28,15 @@ public class EnemySpawner {
 
     @Column(name = "ENEMY_START_POINT_X_LOCATION")
     @Comment("에네미 시작 지점 x 좌표")
-    private Float enemyStartPointXLocation;
+    private Double enemyStartPointXLocation;
 
     @Column(name = "ENEMY_START_POINT_Y_LOCATION")
     @Comment("에네미 시작 지점 y 좌표")
-    private Float enemyStartPointYLocation;
+    private Double enemyStartPointYLocation;
 
     @Column(name = "ENEMY_START_POINT_Z_LOCATION")
     @Comment("에네미 시작 지점 z 좌표")
-    private Float enemyStartPointZLocation;
+    private Double enemyStartPointZLocation;
 
     @JoinColumn(name = "ENEMY_ID")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -49,9 +49,9 @@ public class EnemySpawner {
 
     @Column(name = "SPAWNER_START_DELAY")
     @Comment("에너미 스포너 시작 딜레이")
-    private Float spawnerStartDelay;
+    private Double spawnerStartDelay;
 
     @Column(name = "SPAWNER_INTERVAL")
     @Comment("에너미 스포너 소환 간격")
-    private Float spawnerInterval;
+    private Double spawnerInterval;
 }

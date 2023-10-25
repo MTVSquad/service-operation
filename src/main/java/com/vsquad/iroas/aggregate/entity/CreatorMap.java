@@ -70,7 +70,7 @@ public class CreatorMap {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        List<Float> startPoint = objectMapper.readValue(map.getPlayerStartPoint(), List.class);
+        List<Double> startPoint = objectMapper.readValue(map.getPlayerStartPoint(), List.class);
         try {
             List<EnemySpawnerDto>  enemySpawnerDtos = objectMapper.readValue((JsonParser) map.getEnemySpawnerList(), List.class);
 

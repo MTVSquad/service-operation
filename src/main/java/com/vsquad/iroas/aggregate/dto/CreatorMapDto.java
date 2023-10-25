@@ -37,7 +37,7 @@ public class CreatorMapDto {
     private LocalDateTime createTime;
 
     @Schema(name = "playerStartPoint", description = "플레이어 시작 지점 [x, y, z, yaw]")
-    private List<Float> playerStartPoint;
+    private List<Double> playerStartPoint;
 
     @Schema(name = "timezone", description = "맵 타임존(아침/낮/밤)", allowableValues = {"Morning", "Noon", "Evening"})
     private String timezone;

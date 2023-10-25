@@ -8,8 +8,11 @@ import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
 import com.vsquad.iroas.aggregate.entity.CreatorMap;
 import com.vsquad.iroas.repository.CreatorMapRepository;
 import com.vsquad.iroas.repository.EnemySpawnerRepository;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,6 +41,16 @@ class CreatorMapServiceTest {
     @Mock
     private CreatorMap creatorMap;
 
+    private static Stream<Arguments> getInfo() {
+        return Stream.of(
+                Arguments.of(
+                        "abc998"
+                        , "uKNb4nk6g4RFUsxDYyZO6UTbdvotNsOJPmvUM/E2O7gMVguv7Cu"
+                        , "박성준"
+                        , "")
+        );
+    }
+
     @BeforeTransaction
     void beforeTransaction() throws JsonProcessingException {
 
@@ -47,18 +61,18 @@ class CreatorMapServiceTest {
 
         List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
         enemySpawnerList.addAll(List.of(
-                new EnemySpawnerDto("근접 에네미 스포너", 100.00F, 160.00F, 90.00F, 100, 10F, 10F, enemyDto)
+                new EnemySpawnerDto("근접 에네미 스포너", 100.00D, 160.00D, 90.00D, 100, 10D, 10D, enemyDto)
         ));
 
         List<PropDto> propList = new ArrayList<>();
         propList.addAll(List.of(
-                new PropDto("prop1", "prop", 100.00F, 160.00F, 90.00F, 90.00F),
-                new PropDto("prop2", "prop", 100.00F, 160.00F, 90.00F, 90.00F),
-                new PropDto("prop3", "prop", 100.00F, 160.00F, 90.00F, 90.00F)
+                new PropDto("prop1", "prop", 100.00D, 160.00D, 90.00D, 90.00D),
+                new PropDto("prop2", "prop", 100.00D, 160.00D, 90.00D, 90.00D),
+                new PropDto("prop3", "prop", 100.00D, 160.00D, 90.00D, 90.00D)
         ));
 
-        List<Float> startPoint = new ArrayList<>();
-        startPoint.addAll(List.of(100.00F, 160.00F, 90.00F));
+        List<Double> startPoint = new ArrayList<>();
+        startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
         CreatorMapDto mapDto = new CreatorMapDto(uuid, "testMap", "MELEE", 1L, LocalDateTime.now(),
                 startPoint, "Morning", enemySpawnerList, propList);
@@ -86,18 +100,18 @@ class CreatorMapServiceTest {
 
         List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
         enemySpawnerList.addAll(List.of(
-                new EnemySpawnerDto("근접 에네미 스포너", 100.00F, 160.00F, 90.00F, 100, 10F, 10F, enemyDto)
+                new EnemySpawnerDto("근접 에네미 스포너", 100.00D, 160.00D, 90.00D, 100, 10D, 10D, enemyDto)
         ));
 
         List<PropDto> propList = new ArrayList<>();
         propList.addAll(List.of(
-                new PropDto("prop1", "prop", 100.00F, 160.00F, 100.00F, 90.00F),
-                new PropDto("prop2", "prop", 100.00F, 160.00F, 100.00F, 90.00F),
-                new PropDto("prop3", "prop", 100.00F, 160.00F, 100.00F, 90.00F)
+                new PropDto("prop1", "prop", 100.00D, 160.00D, 100.00D, 90.00D),
+                new PropDto("prop2", "prop", 100.00D, 160.00D, 100.00D, 90.00D),
+                new PropDto("prop3", "prop", 100.00D, 160.00D, 100.00D, 90.00D)
         ));
 
-        List<Float> startPoint = new ArrayList<>();
-        startPoint.addAll(List.of(100.00F, 160.00F, 90.00F));
+        List<Double> startPoint = new ArrayList<>();
+        startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
         CreatorMapDto mapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", 1L, LocalDateTime.now(),
                 startPoint, "Morning", enemySpawnerList, propList);

@@ -16,22 +16,22 @@ public class EnemySpawnerDto {
     private String enemySpawnerName;
 
     @Schema(name = "enemyStartPointXLocation", description = "에네미 시작 지점 x 좌표", example = "10.00")
-    private Float enemyStartPointXLocation;
+    private Double enemyStartPointXLocation;
 
     @Schema(name = "enemyStartPointYLocation", description = "에네미 시작 지점 y 좌표", example = "10.00")
-    private Float enemyStartPointYLocation;
+    private Double enemyStartPointYLocation;
 
     @Schema(name = "enemyStartPointZLocation", description = "에네미 시작 지점 z 좌표", example = "10.00")
-    private Float enemyStartPointZLocation;
+    private Double enemyStartPointZLocation;
 
     @Schema(name = "enemySpawnerAmount", description = "에네미 스포너 생성 수", example = "10")
     private Integer enemySpawnerAmount;
 
     @Schema(name = "enemySpawnerStartDelay", description = "에네미 스포너 시작 딜레이", example = "10.00")
-    private Float enemySpawnerStartDelay;
+    private Double enemySpawnerStartDelay;
 
     @Schema(name = "enemySpawnerInterval", description = "에네미 스포너 생성 간격", example = "10.00")
-    private Float enemySpawnerInterval;
+    private Double enemySpawnerInterval;
 
     @Schema(name = "enemy", description = "에네미 정보")
     private EnemyDto enemy;
