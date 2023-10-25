@@ -32,6 +32,11 @@ jobs:
     - name: print env
       run: echo "${{ secrets.OCCUPY_SECRET }}"
 
+    - name: Make application.yml executable
+      run: |
+        chmod +x src/main/resources/application.yml 
+        chmod +x src/main/resources/application-dev.yml
+
     - name: Copy Secret
       env:
         OCCUPY_SECRETS: ${{ secrets.OCCUPY_SECRET }}
@@ -42,9 +47,6 @@ jobs:
       run: |
           echo $OCCUPY_SECRETS | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_FILE &&
           echo $OCCUPY_DEV_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DEV_FILE
-
-    - name: Make application.yml executable
-      run: chmod +x src/main/resources/application.yml | chmod +x src/main/resources/application-dev.yml
 
     - name: Setup MySQL
       uses: samin/mysql-action@v1
