@@ -5,7 +5,6 @@ import com.vsquad.iroas.aggregate.dto.*;
 import com.vsquad.iroas.aggregate.entity.CreatorMap;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.entity.Ranking;
-import com.vsquad.iroas.aggregate.vo.Nickname;
 import com.vsquad.iroas.aggregate.vo.PlayTime;
 import com.vsquad.iroas.repository.CreatorMapRepository;
 import com.vsquad.iroas.repository.PlayerRepository;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +43,7 @@ class RankingServiceTest {
         while (true) {
             playerKey = UUID.randomUUID().toString();
 
-            Optional isDuplicated = playerRepository.findByPlayerSteamKey(playerKey);
+            Optional<Player> isDuplicated = playerRepository.findByPlayerSteamKey(playerKey);
 
             if (!isDuplicated.isPresent()) {
                 break;
@@ -78,7 +76,7 @@ class RankingServiceTest {
 
         List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
         enemySpawnerList.addAll(List.of(
-                new EnemySpawnerDto("근접 에네미 스포너", 100.00D, 160.00D, 90.00D, 100, 10D, 10D,  "Melee", 100L, 10L)
+                new EnemySpawnerDto(100.00D, 160.00D, 90.00D, 100, 10D, 10D,  "Melee", 100L, 10L)
         ));
 
         List<PropDto> propList = new ArrayList<>();
@@ -124,7 +122,7 @@ class RankingServiceTest {
         int clearTotalCount = 0;
         int playTotalCount = 0;
 
-        if(clearYn == true) {
+        if(clearYn) {
             clearTotalCount++;
             playTotalCount++;
         } else {

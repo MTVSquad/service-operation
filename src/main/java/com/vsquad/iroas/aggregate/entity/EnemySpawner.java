@@ -18,10 +18,6 @@ public class EnemySpawner {
     @Comment("에너미 스포너 식별자")
     private Long enemySpawnerId;
 
-    @Column(name = "ENEMY_SPAWNER_NAME")
-    @Comment("에너미 스포너 이름")
-    private String enemySpawnerName;
-
     @Column(name = "CREATOR_MAP_ID")
     @Comment("크리에이터 툴에 의해 생성된 맵 식별자")
     private String creatorMapId;

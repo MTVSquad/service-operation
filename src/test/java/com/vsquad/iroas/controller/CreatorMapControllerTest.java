@@ -69,7 +69,7 @@ class CreatorMapControllerTest {
 
         List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
         enemySpawnerList.addAll(List.of(
-                new EnemySpawnerDto("근접 에네미 스포너", 100.00D, 160.00D, 90.00D, 100, 10D, 10D, "Melee", 100L, 10L)
+                new EnemySpawnerDto(100.00D, 160.00D, 90.00D, 100, 10D, 10D, "Melee", 100L, 10L)
         ));
 
         List<PropDto> propList = new ArrayList<>();
@@ -103,7 +103,7 @@ class CreatorMapControllerTest {
 
         List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
         enemySpawnerList.addAll(List.of(
-                new EnemySpawnerDto("근접 에네미 스포너", 100.00D, 160.00D, 90.00D, 100, 10D, 10D, "Melee", 100L, 10L)
+                new EnemySpawnerDto(100.00D, 160.00D, 90.00D, 100, 10D, 10D, "Melee", 100L, 10L)
         ));
 
         List<PropDto> propList = new ArrayList<>();
