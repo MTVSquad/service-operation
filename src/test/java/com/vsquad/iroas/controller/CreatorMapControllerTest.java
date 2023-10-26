@@ -3,7 +3,6 @@ package com.vsquad.iroas.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.vsquad.iroas.aggregate.dto.EnemyDto;
 import com.vsquad.iroas.aggregate.dto.EnemySpawnerDto;
 import com.vsquad.iroas.aggregate.dto.PropDto;
 import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
@@ -68,11 +67,9 @@ class CreatorMapControllerTest {
         // given
         String uuid = UUID.randomUUID().toString();
 
-        EnemyDto enemyDto = new EnemyDto("close_range_0", "근거리1", "Melee", 100L, 10L);
-
         List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
         enemySpawnerList.addAll(List.of(
-                new EnemySpawnerDto("근접 에네미 스포너", 100.00D, 160.00D, 90.00D, 100, 10D, 10D, enemyDto)
+                new EnemySpawnerDto(100.00D, 160.00D, 90.00D, 100, 10D, 10D, "Melee", 100L, 10L)
         ));
 
         List<PropDto> propList = new ArrayList<>();
@@ -104,11 +101,9 @@ class CreatorMapControllerTest {
 
         String uuid = UUID.randomUUID().toString();
 
-        EnemyDto enemyDto = new EnemyDto("close_range_1", "근거리1", "Melee", 100L, 10L);
-
         List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
         enemySpawnerList.addAll(List.of(
-                new EnemySpawnerDto("근접 에네미 스포너", 100.00D, 160.00D, 90.00D, 100, 10D, 10D, enemyDto)
+                new EnemySpawnerDto(100.00D, 160.00D, 90.00D, 100, 10D, 10D, "Melee", 100L, 10L)
         ));
 
         List<PropDto> propList = new ArrayList<>();

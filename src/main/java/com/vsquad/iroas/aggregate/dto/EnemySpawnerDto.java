@@ -12,9 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EnemySpawnerDto {
 
-    @Schema(name = "enemySpawnerName", description = "에네미 스포너 이름", example = "enemySpawner1")
-    private String enemySpawnerName;
-
     @Schema(name = "enemyStartPointXLocation", description = "에네미 시작 지점 x 좌표", example = "10.00")
     private Double enemyStartPointXLocation;
 
@@ -24,8 +21,8 @@ public class EnemySpawnerDto {
     @Schema(name = "enemyStartPointZLocation", description = "에네미 시작 지점 z 좌표", example = "10.00")
     private Double enemyStartPointZLocation;
 
-    @Schema(name = "enemySpawnerAmount", description = "에네미 스포너 생성 수", example = "10")
-    private Integer enemySpawnerAmount;
+    @Schema(name = "enemySpawnAmount", description = "에네미 스포너 에너미 생성 수", example = "10")
+    private Integer enemySpawnAmount;
 
     @Schema(name = "enemySpawnerStartDelay", description = "에네미 스포너 시작 딜레이", example = "10.00")
     private Double enemySpawnerStartDelay;
@@ -33,8 +30,14 @@ public class EnemySpawnerDto {
     @Schema(name = "enemySpawnerInterval", description = "에네미 스포너 생성 간격", example = "10.00")
     private Double enemySpawnerInterval;
 
-    @Schema(name = "enemy", description = "에네미 정보")
-    private EnemyDto enemy;
+    @Schema(name = "enemyType", description = "에네미 타입(근거리, 원거리, 엘리트)", allowableValues = {"Melee", "Ranged_Ground", "Ranged_Air", "Elite"})
+    private String enemyType;
+
+    @Schema(name = "enemyHp", description = "에네미 체력", example = "100")
+    private Long enemyHp;
+
+    @Schema(name = "enemyPower", description = "에네미 공격력", example = "10")
+    private Long enemyPower;
 
     public static EnemySpawner convertToEntity(EnemySpawnerDto enemySpawnerDto) throws JsonProcessingException {
 
@@ -43,14 +46,15 @@ public class EnemySpawnerDto {
         }
 
         EnemySpawner enemySpawner = new EnemySpawner();
-        enemySpawner.setEnemySpawnerName(enemySpawnerDto.getEnemySpawnerName());
-        enemySpawner.setSpawnerAmount(enemySpawnerDto.getEnemySpawnerAmount());
+        enemySpawner.setSpawnerAmount(enemySpawnerDto.getEnemySpawnAmount());
         enemySpawner.setSpawnerInterval(enemySpawnerDto.getEnemySpawnerInterval());
         enemySpawner.setSpawnerStartDelay(enemySpawnerDto.getEnemySpawnerStartDelay());
         enemySpawner.setEnemyStartPointXLocation(enemySpawnerDto.getEnemyStartPointXLocation());
         enemySpawner.setEnemyStartPointYLocation(enemySpawnerDto.getEnemyStartPointYLocation());
         enemySpawner.setEnemyStartPointZLocation(enemySpawnerDto.getEnemyStartPointZLocation());
-        enemySpawner.setEnemy(EnemyDto.convertToEntity(enemySpawnerDto.getEnemy()));
+        enemySpawner.setEnemyType(enemySpawnerDto.getEnemyType());
+        enemySpawner.setEnemyHp(enemySpawnerDto.getEnemyHp());
+        enemySpawner.setEnemyPower(enemySpawnerDto.getEnemyPower());
 
         return enemySpawner;
     }
