@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,19 @@ public class CreatorMapService {
     private final ModelMapper modelMapper;
 
     public void addCreatorMap(CreatorMapDto creatorMapDto) throws JsonProcessingException {
+        String uuid;
+
+        while (true) {
+            uuid = UUID.randomUUID().toString();
+            Optional<CreatorMap> isCreatorMap = creatorMapRepository.findById(uuid);
+
+            if (!isCreatorMap.isPresent()) {
+                break;
+            }
+        }
+
+       creatorMapDto.setCreatorMapId(uuid);
+
        CreatorMap map = creatorMapDto.convertToEntity(creatorMapDto);
        creatorMapRepository.save(map);
     }
@@ -49,5 +64,10 @@ public class CreatorMapService {
         Page<CreatorMapDto> creatorMapDtoPage = creatorMapPage.map(creatorMap -> modelMapper.map(creatorMap, CreatorMapDto.class));
 
         return creatorMapDtoPage;
+    }
+
+    @Transactional
+    public void deleteCreatorMap(String creatorMapId) {
+        creatorMapRepository.deleteById(creatorMapId);
     }
 }
