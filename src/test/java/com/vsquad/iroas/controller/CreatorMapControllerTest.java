@@ -151,4 +151,18 @@ class CreatorMapControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
+
+
+    @Test
+    @DisplayName("크리에이터 맵 목록 조회 성공 테스트")
+    void readCreatorMapPageSuccessTest() throws Exception {
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/api/v1/maps")
+                        .param("page", "0")
+                        .param("size", "10")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
 }
