@@ -33,8 +33,14 @@ public class EnemySpawnerDto {
     @Schema(name = "enemySpawnerInterval", description = "에네미 스포너 생성 간격", example = "10.00")
     private Double enemySpawnerInterval;
 
-    @Schema(name = "enemy", description = "에네미 정보")
-    private EnemyDto enemy;
+    @Schema(name = "enemyType", description = "에네미 타입(근거리, 원거리, 엘리트)", allowableValues = {"Melee", "Ranged_Ground", "Ranged_Air", "Elite"})
+    private String enemyType;
+
+    @Schema(name = "enemyHp", description = "에네미 체력", example = "100")
+    private Long enemyHp;
+
+    @Schema(name = "enemyPower", description = "에네미 공격력", example = "10")
+    private Long enemyPower;
 
     public static EnemySpawner convertToEntity(EnemySpawnerDto enemySpawnerDto) throws JsonProcessingException {
 
@@ -50,7 +56,9 @@ public class EnemySpawnerDto {
         enemySpawner.setEnemyStartPointXLocation(enemySpawnerDto.getEnemyStartPointXLocation());
         enemySpawner.setEnemyStartPointYLocation(enemySpawnerDto.getEnemyStartPointYLocation());
         enemySpawner.setEnemyStartPointZLocation(enemySpawnerDto.getEnemyStartPointZLocation());
-        enemySpawner.setEnemy(EnemyDto.convertToEntity(enemySpawnerDto.getEnemy()));
+        enemySpawner.setEnemyType(enemySpawnerDto.getEnemyType());
+        enemySpawner.setEnemyHp(enemySpawnerDto.getEnemyHp());
+        enemySpawner.setEnemyPower(enemySpawnerDto.getEnemyPower());
 
         return enemySpawner;
     }
