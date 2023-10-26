@@ -32,12 +32,21 @@ public class CreatorMapDto {
     @Schema(name = "creator", description = "맵 생성자")
     private Long creator;
 
-    @Schema(name = "createTime", description = "맵 생성 시간", example = "2023-10-25 06:25:56")
+    @Schema(name = "createTime", description = "맵 생성 시간", example = "2023-10-25 06:25:56", defaultValue = "2023-10-25 06:25:56")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
-    @Schema(name = "playerStartPoint", description = "플레이어 시작 지점 [x, y, z, yaw]")
-    private List<Double> playerStartPoint;
+    @Schema(name = "playerStartPointXLocation", description = "플레이어 시작 지점 x 좌표")
+    private Double playerStartPointXLocation;
+
+    @Schema(name = "playerStartPointYLocation", description = "플레이어 시작 지점 y 좌표")
+    private Double playerStartPointYLocation;
+
+    @Schema(name = "playerStartPointZLocation", description = "플레이어 시작 지점 z 좌표")
+    private Double playerStartPointZLocation;
+
+    @Schema(name = "playerStartPointYaw", description = "플레이어 시작 지점 회전 값")
+    private Double playerStartPointYaw;
 
     @Schema(name = "timezone", description = "맵 타임존(아침/낮/밤)", allowableValues = {"Morning", "Noon", "Evening"})
     private String timezone;
@@ -57,9 +66,6 @@ public class CreatorMapDto {
         List<EnemySpawnerDto> enemySpawnerDtos =  creatorMapDto.getEnemySpawnerList();
         List<EnemySpawner> enemySpawners = new ArrayList<>();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String convertedStartPoint = objectMapper.writeValueAsString(playerStartPoint);
-
         for (EnemySpawnerDto enemySpawnerDto : enemySpawnerDtos) {
             enemySpawners.add(enemySpawnerDto.convertToEntity(enemySpawnerDto));
         }
@@ -77,7 +83,10 @@ public class CreatorMapDto {
         creatorMap.setCreatorMapType(creatorMapDto.getCreatorMapType());
         creatorMap.setCreator(creatorMapDto.getCreator());
         creatorMap.setCreateTime(creatorMapDto.getCreateTime());
-        creatorMap.setPlayerStartPoint(convertedStartPoint);
+        creatorMap.setPlayerStartPointXLocation(creatorMapDto.getPlayerStartPointXLocation());
+        creatorMap.setPlayerStartPointYLocation(creatorMapDto.getPlayerStartPointYLocation());
+        creatorMap.setPlayerStartPointZLocation(creatorMapDto.getPlayerStartPointZLocation());
+        creatorMap.setPlayerStartPointYaw(creatorMapDto.getPlayerStartPointYaw());
         creatorMap.setTimezone(creatorMapDto.getTimezone());
         creatorMap.setEnemySpawnerList(enemySpawners);
         creatorMap.setPropList(props);

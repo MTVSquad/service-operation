@@ -3,6 +3,7 @@ package com.vsquad.iroas.aggregate.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.springframework.validation.annotation.Validated;
 
@@ -10,6 +11,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class ReqPlayerDto {
 

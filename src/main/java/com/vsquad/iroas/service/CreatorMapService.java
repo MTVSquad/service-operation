@@ -8,7 +8,10 @@ import com.vsquad.iroas.aggregate.entity.Prop;
 import com.vsquad.iroas.repository.CreatorMapRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,18 +34,20 @@ public class CreatorMapService {
 
         CreatorMapDto creatorMapDto = modelMapper.map(creatorMap, CreatorMapDto.class);
 
-        String startPoint = creatorMap.getPlayerStartPoint();
+        return creatorMapDto;
+    }
 
-        ObjectMapper objectMapper = new ObjectMapper();
+    @Transactional(readOnly = true)
+    public Page<CreatorMapDto> readPlayerCreatorMapList(Pageable pageable) {
 
-        List<Double> convertedStartPoint = null;
+        Page<CreatorMap> creatorMapPage = creatorMapRepository.findAll(pageable);
 
-        if(startPoint != null) {
-            convertedStartPoint = objectMapper.readValue(startPoint, List.class);
+        if(creatorMapPage.isEmpty()) {
+            throw new IllegalArgumentException("해당 맵 목록 없음");
         }
 
-        creatorMapDto.setPlayerStartPoint(convertedStartPoint);
+        Page<CreatorMapDto> creatorMapDtoPage = creatorMapPage.map(creatorMap -> modelMapper.map(creatorMap, CreatorMapDto.class));
 
-        return creatorMapDto;
+        return creatorMapDtoPage;
     }
 }
