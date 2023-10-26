@@ -1,15 +1,32 @@
 package com.vsquad.iroas.aggregate.entity;
 
+import com.vsquad.iroas.aggregate.vo.Nickname;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.Table;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 
 @Entity
-@Table(appliesTo = "TB_PLAYER", comment = "플레이어")
+@javax.persistence.Table(name = "tb_player", indexes = {
+        @Index(name = "IDX_PLAYER_STEAM_KEY", columnList = "PLAYER_STEAM_KEY", unique = true),
+        @Index(name = "IDX_PLAYER_NICKNAME", columnList = "PLAYER_NICKNAME", unique = true)
+}, uniqueConstraints = {
+        @UniqueConstraint(name = "UK_PLAYER_STEAM_KEY", columnNames = {"PLAYER_STEAM_KEY"}),
+        @UniqueConstraint(name = "UK_PLAYER_NICKNAME", columnNames = {"PLAYER_NICKNAME"})
+})
+@Table(appliesTo = "tb_player", comment = "플레이어")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Player {
 
     @Id
@@ -18,10 +35,19 @@ public class Player {
     @Comment("플레이어 식별자")
     private Long playerId;
 
-    @Column(name = "PLAYER_NICKNAME")
-    @Comment("닉네임")
-    private String playerNickname;
+    @NotNull
+    @Column(name = "PLAYER_STEAM_KEY")
+    @Comment("플레이어 스팀 식별 키")
+    private String playerSteamKey;
 
+    @Embedded
+    private Nickname nickname;
+
+    @Column(name = "PLYER_AVATAR")
+    @Comment("플레이어 아바타")
+    private Long playerAvatar;
+
+    @ColumnDefault("0")
     @Column(name = "PLAYER_MONEY")
     @Comment("플레이어 소지금")
     private Long playerMoney;
@@ -29,4 +55,14 @@ public class Player {
     @Column(name = "PLAYER_ITEMS")
     @Comment("플레이어가 소지한 아이템")
     private String playerItems;
+
+    @ColumnDefault("'ROLE_PLAYER'")
+    @Column(name = "PLAYER_ROLE")
+    @Comment("플레이어 권한")
+    private String playerRole;
+
+    public Player(String steamKey, String nickname) {
+        this.playerSteamKey = steamKey;
+        this.nickname = new Nickname(nickname);
+    }
 }
