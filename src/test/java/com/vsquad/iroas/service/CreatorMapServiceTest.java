@@ -204,6 +204,51 @@ class CreatorMapServiceTest {
         creatorMapRepository.save(map);
     }
 
+    private CreatorMap addMap() throws JsonProcessingException {
+
+        String uuid;
+
+        while (true) {
+            uuid = UUID.randomUUID().toString();
+            Optional<CreatorMap> isCreatorMap = creatorMapRepository.findById(uuid);
+
+            if (!isCreatorMap.isPresent()) {
+                break;
+            }
+        }
+
+        EnemyDto enemyDto = new EnemyDto("close_range_1", "근거리1", "Melee", 100L, 10L);
+
+        List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
+        enemySpawnerList.addAll(List.of(
+                new EnemySpawnerDto("근접 에네미 스포너", 100.00D, 160.00D, 90.00D, 100, 10D, 10D, enemyDto)
+        ));
+
+        List<PropDto> propList = new ArrayList<>();
+        propList.addAll(List.of(
+                new PropDto("prop1", "prop", 100.00D, 160.00D, 100.00D, 90.00D),
+                new PropDto("prop2", "prop", 100.00D, 160.00D, 100.00D, 90.00D),
+                new PropDto("prop3", "prop", 100.00D, 160.00D, 100.00D, 90.00D)
+        ));
+
+        List<Double> startPoint = new ArrayList<>();
+        startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
+
+        CreatorMapDto mapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", 1L, LocalDateTime.now(),
+                90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
+
+        CreatorMap map = mapDto.convertToEntity(mapDto);
+
+        // when
+        creatorMapRepository.save(map);
+
+        // then
+        CreatorMap foundMap = creatorMapRepository.findById(map.getCreatorMapId())
+                .orElseThrow(() -> new IllegalArgumentException("맵을 찾을 수 없습니다."));
+
+        return foundMap;
+    }
+
     @Test
     @DisplayName("크리에이터 맵 목록 1페이지, 10개, 시간 순 오름 차순 조회 성공")
     void readCreatorMapListSuccessTest() throws JsonProcessingException {
@@ -225,5 +270,19 @@ class CreatorMapServiceTest {
         // then
         Assertions.assertFalse(foundMapList.isEmpty());
         Assertions.assertTrue(foundMapList.getNumberOfElements() == 10);
+    }
+
+    @Test
+    @DisplayName("크리에이터 맵 제거 성공")
+    void removeMapSuccessTest() throws JsonProcessingException {
+
+        // given
+        CreatorMap addedMap = addMap();
+
+        // when
+        creatorMapRepository.deleteById(addedMap.getCreatorMapId());
+
+        //then
+        assertFalse(creatorMapRepository.findById(addedMap.getCreatorMapId()).isPresent());
     }
 }

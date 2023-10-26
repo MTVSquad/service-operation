@@ -165,4 +165,15 @@ class CreatorMapControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    @DisplayName("크리에이터 맵 제거 성공 테스트")
+    void deleteCreatorMapSuccessTest() throws Exception {
+
+        mvc.perform(MockMvcRequestBuilders
+                        .delete("/api/v1/maps/{creatorMapId}", creatorMap.getCreatorMapId())
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
 }

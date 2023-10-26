@@ -96,4 +96,22 @@ public class CreatorMapController {
         }
     }
 
+    @DeleteMapping("/{creatorMapId}")
+    @Operation(summary = "크리에이터 맵 제거", description = "맵을 삭제 합니다.", responses = {
+            @ApiResponse(responseCode = "200", description = "맵 제거 성공", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "맵 제거 실패", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(name = "맵 제거 실패", example = "에러 메시지"), mediaType = "application/json"))
+    })
+    public ResponseEntity<ResMessageDto> deleteCreatorMap(@PathVariable String creatorMapId) {
+        try {
+            creatorMapService.deleteCreatorMap(creatorMapId);
+
+            ResMessageDto res = new ResMessageDto("맵 삭제 성공");
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        } catch (Exception e) {
+            log.warn("맵 삭제 실패");
+
+            ResMessageDto res = new ResMessageDto("맵 삭제 실패");
+            return ResponseEntity.badRequest().body(res);
+        }
+    }
 }
