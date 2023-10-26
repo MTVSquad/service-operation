@@ -46,9 +46,21 @@ public class CreatorMap {
     @Comment("맵 생성 시간")
     private LocalDateTime createTime;
 
-    @Column(name = "PLAYER_START_POINT")
-    @Comment("플레이어 시작 지점 [x, y, z, yaw]")
-    private String playerStartPoint;
+    @Column(name = "PLAYER_START_POINT_X_LOCATION")
+    @Comment("플레이어 시작 지점 x 좌표")
+    private Double playerStartPointXLocation;
+
+    @Column(name = "PLAYER_START_POINT_Y_LOCATION")
+    @Comment("플레이어 시작 지점 y 좌표")
+    private Double playerStartPointYLocation;
+
+    @Column(name = "PLAYER_START_POINT_Z_LOCATION")
+    @Comment("플레이어 시작 지점 z 좌표")
+    private Double playerStartPointZLocation;
+
+    @Column(name = "PLAYER_START_POINT_YAW")
+    @Comment("플레이어 시작 지점 회전 값")
+    private Double playerStartPointYaw;
 
     @Column(name = "TIMEZONE", columnDefinition = "ENUM('Morning', 'Noon', 'Evening')")
     @Comment("맵 타임존(낮/밤)")
@@ -63,28 +75,4 @@ public class CreatorMap {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Comment("구조물 목록")
     private List<Prop> propList;
-
-    public static CreatorMapDto convertToDto(CreatorMap map) throws JsonProcessingException {
-
-        if(map == null) return null;
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        List<Double> startPoint = objectMapper.readValue(map.getPlayerStartPoint(), List.class);
-        try {
-            List<EnemySpawnerDto>  enemySpawnerDtos = objectMapper.readValue((JsonParser) map.getEnemySpawnerList(), List.class);
-
-            List<PropDto> propDtos = objectMapper.readValue((JsonParser) map.getPropList(), List.class);
-
-            return new CreatorMapDto(map.getCreatorMapId(), map.getCreatorMapName(), map.getCreatorMapType(), map.getCreator(),
-                map.getCreateTime(), startPoint, map.getTimezone(), enemySpawnerDtos, propDtos);
-
-        } catch (Exception e) {
-            String errorMessage = e.getMessage();
-            System.err.println("Error: " + errorMessage);
-            e.printStackTrace();
-        }
-
-        return null;
-    }
 }

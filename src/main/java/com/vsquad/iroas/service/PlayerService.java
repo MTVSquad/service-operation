@@ -1,6 +1,7 @@
 package com.vsquad.iroas.service;
 
 import com.vsquad.iroas.aggregate.dto.AvatarDto;
+import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
 import com.vsquad.iroas.aggregate.dto.ResPlayerInfoDto;
 import com.vsquad.iroas.aggregate.entity.Avatar;
 import com.vsquad.iroas.aggregate.entity.Player;
@@ -8,6 +9,8 @@ import com.vsquad.iroas.aggregate.vo.Nickname;
 import com.vsquad.iroas.repository.AvatarRepository;
 import com.vsquad.iroas.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
