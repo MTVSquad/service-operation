@@ -102,7 +102,6 @@ class CreatorMapControllerTest {
     @DisplayName("크리에이터 맵 추가 성공 테스트")
     void addMapSuccessTest() throws Exception {
 
-        // given
         String uuid = UUID.randomUUID().toString();
 
         EnemyDto enemyDto = new EnemyDto("close_range_1", "근거리1", "Melee", 100L, 10L);
@@ -130,7 +129,6 @@ class CreatorMapControllerTest {
         String json = objectMapper
                         .registerModule(new JavaTimeModule())
                         .writeValueAsString(reqCreatorMapDto);
-        System.out.println("json = " + json);
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/api/v1/maps")
