@@ -38,8 +38,8 @@ public class CustomUserDetailService implements UserDetailsService {
     }
 
     @Transactional
-    public UserDetails loadPlayerById(Long id) throws Exception {
-        Optional<Player> player = playerRepository.findById(id);
+    public UserDetails loadPlayerById(String steamId) throws Exception {
+        Optional<Player> player = playerRepository.findByPlayerSteamKey(steamId);
         if(player.isPresent()) {
             return PlayerPrincipal.create(player.get());
         } else {

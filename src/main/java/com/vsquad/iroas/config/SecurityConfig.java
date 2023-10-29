@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -39,7 +40,7 @@ public class SecurityConfig {
             .csrf().disable()
             .authorizeHttpRequests(requests -> requests
                     .antMatchers("/", "steam/login", "steam/login/redirect", "steam/failed", "/swagger",
-                            "/v3/api-docs/**",  "/swagger-ui.html", "/swagger-ui/**", "/api/v1/**", "/api/v1/**/**", "/api/v1/player", "/error")
+                            "/v3/api-docs/**",  "/swagger-ui.html", "/swagger-ui/**", "/api/v1/player", "/api/v1/player/login", "/error")
                     .permitAll()
                     .anyRequest()
                     .authenticated()
@@ -47,6 +48,9 @@ public class SecurityConfig {
 
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.authenticationProvider(steamAuthenticationProvider);
+
+        // JWT 인증 필터 추가
+        http.addFilterBefore(customOncePerRequestFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -1,6 +1,7 @@
 package com.vsquad.iroas.service.auth;
 
 import antlr.Token;
+import com.vsquad.iroas.aggregate.dto.PlayerDto;
 import com.vsquad.iroas.aggregate.dto.ResPlayerInfoDto;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.config.OAuth2Config;
@@ -16,6 +17,7 @@ import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,9 @@ import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Date;
+import java.util.function.Function;
 
 @Component
 @Slf4j
@@ -67,12 +71,9 @@ public class CustomTokenProviderService {
                 .build();
     }
 
-    public String generateToken(String identifier) {
+    public String generateToken(PlayerDto player) {
 
-        Player player = playerRepository.findByPlayerSteamKey(identifier)
-                .orElseThrow(()->new IllegalArgumentException("해당 유저가 없습니다."));
-
-        ResPlayerInfoDto playerDto = ResPlayerInfoDto.convertToDto(player);
+        String identifier = player.getPlayerSteamKey();
 
         // 고정된 secretKey
         String fixedSecretKeyString = secretKey;
@@ -81,26 +82,26 @@ public class CustomTokenProviderService {
         long now = System.currentTimeMillis();
         return Jwts.builder()
                 .setSubject(identifier)
-                .claim("player", playerDto)
+                .claim("player", player)
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now + expiration)) // 10시간 유효
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
-    public Long getPlayerIdFromToken(String token) {
+    public String getPlayerIdFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(oAuth2Config.getAuth().getTokenSecret())
+                .setSigningKey(secretKey)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
 
-        return Long.parseLong(claims.getSubject());
+        return claims.getSubject().toString();
     }
 
     public UsernamePasswordAuthenticationToken getAuthenticationById(String token) throws Exception {
-        Long playerId = getPlayerIdFromToken(token);
-        UserDetails userDetails = customUserDetailService.loadPlayerById(playerId);
+        String steamId = getPlayerIdFromToken(token);
+        UserDetails userDetails = customUserDetailService.loadPlayerById(steamId);
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         return authentication;
     }
@@ -114,22 +115,31 @@ public class CustomTokenProviderService {
         return (expiration.getTime() - now);
     }
 
-    public boolean validateToken(String token) {
-        try {
-            //log.info("bearerToken = {} \n oAuth2Config.getAuth()={}", token, oAuth2Config.getAuth().getTokenSecret());
-            Jwts.parserBuilder().setSigningKey(oAuth2Config.getAuth().getTokenSecret()).build().parseClaimsJws(token);
-            return true;
-        } catch (io.jsonwebtoken.security.SecurityException ex) {
-            log.error("잘못된 JWT 서명입니다.");
-        } catch (MalformedJwtException ex) {
-            log.error("잘못된 JWT 서명입니다.");
-        } catch (ExpiredJwtException ex) {
-            log.error("만료된 JWT 토큰입니다.");
-        } catch (UnsupportedJwtException ex) {
-            log.error("지원되지 않는 JWT 토큰입니다.");
-        } catch (IllegalArgumentException ex) {
-            log.error("JWT 토큰이 잘못되었습니다.");
-        }
-        return false;
+    public Authentication getAuthentication(String token) {
+        // JWT에서 사용자 이름 추출
+        String username = getUsernameFromToken(token);
+
+        // 여기서는 간단한 예로 username을 기반으로 Authentication 객체를 생성합니다.
+        // 실제 구현에서는 이 사용자 이름을 이용하여 사용자의 세부 정보를 불러오는 과정이 필요할 수 있습니다.
+        return new UsernamePasswordAuthenticationToken(username, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_PLAYER")));
+    }
+
+    // JWT에서 사용자 이름을 추출하는 메소드
+    private String getUsernameFromToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
+    }
+
+    // JWT에서 특정 클레임을 추출하는 범용 메소드
+    private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = getAllClaimsFromToken(token);
+        return claimsResolver.apply(claims);
+    }
+
+    // JWT에서 모든 클레임을 추출하는 메소드
+    private Claims getAllClaimsFromToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
