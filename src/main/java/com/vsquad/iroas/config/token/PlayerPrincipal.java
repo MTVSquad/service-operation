@@ -6,10 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.nio.file.attribute.UserPrincipal;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public class PlayerPrincipal implements OAuth2User, UserDetails {
@@ -17,18 +14,22 @@ public class PlayerPrincipal implements OAuth2User, UserDetails {
     private Long id;
     private String nickname;
 
-    public PlayerPrincipal(Long id, String nickname) {
+    private GrantedAuthority authorities;
+
+    public PlayerPrincipal(Long id, String nickname, GrantedAuthority authorities) {
         this.id = id;
         this.nickname = nickname;
+        this.authorities = authorities;
     }
 
     public static PlayerPrincipal create(Player player) {
 
-        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(player.getPlayerRole()));
+        GrantedAuthority authorities = new SimpleGrantedAuthority(player.getPlayerRole());
 
         return new PlayerPrincipal(
             player.getPlayerId(),
-            player.getNickname().getPlayerNickname()
+            player.getNickname().getPlayerNickname(),
+            authorities
         );
     }
 

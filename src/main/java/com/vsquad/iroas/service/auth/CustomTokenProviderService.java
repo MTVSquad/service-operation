@@ -1,15 +1,19 @@
 package com.vsquad.iroas.service.auth;
 
 import antlr.Token;
+import com.vsquad.iroas.aggregate.dto.ResPlayerInfoDto;
+import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.config.OAuth2Config;
 import com.vsquad.iroas.config.token.PlayerPrincipal;
 import com.vsquad.iroas.config.token.TokenMapping;
+import com.vsquad.iroas.repository.PlayerRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,16 +21,26 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.Date;
 
-@RequiredArgsConstructor
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CustomTokenProviderService {
 
     private final OAuth2Config oAuth2Config;
 
     private final CustomUserDetailService customUserDetailService;
+
+    private final PlayerRepository playerRepository;
+
+    @Value("${jwt.secret}")
+    private String secretKey;
+
+    @Value("${jwt.expiration}")
+    private Long expiration;
 
     public TokenMapping createToken(Authentication authentication) {
         PlayerPrincipal playerPrincipal = (PlayerPrincipal) authentication.getPrincipal();
@@ -48,9 +62,30 @@ public class CustomTokenProviderService {
                 .compact();
 
         return TokenMapping.builder()
-                .playerNickname(playerPrincipal.getName())
+                //.playerNickname(playerPrincipal.getName())
                 .accessToken(accessToken)
                 .build();
+    }
+
+    public String generateToken(String identifier) {
+
+        Player player = playerRepository.findByPlayerSteamKey(identifier)
+                .orElseThrow(()->new IllegalArgumentException("해당 유저가 없습니다."));
+
+        ResPlayerInfoDto playerDto = ResPlayerInfoDto.convertToDto(player);
+
+        // 고정된 secretKey
+        String fixedSecretKeyString = secretKey;
+        byte[] secretKey = Base64.getDecoder().decode(fixedSecretKeyString);
+
+        long now = System.currentTimeMillis();
+        return Jwts.builder()
+                .setSubject(identifier)
+                .claim("player", playerDto)
+                .setIssuedAt(new Date(now))
+                .setExpiration(new Date(now + expiration)) // 10시간 유효
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
     }
 
     public Long getPlayerIdFromToken(String token) {

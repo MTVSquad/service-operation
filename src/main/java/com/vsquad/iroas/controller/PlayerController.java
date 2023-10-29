@@ -1,10 +1,11 @@
 package com.vsquad.iroas.controller;
 
-import com.vsquad.iroas.aggregate.dto.ReqAvatarDto;
-import com.vsquad.iroas.aggregate.dto.ReqPlayerDto;
-import com.vsquad.iroas.aggregate.dto.ResMessageDto;
-import com.vsquad.iroas.aggregate.dto.ResPlayerInfoDto;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vsquad.iroas.aggregate.dto.*;
+import com.vsquad.iroas.config.exception.SteamUserNotFoundException;
 import com.vsquad.iroas.service.PlayerService;
+import com.vsquad.iroas.service.auth.CustomTokenProviderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -13,33 +14,95 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/player")
 @Slf4j
 @Tag(name = "플레이어 API")
 public class PlayerController {
 
-    private final PlayerService playerService;
+    private PlayerService playerService;
 
-    @GetMapping("/login/steam")
-    public String steamLogin() {
-        return "Redirecting to Steam for authentication...";
+    private CustomTokenProviderService customTokenProviderService;
+
+    @Value("${steam.api.key}")
+    private String steamApiKey;
+
+    private final WebClient webClient;
+
+    public PlayerController(PlayerService playerService, CustomTokenProviderService customTokenProviderService, WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.baseUrl("http://api.steampowered.com").build();
+        this.playerService = playerService;
+        this.customTokenProviderService = customTokenProviderService;
     }
 
-    @GetMapping("/login/success")
-    public String loginSuccess() {
-        return "Successfully authenticated with Steam!";
-    }
+    @GetMapping("/login")
+    @Operation(summary = "로그인", description = "스팀에서 받아온 식별 정보를 가지고 로그인 합니다.", responses = {
+            @ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(schema = @Schema(implementation = ResponseDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "로그인 실패", content = @Content(schema = @Schema(name = "로그인 실패", example = "에러 메시지(스팀 유저를 찾을 수 없음 등)"), mediaType = "application/json"))
+    })
+    @Parameter(name = "steamKey", description = "스팀에서 받아온 회원 식별 정보", in = ParameterIn.QUERY)
+    public ResponseEntity<ResponseDto> steamLogin(@RequestParam String steamKey) {
 
+        try {
+            Mono<ResponseEntity<ResponseDto>> json = webClient.get()
+                    .uri(uriBuilder -> uriBuilder.path("/ISteamUser/GetPlayerSummaries/v0002/")
+                            .queryParam("key", steamApiKey)
+                            .queryParam("steamids", steamKey)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .flatMap(response -> {
+
+                        log.info("스팀 응답 값 {}", response);
+
+                        ObjectMapper mapper = new ObjectMapper();
+                        JsonNode rootNode;
+                        try {
+                            rootNode = mapper.readTree(response);
+                        } catch (Exception e) {
+                            return Mono.error(new Exception("Invalid JSON response"));
+                        }
+
+                        JsonNode playersNode = rootNode.path("response").path("players");
+                        if (playersNode.isArray() && playersNode.isEmpty()) {
+                            return Mono.error(new SteamUserNotFoundException());
+                        }
+
+                        if (response == null || response.startsWith("player")) {
+                            return Mono.error(new Exception("Response is empty"));
+                        }
+
+                        String token = customTokenProviderService.generateToken(steamKey);
+
+                        ResponseDto responseDto = new ResponseDto(token, "로그인 성공");
+
+                        return Mono.just(new ResponseEntity<>(responseDto, HttpStatus.OK));
+                    });
+            return json.block();
+        } catch (SteamUserNotFoundException e) {
+            log.warn(e.getMessage());
+            log.warn("스팀 유저를 찾을 수 없음");
+
+            ResponseDto responseDto = new ResponseDto(null, "스팀 유저를 찾을 수 없음");
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+            log.warn("로그인 실패");
+
+            ResponseDto responseDto = new ResponseDto(null, "로그인 실패");
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
+    }
     @PostMapping
     @Operation(summary = "플레이어 추가", description = "스팀에서 받아온 식별 정보와 닉네임을 가지고 플레이어를 생성 합니다.", responses = {
             @ApiResponse(responseCode = "201", description = "플레이어 추가 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),

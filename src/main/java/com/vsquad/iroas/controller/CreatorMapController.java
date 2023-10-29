@@ -37,10 +37,14 @@ public class CreatorMapController {
     })
     public ResponseEntity<ResMessageDto> addCreatorMap(@RequestBody CreatorMapDto reqDto) {
         try {
+            log.info("새로운 맵 추가");
+
             creatorMapService.addCreatorMap(reqDto);
             ResMessageDto resDto = new ResMessageDto("새로운 맵 추가 완료");
             return new ResponseEntity<>(resDto, HttpStatus.CREATED);
         } catch (Exception e) {
+            log.warn("맵 추가 실패");
+
             return ResponseEntity.badRequest().body(new ResMessageDto("맵 추가 실패"));
         }
     }
@@ -52,6 +56,8 @@ public class CreatorMapController {
     })
     public ResponseEntity<ResCreatorMapDto> getCreatorMap(@PathVariable String creatorMapId) {
         try {
+            log.info("맵 조회");
+
             CreatorMapDto resDto = creatorMapService.getCreatorMap(creatorMapId);
 
             ResCreatorMapDto res = new ResCreatorMapDto(resDto, "맵 조회 성공");

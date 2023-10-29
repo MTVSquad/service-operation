@@ -1,7 +1,5 @@
 package com.vsquad.iroas.service;
 
-import com.vsquad.iroas.aggregate.dto.AvatarDto;
-import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
 import com.vsquad.iroas.aggregate.dto.ResPlayerInfoDto;
 import com.vsquad.iroas.aggregate.entity.Avatar;
 import com.vsquad.iroas.aggregate.entity.Player;
@@ -9,8 +7,6 @@ import com.vsquad.iroas.aggregate.vo.Nickname;
 import com.vsquad.iroas.repository.AvatarRepository;
 import com.vsquad.iroas.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +34,7 @@ public class PlayerService {
             throw new IllegalArgumentException("중복된 닉네임");
         });
 
-        Player newPlayer = new Player(steamKey, nickname);
+        Player newPlayer = new Player(steamKey, nickname, 0L, "ROLE_PLAYER");
         playerRepository.save(newPlayer);
     }
 
@@ -81,7 +77,7 @@ public class PlayerService {
 
         foundPlayer.setNickname(newNickname);
 
-        ResPlayerInfoDto resPlayerDto = new ResPlayerInfoDto(foundPlayer.getPlayerId(), foundPlayer.getNickname().getPlayerNickname(), foundPlayer.getPlayerSteamKey(), null);
+        ResPlayerInfoDto resPlayerDto = new ResPlayerInfoDto(foundPlayer.getPlayerId(), foundPlayer.getNickname().getPlayerNickname(), foundPlayer.getPlayerSteamKey(), null, null);
 
         return resPlayerDto;
     }
@@ -100,10 +96,11 @@ public class PlayerService {
 
         String resPlayerNickname = foundPlayer.getNickname().getPlayerNickname();
         String resPlayerSteamKey = foundPlayer.getPlayerSteamKey();
-        AvatarDto resPlayerAvatar = new AvatarDto(foundAvatar.getAvatarId(), foundAvatar.getMask());
+//        AvatarDto resPlayerAvatar = new AvatarDto(foundAvatar.getAvatarId(), foundAvatar.getMask());
+        Long avatarId = foundAvatar.getAvatarId();
 
         // player 정보 반환 하기 위해 dto로 변환
-        ResPlayerInfoDto resPlayerDto = new ResPlayerInfoDto(foundPlayerId, resPlayerNickname, resPlayerSteamKey, resPlayerAvatar);
+        ResPlayerInfoDto resPlayerDto = new ResPlayerInfoDto(foundPlayerId, resPlayerNickname, resPlayerSteamKey, avatarId, "ROLE_PLAYER");
 
         return resPlayerDto;
     }
