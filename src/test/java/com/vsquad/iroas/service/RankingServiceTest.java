@@ -54,7 +54,7 @@ class RankingServiceTest {
 
         ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
 
-        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName());
+        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName(), 0L, "ROLE_PLAYER");
 
         Player foundPlayer = playerRepository.save(player);
 

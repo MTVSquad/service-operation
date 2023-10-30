@@ -1,9 +1,9 @@
 package com.vsquad.iroas.config.token;
 
-import com.nimbusds.jose.proc.SecurityContext;
 import com.vsquad.iroas.service.auth.CustomTokenProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
@@ -24,7 +24,7 @@ public class CustomOncePerRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = getJwtFromRequest(request);
 
-        if(StringUtils.hasText(jwt) && customTokenProviderService.validateToken(jwt)) {
+        if(StringUtils.hasText(jwt) && customTokenProviderService.getAuthentication(jwt).isAuthenticated()) {
             UsernamePasswordAuthenticationToken authentication = null;
 
             try {

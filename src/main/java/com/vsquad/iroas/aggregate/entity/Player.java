@@ -61,8 +61,10 @@ public class Player {
     @Comment("플레이어 권한")
     private String playerRole;
 
-    public Player(String steamKey, String nickname) {
+    public Player(String steamKey, String nickname, Long playerMoney, String playerRole) {
         this.playerSteamKey = steamKey;
         this.nickname = new Nickname(nickname);
+        this.playerMoney = playerMoney;
+        this.playerRole = playerRole;
     }
 }

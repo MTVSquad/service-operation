@@ -2,7 +2,7 @@ package com.vsquad.iroas.aggregate.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.vsquad.iroas.aggregate.entity.CreatorMap;
 import com.vsquad.iroas.aggregate.entity.EnemySpawner;
 import com.vsquad.iroas.aggregate.entity.Prop;
@@ -34,6 +34,7 @@ public class CreatorMapDto {
 
     @Schema(name = "createTime", description = "맵 생성 시간", example = "2023-10-25 06:25:56", defaultValue = "2023-10-25 06:25:56")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
     private LocalDateTime createTime;
 
     @Schema(name = "playerStartPointXLocation", description = "플레이어 시작 지점 x 좌표")

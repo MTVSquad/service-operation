@@ -5,20 +5,27 @@ import com.vsquad.iroas.aggregate.entity.Avatar;
 import com.vsquad.iroas.aggregate.entity.Item;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.vo.Nickname;
+import com.vsquad.iroas.config.token.TokenMapping;
 import com.vsquad.iroas.repository.AvatarRepository;
 import com.vsquad.iroas.repository.ItemRepository;
 import com.vsquad.iroas.repository.PlayerRepository;
+import com.vsquad.iroas.service.auth.CustomTokenProviderService;
+import com.vsquad.iroas.service.auth.CustomUserDetailService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,6 +41,12 @@ class PlayerServiceTest {
 
     @Autowired
     private ItemRepository itemRepository;
+
+    @Autowired
+    private CustomTokenProviderService customTokenProviderService;
+
+    @Autowired
+    private CustomUserDetailService userService;
 
     private Player player;
 
@@ -69,6 +82,7 @@ class PlayerServiceTest {
         // when
         Player newPlayer = new Player();
         newPlayer.setPlayerSteamKey(playerKey);
+        newPlayer.setPlayerRole("ROLE_PLAYER");
 
         // 저장
         playerRepository.save(newPlayer);
@@ -82,6 +96,24 @@ class PlayerServiceTest {
     }
 
     @Test
+    @DisplayName("스팀 로그인 성공")
+    void steamLoginSuccessTest() {
+
+        // given
+        String uuid = player.getPlayerSteamKey();
+
+        // when
+        UserDetails user = userService.loadUserByUsername(uuid);
+
+        TokenMapping tokenMapping = customTokenProviderService.createToken((Authentication) user.getAuthorities());
+
+        String token = tokenMapping.getAccessToken();
+
+        // then
+        assertNotNull(token);
+    }
+
+    @Test
     @DisplayName("플레이어 닉네임 추가 성공")
     void addPlayerNicknameTest() {
 
@@ -92,7 +124,7 @@ class PlayerServiceTest {
 
         ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
 
-        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName());
+        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName(), 0L, "ROLE_PLAYER");
 
         // when
         playerRepository.save(player);
@@ -141,7 +173,7 @@ class PlayerServiceTest {
         String inputNickname2 = "테스트닉네임";
         String steamKey2 = "testKey2";
 
-        Player player1 = new Player(steamKey1, inputNickname);
+        Player player1 = new Player(steamKey1, inputNickname, 0L, "ROLE_PLAYER" );
         playerRepository.save(player1);
 
 
@@ -151,7 +183,7 @@ class PlayerServiceTest {
 
             playerRepository.findByNickname(new Nickname(inputNickname)).orElseThrow();
 
-            Player player2 = new Player(steamKey2, inputNickname2);
+            Player player2 = new Player(steamKey2, inputNickname2, 0L, "ROLE_PLAYER" );
             playerRepository.save(player2);
 
         }, "에러 출력 되지 않음...");
@@ -166,7 +198,7 @@ class PlayerServiceTest {
         // 최소 2자, 최대 8자, 특수 문자x, 한글 / 영문
         String inputData = "아바라abcf";
         ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
-        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName());
+        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName(), 0L, "ROLE_PLAYER");
         playerRepository.save(player);
 
         // when
@@ -192,7 +224,7 @@ class PlayerServiceTest {
         String playerKey = "key";
         String inputData = "바닐라라떼";
         ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
-        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName());
+        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName(), 0L, "ROLE_PLAYER");
         playerRepository.save(player);
 
         // when

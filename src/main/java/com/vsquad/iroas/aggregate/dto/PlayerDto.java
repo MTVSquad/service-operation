@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResPlayerInfoDto {
+public class PlayerDto {
 
     private Long playerId;
 
@@ -16,13 +16,11 @@ public class ResPlayerInfoDto {
 
     private String playerNickName;
 
-    private Long avatarId;
-
     private String playerRole;
 
-    public static ResPlayerInfoDto convertToDto(Player player) {
-
-        return new ResPlayerInfoDto(player.getPlayerId(), player.getPlayerSteamKey(), player.getNickname().getPlayerNickname(),
-                player.getPlayerAvatar(), player.getPlayerRole());
-    }
+//    public static PlayerDto convertToDto(Player player) {
+//
+//        return new PlayerDto(player.getPlayerId(), player.getPlayerSteamKey(), player.getNickname().getPlayerNickname(),
+//                player.getPlayerRole());
+//    }
 }
