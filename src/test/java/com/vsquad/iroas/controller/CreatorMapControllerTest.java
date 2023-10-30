@@ -82,10 +82,14 @@ class CreatorMapControllerTest {
         List<Double> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
-        CreatorMapDto mapDto = new CreatorMapDto(uuid, "testMap", "MELEE", 1L, LocalDateTime.now(),
+        CreatorMapDto mapDto = new CreatorMapDto( "MELEE", LocalDateTime.now(),
                 90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
+        // 플레이어를 추가하기 그래서 임의로 수정함
         CreatorMap map = mapDto.convertToEntity(mapDto);
+        map.setCreatorMapId(uuid);
+        map.setCreatorMapName("testNick의 맵");
+        map.setCreator("testNick");
 
         creatorMap = creatorMapRepository.save(map);
     }
@@ -116,7 +120,8 @@ class CreatorMapControllerTest {
         List<Double> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
-        reqCreatorMapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", 1L, LocalDateTime.now(),
+        // 맵 name(player's 맵) player를 추가해야 되서 임의로 작성함
+        reqCreatorMapDto = new CreatorMapDto("MELEE", LocalDateTime.now(),
                 90.00D, 90.00D, 90.00D, 90.00D,  "Morning", enemySpawnerList, propList);
 
         // dto 객체 json으로 변환

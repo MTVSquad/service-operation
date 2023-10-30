@@ -40,7 +40,7 @@ public class CreatorMap {
 
     @Column(name = "CREATOR")
     @Comment("맵 생성자")
-    private Long creator;
+    private String creator;
 
     @Column(name = "CREATE_TIME")
     @Comment("맵 생성 시간")

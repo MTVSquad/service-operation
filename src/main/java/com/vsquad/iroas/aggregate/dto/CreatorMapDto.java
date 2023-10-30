@@ -19,18 +19,18 @@ import java.util.List;
 @AllArgsConstructor
 public class CreatorMapDto {
 
-    @Schema(name = "creatorMapId", description = "맵 식별자")
-    private String creatorMapId;
+//    @Schema(name = "creatorMapId", description = "맵 식별자")
+//    private String creatorMapId;
 
-    @Schema(name = "creatorMapName", description = "맵 이름은 2~12자 한글, 영문 대소문자, 숫자만 가능")
-    @Pattern(regexp = "^[가-힣a-zA-Z0-9]{2,12}$")
-    private String creatorMapName;
+//    @Schema(name = "creatorMapName", description = "맵 이름은 2~12자 한글, 영문 대소문자, 숫자만 가능")
+//    @Pattern(regexp = "^[가-힣a-zA-Z0-9]{2,12}$")
+//    private String creatorMapName;
 
     @Schema(name = "creatorMapType", description = "맵 타입", allowableValues = {"MELEE", "TIME_ATTACK"})
     private String creatorMapType;
 
-    @Schema(name = "creator", description = "맵 생성자")
-    private Long creator;
+//    @Schema(name = "creator", description = "맵 생성자")
+//    private String creator;
 
     @Schema(name = "createTime", description = "맵 생성 시간", example = "2023-10-25 06:25:56", defaultValue = "2023-10-25 06:25:56")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -79,10 +79,10 @@ public class CreatorMapDto {
         }
 
         CreatorMap creatorMap = new CreatorMap();
-        creatorMap.setCreatorMapId(creatorMapDto.getCreatorMapId());
-        creatorMap.setCreatorMapName(creatorMapDto.getCreatorMapName());
+//        creatorMap.setCreatorMapId(creatorMapDto.getCreatorMapId());
+//        creatorMap.setCreatorMapName(creatorMapDto.getCreatorMapName());
         creatorMap.setCreatorMapType(creatorMapDto.getCreatorMapType());
-        creatorMap.setCreator(creatorMapDto.getCreator());
+//        creatorMap.setCreator(creatorMapDto.getCreator());
         creatorMap.setCreateTime(creatorMapDto.getCreateTime());
         creatorMap.setPlayerStartPointXLocation(creatorMapDto.getPlayerStartPointXLocation());
         creatorMap.setPlayerStartPointYLocation(creatorMapDto.getPlayerStartPointYLocation());

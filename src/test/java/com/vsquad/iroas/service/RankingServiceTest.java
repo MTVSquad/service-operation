@@ -89,7 +89,7 @@ class RankingServiceTest {
         List<Double> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
-        CreatorMapDto mapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", 1L, LocalDateTime.now(),
+        CreatorMapDto mapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", "testNick", LocalDateTime.now(),
                 90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
         CreatorMap map = mapDto.convertToEntity(mapDto);

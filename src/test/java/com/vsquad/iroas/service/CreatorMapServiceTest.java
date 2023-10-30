@@ -7,6 +7,7 @@ import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
 import com.vsquad.iroas.aggregate.entity.CreatorMap;
 import com.vsquad.iroas.repository.CreatorMapRepository;
 import com.vsquad.iroas.repository.EnemySpawnerRepository;
+import com.vsquad.iroas.repository.PlayerRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,10 +40,12 @@ class CreatorMapServiceTest {
     private CreatorMapRepository creatorMapRepository;
 
     @Autowired
-    private EnemySpawnerRepository enemySpawnerRepository;
+    private PlayerRepository playerRepository;
 
     @Mock
     private CreatorMap creatorMap;
+
+    private PlayerServiceTest playerServiceTest;
 
     private static Stream<Arguments> getInfo() {
         return Stream.of(
@@ -58,6 +61,7 @@ class CreatorMapServiceTest {
     void beforeTransaction() throws JsonProcessingException {
 
         // given
+        // 플레이어 추가
         String uuid;
 
         while (true) {
@@ -84,7 +88,7 @@ class CreatorMapServiceTest {
         List<Double> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
-        CreatorMapDto mapDto = new CreatorMapDto(uuid, "testMap", "MELEE", 1L, LocalDateTime.now(),
+        CreatorMapDto mapDto = new CreatorMapDto("MELEE", LocalDateTime.now(),
                 90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
         CreatorMap map = mapDto.convertToEntity(mapDto);
@@ -128,7 +132,7 @@ class CreatorMapServiceTest {
         List<Double> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
-        CreatorMapDto mapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", 1L, LocalDateTime.now(),
+        CreatorMapDto mapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", "testNick", LocalDateTime.now(),
                 90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
         CreatorMap map = mapDto.convertToEntity(mapDto);
@@ -187,7 +191,7 @@ class CreatorMapServiceTest {
         List<Double> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
-        CreatorMapDto mapDto = new CreatorMapDto(uuid, mepName, "MELEE", 1L, LocalDateTime.now(),
+        CreatorMapDto mapDto = new CreatorMapDto(uuid, mepName, "MELEE", "testNick", LocalDateTime.now(),
                 90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
         CreatorMap map = mapDto.convertToEntity(mapDto);
@@ -223,7 +227,7 @@ class CreatorMapServiceTest {
         List<Double> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
-        CreatorMapDto mapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", 1L, LocalDateTime.now(),
+        CreatorMapDto mapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", "testNick", LocalDateTime.now(),
                 90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
         CreatorMap map = mapDto.convertToEntity(mapDto);
