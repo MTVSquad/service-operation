@@ -1,8 +1,10 @@
 package com.vsquad.iroas.controller;
 
+import com.vsquad.iroas.aggregate.dto.PlayerDto;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.vo.Nickname;
 import com.vsquad.iroas.repository.PlayerRepository;
+import com.vsquad.iroas.service.auth.CustomTokenProviderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.BeforeTransaction;
@@ -44,20 +48,14 @@ class PlayerControllerTest {
 
     private Player player;
 
+    @Autowired
+    private CustomTokenProviderService customTokenProviderService;
+
     private static Stream<Arguments> getPlayerInfo() {
         return Stream.of(
                 Arguments.of(
-                        "123456789",
-                        "히에로"
-                    )
-                );
-    }
-
-    private static Stream<Arguments> getAvatarInfo() {
-        return Stream.of(
-                Arguments.of(
-                        "red",
-                        "1L"
+                        "76561197960435530",
+                        "테스트코드"
                     )
                 );
     }
@@ -71,19 +69,32 @@ class PlayerControllerTest {
     }
 
     @BeforeTransaction
-    public void accountSetup() {
+    public void accountSetup() throws Exception {
         player = Player.builder()
                 .playerSteamKey("123456789012345678")
                 .nickname(new Nickname("히에로스"))
+                .playerRole("ROLE_PLAYER")
                 .build();
 
         player = playerRepository.save(player);
+
+        //Security Context에 유저정보 등록, 토큰발급
+        PlayerDto playerDto = new PlayerDto(player.getPlayerId(), player.getPlayerSteamKey()
+                , player.getNickname().getPlayerNickname(), player.getPlayerRole());
+
+        String jwt = customTokenProviderService.generateToken(playerDto);
+
+        UsernamePasswordAuthenticationToken authentication =
+                customTokenProviderService.getAuthenticationById(jwt);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     @AfterTransaction
     public void clear()
     {
         playerRepository.deleteById(player.getPlayerId());
+        SecurityContextHolder.clearContext();
     }
 
     @ParameterizedTest
@@ -107,10 +118,8 @@ class PlayerControllerTest {
     @DisplayName("아바타 추가 성공 테스트")
     void addPlayerAvatarSuccessTest() throws Exception {
 
-        String playerId = player.getPlayerId().toString();
         String maskColor = "red";
-
-        String requestJson = "{\"playerId\":\"" + playerId + "\",\"maskColor\":\"" + maskColor + "\"}";
+        String requestJson = "{\"maskColor\":\"" + maskColor + "\"}";
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/api/v1/player/avatar")
@@ -125,13 +134,10 @@ class PlayerControllerTest {
     @DisplayName("플레이어 정보 조회 성공 테스트")
     void readPlayerInfoTest() throws Exception {
 
-        String playerId = player.getPlayerId().toString();
-
         addPlayerAvatarSuccessTest();
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/player/info")
-                        .param("playerId", playerId)
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
@@ -140,12 +146,8 @@ class PlayerControllerTest {
     @Test
     @DisplayName("플레이어 닉네임 변경 성공 테스트")
     void changePlayerNicknameSuccessTest() throws Exception {
-
-        String playerId = player.getPlayerId().toString();
-
         mvc.perform(MockMvcRequestBuilders
                         .patch("/api/v1/player/nickname")
-                        .param("playerId", playerId)
                         .param("nickname", "변경된닉네임")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -155,11 +157,9 @@ class PlayerControllerTest {
     @Test
     @DisplayName("플레이어 닉네임 변경 실패 테스트")
     void changePlayerNicknameFailTest() throws Exception {
-        addPlayerTest("12345678901234567", "tester");
 
         mvc.perform(MockMvcRequestBuilders
                         .patch("/api/v1/player/nickname")
-                        .param("playerId", "1")
                         .param("nickname", "변경된닉네임111")
                 )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -172,9 +172,8 @@ class PlayerControllerTest {
 
         addPlayerAvatarSuccessTest();
 
-        String playerId =   player.getPlayerId().toString();
         String maskColor = "green";
-        String requestJson = "{\"playerId\":\"" + playerId + "\",\"maskColor\":\"" + maskColor + "\"}";
+        String requestJson = "{\"maskColor\":\"" + maskColor + "\"}";
 
         mvc.perform(MockMvcRequestBuilders
                         .patch("/api/v1/player/avatar")

@@ -6,12 +6,9 @@ import com.vsquad.iroas.aggregate.dto.PropDto;
 import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
 import com.vsquad.iroas.aggregate.entity.CreatorMap;
 import com.vsquad.iroas.repository.CreatorMapRepository;
-import com.vsquad.iroas.repository.EnemySpawnerRepository;
-import com.vsquad.iroas.repository.PlayerRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.provider.Arguments;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,23 +35,8 @@ class CreatorMapServiceTest {
     @Autowired
     private CreatorMapRepository creatorMapRepository;
 
-    @Autowired
-    private PlayerRepository playerRepository;
-
     @Mock
     private CreatorMap creatorMap;
-
-    private PlayerServiceTest playerServiceTest;
-
-    private static Stream<Arguments> getInfo() {
-        return Stream.of(
-                Arguments.of(
-                        "abc998"
-                        , "uKNb4nk6g4RFUsxDYyZO6UTbdvotNsOJPmvUM/E2O7gMVguv7Cu"
-                        , "박성준"
-                        , "")
-        );
-    }
 
     @BeforeTransaction
     void beforeTransaction() throws JsonProcessingException {
@@ -132,10 +113,15 @@ class CreatorMapServiceTest {
         List<Double> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
-        CreatorMapDto mapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", "testNick", LocalDateTime.now(),
+        CreatorMapDto mapDto = new CreatorMapDto( "MELEE", LocalDateTime.now(),
                 90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
+        String creator = "testNick";
+
         CreatorMap map = mapDto.convertToEntity(mapDto);
+        map.setCreatorMapId(uuid);
+        map.setCreator(creator);
+        map.setCreatorMapName(creator + "의 맵");
 
         // when
         creatorMapRepository.save(map);
@@ -163,7 +149,7 @@ class CreatorMapServiceTest {
     }
 
     @DisplayName("크리에이터 맵 51개 추가 성공")
-    void add51CreatorMapSuccessTest(String mepName) throws JsonProcessingException {
+    void add51CreatorMapSuccessTest() throws JsonProcessingException {
 
         String uuid;
 
@@ -191,10 +177,15 @@ class CreatorMapServiceTest {
         List<Double> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
-        CreatorMapDto mapDto = new CreatorMapDto(uuid, mepName, "MELEE", "testNick", LocalDateTime.now(),
+        CreatorMapDto mapDto = new CreatorMapDto("MELEE", LocalDateTime.now(),
                 90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
+        String creator = "testNick";
+
         CreatorMap map = mapDto.convertToEntity(mapDto);
+        map.setCreatorMapId(uuid);
+        map.setCreator(creator);
+        map.setCreatorMapName(creator + "의 맵");
 
         creatorMapRepository.save(map);
     }
@@ -227,10 +218,16 @@ class CreatorMapServiceTest {
         List<Double> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
-        CreatorMapDto mapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", "testNick", LocalDateTime.now(),
+//        CreatorMapDto mapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", "testNick", LocalDateTime.now(),
+//                90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
+
+        CreatorMapDto mapDto = new CreatorMapDto( "MELEE", LocalDateTime.now(),
                 90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
         CreatorMap map = mapDto.convertToEntity(mapDto);
+        map.setCreatorMapId(uuid);
+        map.setCreatorMapName("testNick의 맵");
+        map.setCreator("testNick");
 
         // when
         creatorMapRepository.save(map);
@@ -248,7 +245,7 @@ class CreatorMapServiceTest {
 
         // given
         for(int i = 0; i < 51; i++) {
-            add51CreatorMapSuccessTest("map" + i);
+            add51CreatorMapSuccessTest();
         }
 
         int page = 0;
@@ -262,7 +259,7 @@ class CreatorMapServiceTest {
 
         // then
         Assertions.assertFalse(foundMapList.isEmpty());
-        Assertions.assertTrue(foundMapList.getNumberOfElements() == 10);
+        assertEquals(10, foundMapList.getNumberOfElements());
     }
 
     @Test

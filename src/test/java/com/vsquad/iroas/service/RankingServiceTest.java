@@ -89,10 +89,13 @@ class RankingServiceTest {
         List<Double> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
-        CreatorMapDto mapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", "testNick", LocalDateTime.now(),
+        CreatorMapDto mapDto = new CreatorMapDto("MELEE", LocalDateTime.now(),
                 90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
         CreatorMap map = mapDto.convertToEntity(mapDto);
+        map.setCreatorMapId(uuid);
+        map.setCreatorMapName("testNick의 맵");
+        map.setCreator("testNick");
 
         // when
         creatorMapRepository.save(map);
