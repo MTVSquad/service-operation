@@ -27,7 +27,7 @@ public class PlayerService {
     private final AvatarRepository avatarRepository;
 
     @Transactional
-    public void addPlayer(String steamKey, String nickname) {
+    public PlayerDto addPlayer(String steamKey, String nickname) {
 
         // 스팀 키 중복 체크
         playerRepository.findByPlayerSteamKey(steamKey).ifPresent(player -> {
@@ -41,7 +41,17 @@ public class PlayerService {
         });
 
         Player newPlayer = new Player(steamKey, nickname, 0L, "ROLE_PLAYER");
-        playerRepository.save(newPlayer);
+        Player savedPlayer = playerRepository.save(newPlayer);
+
+        Long playerId = savedPlayer.getPlayerId();
+        String playerSteamKey = savedPlayer.getPlayerSteamKey();
+        String playerNickname = savedPlayer.getNickname().getPlayerNickname();
+        String playerRole = savedPlayer.getPlayerRole();
+
+        // player 정보 반환 하기 위해 dto로 변환
+        PlayerDto playerDto = new PlayerDto(playerId, playerSteamKey, playerNickname, playerRole);
+        return playerDto;
+
     }
 
     @Transactional
