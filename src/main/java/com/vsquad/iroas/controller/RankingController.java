@@ -2,17 +2,23 @@ package com.vsquad.iroas.controller;
 
 import com.vsquad.iroas.aggregate.dto.ReqRankingDto;
 import com.vsquad.iroas.aggregate.dto.ResMessageDto;
+import com.vsquad.iroas.aggregate.dto.ResRankingDto;
+import com.vsquad.iroas.aggregate.dto.ResponseDto;
 import com.vsquad.iroas.service.RankingService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -40,6 +46,31 @@ public class RankingController {
 
             return ResponseEntity.badRequest().body(new ResMessageDto("랭킹 추가 실패"));
         }
+    }
 
+    @GetMapping
+    @Operation(summary = "랭킹 조회", responses = {
+            @ApiResponse(responseCode = "200", description = "랭킹 조회 성공", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "랭킹 조회 실패", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(name = "랭킹 조회 실패", example = "에러 메시지"), mediaType = "application/json"))
+    })
+    @Parameters(
+            @Parameter(name = "creatorMapId", description = "커스텀 모드 유즈맵 식별자", example = "test", required = true)
+    )
+    public ResponseEntity<ResponseDto> getRanking(@RequestParam @Parameter(hidden = true) String creatorMapId, @PageableDefault @Parameter(hidden = true) Pageable pageable) {
+        try {
+            log.info("랭킹 조회");
+
+            Page<ResRankingDto> ranking = rankingService.getRanking(creatorMapId, pageable);
+
+            ResponseDto resDto = new ResponseDto(ranking, "랭킹 조회 완료");
+
+            log.info("랭킹 조회 성공");
+            return new ResponseEntity<>(resDto, HttpStatus.OK);
+        } catch (Exception e) {
+            log.warn("랭킹 조회 실패");
+
+            ResponseDto resDto = new ResponseDto(null, "랭킹 조회 실패");
+            return ResponseEntity.badRequest().body(resDto);
+        }
     }
 }
