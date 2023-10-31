@@ -37,10 +37,13 @@ public class CreatorMapController {
     })
     public ResponseEntity<ResMessageDto> addCreatorMap(@RequestBody CreatorMapDto reqDto) {
         try {
-            log.info("새로운 맵 추가");
+            log.info("새로운 맵 추가 ::{}", reqDto.getCreator().toString() + "의" + reqDto.getCreatorMapName() + "맵");
 
             creatorMapService.addCreatorMap(reqDto);
             ResMessageDto resDto = new ResMessageDto("새로운 맵 추가 완료");
+
+            log.info("새로운 맵 추가 완료");
+
             return new ResponseEntity<>(resDto, HttpStatus.CREATED);
         } catch (Exception e) {
             log.warn("맵 추가 실패");
@@ -56,7 +59,7 @@ public class CreatorMapController {
     })
     public ResponseEntity<ResCreatorMapDto> getCreatorMap(@PathVariable String creatorMapId) {
         try {
-            log.info("맵 조회");
+            log.info("맵 조회 ::{}", creatorMapId + "의 맵");
 
             CreatorMapDto resDto = creatorMapService.getCreatorMap(creatorMapId);
 
@@ -93,6 +96,8 @@ public class CreatorMapController {
             Page<CreatorMapDto> resDto = creatorMapService.readPlayerCreatorMapList(pageable);
             ResponseDto res = new ResponseDto(resDto, "맵 목록 조회 성공");
 
+            log.info("맵 목록 조회 성공");
+
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
             log.warn("맵 목록 조회 실패");
@@ -109,7 +114,11 @@ public class CreatorMapController {
     })
     public ResponseEntity<ResMessageDto> deleteCreatorMap(@PathVariable String creatorMapId) {
         try {
+            log.info("맵 삭제 ::{}", creatorMapId + "의 맵");
+
             creatorMapService.deleteCreatorMap(creatorMapId);
+
+            log.info("맵 삭제 성공");
 
             ResMessageDto res = new ResMessageDto("맵 삭제 성공");
             return new ResponseEntity<>(res, HttpStatus.OK);

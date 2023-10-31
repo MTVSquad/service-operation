@@ -3,6 +3,7 @@ package com.vsquad.iroas.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vsquad.iroas.aggregate.dto.*;
+import com.vsquad.iroas.config.exception.PlayerNotFoundException;
 import com.vsquad.iroas.config.exception.SteamUserNotFoundException;
 import com.vsquad.iroas.service.PlayerService;
 import com.vsquad.iroas.service.auth.CustomTokenProviderService;
@@ -60,6 +61,11 @@ public class PlayerController {
 
             ResponseDto responseDto = new ResponseDto(token, "로그인 성공");
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        } catch (PlayerNotFoundException e) {
+            log.warn(e.getMessage());
+
+            ResponseDto responseDto = new ResponseDto(null, e.getMessage());
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         } catch (SteamUserNotFoundException e) {
             log.warn(e.getMessage());
             log.warn("스팀 유저를 찾을 수 없음");
@@ -158,11 +164,15 @@ public class PlayerController {
         String maskColor = reqBody.getMaskColor();
 
         try {
+            log.info("플레이어 아바타 추가");
             playerService.addPlayerAvatar(maskColor);
 
             ResMessageDto resDto = new ResMessageDto("플레이어 아바타가 추가되었습니다.");
+            
+            log.info("플레이어 아바타 추가 성공");
             return new ResponseEntity<>(resDto, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
+            log.warn("플레이어 아바타 추가 실패");
             log.warn(e.getMessage());
 
             ResMessageDto resDto = new ResMessageDto(e.getMessage());
@@ -181,9 +191,14 @@ public class PlayerController {
         String maskColor = reqBody.getMaskColor();
 
         try {
+            log.info("플레이어 아바타 변경");
+
             ResPlayerInfoDto resDto = playerService.changePlayerAvatar(maskColor);
+
+            log.info("플레이어 아바타 변경 성공");
             return new ResponseEntity<>(resDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
+            log.warn("플레이어 아바타 변경 실패");
             log.warn(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -197,9 +212,13 @@ public class PlayerController {
     public ResponseEntity<ResPlayerInfoDto> readPlayerInfo() {
 
         try {
+            log.info("플레이어 정보 조회");
             ResPlayerInfoDto resDto = playerService.readPlayerInfo();
+
+            log.info("플레이어 정보 조회 완료");
             return new ResponseEntity<>(resDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
+            log.info("플레이어 정보 조회 실패");
             log.warn(e.getMessage());
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -218,6 +237,8 @@ public class PlayerController {
             log.info("플레이어 닉네임 수정");
             ResPlayerInfoDto body = playerService.changePlayerNickname(nickname);
             ResponseDto responseDto = new ResponseDto(body, "플레이어 닉네임이 수정되었습니다.");
+            
+            log.info("플레이어 닉네임 수정 완료");
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             log.warn(e.getMessage());
@@ -240,10 +261,13 @@ public class PlayerController {
     public ResponseEntity<ResMessageDto> deletePlayerAvatar() {
 
         try {
-            log.info("플레이어 아바타 제거");
+            log.info("플레이어 아바타 초기화");
 
             playerService.resetPlayerInfo();
             ResMessageDto resDto = new ResMessageDto("플레이어 아바타가 초기화 되었습니다.");
+            
+            log.info("플레이어 아바타 초기화 완료");
+            
             return new ResponseEntity<>(resDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             log.warn(e.getMessage());

@@ -5,6 +5,7 @@ import com.vsquad.iroas.aggregate.dto.ResPlayerInfoDto;
 import com.vsquad.iroas.aggregate.entity.Avatar;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.vo.Nickname;
+import com.vsquad.iroas.config.exception.PlayerNotFoundException;
 import com.vsquad.iroas.config.token.PlayerPrincipal;
 import com.vsquad.iroas.repository.AvatarRepository;
 import com.vsquad.iroas.repository.PlayerRepository;
@@ -186,7 +187,7 @@ public class PlayerService {
     public PlayerDto readPlayer(String steamKey) {
 
         Player foundPlayer = playerRepository.findByPlayerSteamKey(steamKey).orElseThrow(() -> {
-            throw new NoSuchElementException("저장된 플레이어가 없습니다.");
+            throw new PlayerNotFoundException("저장된 플레이어가 없습니다.");
         });
 
         Long playerId = foundPlayer.getPlayerId();
