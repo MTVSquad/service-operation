@@ -52,31 +52,31 @@ public class PlayerController {
             @ApiResponse(responseCode = "400", description = "로그인 실패", content = @Content(schema = @Schema(name = "로그인 실패", example = "에러 메시지(스팀 유저를 찾을 수 없음 등)"), mediaType = "application/json"))
     })
     @Parameter(name = "steamKey", description = "스팀에서 받아온 회원 식별 정보", in = ParameterIn.QUERY)
-    public ResponseEntity<ResponseDto> steamLogin(@RequestParam String steamKey) {
+    public ResponseEntity<ResTokenDto> steamLogin(@RequestParam String steamKey) {
 
         try {
             PlayerDto player = playerService.readPlayer(steamKey);
 
             String token = customTokenProviderService.generateToken(player);
 
-            ResponseDto responseDto = new ResponseDto(token, "로그인 성공");
+            ResTokenDto responseDto = new ResTokenDto(token, "로그인 성공");
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (PlayerNotFoundException e) {
             log.warn(e.getMessage());
 
-            ResponseDto responseDto = new ResponseDto(null, e.getMessage());
+            ResTokenDto responseDto = new ResTokenDto(null, e.getMessage());
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         } catch (SteamUserNotFoundException e) {
             log.warn(e.getMessage());
             log.warn("스팀 유저를 찾을 수 없음");
 
-            ResponseDto responseDto = new ResponseDto(null, "스팀 유저를 찾을 수 없음");
+            ResTokenDto responseDto = new ResTokenDto(null, "스팀 유저를 찾을 수 없음");
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             log.warn(e.getMessage());
             log.warn("로그인 실패");
 
-            ResponseDto responseDto = new ResponseDto(null, "로그인 실패");
+            ResTokenDto responseDto = new ResTokenDto(null, "로그인 실패");
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         }
     }
@@ -86,7 +86,7 @@ public class PlayerController {
             @ApiResponse(responseCode = "201", description = "플레이어 추가 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "플레이어 추가 실패", content = @Content(schema = @Schema(name = "플레이어 추가 실패", example = "에러 메시지(닉네임 중복 등)"), mediaType = "application/json"))
     })
-    public ResponseEntity<ResponseDto> addPlayer(@RequestBody ReqPlayerDto reqBody) {
+    public ResponseEntity<ResTokenDto> addPlayer(@RequestBody ReqPlayerDto reqBody) {
 
         String steamKey = reqBody.getSteamKey();
         String nickname = reqBody.getPlayerNickName();
@@ -130,26 +130,27 @@ public class PlayerController {
 
             json.block();
 
-            playerService.addPlayer(steamKey, nickname);
+            PlayerDto player = playerService.addPlayer(steamKey, nickname);
+            String token = customTokenProviderService.generateToken(player);
 
-            ResponseDto responseDto = new ResponseDto(null, "플레이어가 추가되었습니다.");
+            ResTokenDto responseDto = new ResTokenDto(token, "플레이어가 추가되었습니다.");
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
         } catch (SteamUserNotFoundException e) {
             log.warn(e.getMessage());
             log.warn("스팀 유저를 찾을 수 없음");
 
-            ResponseDto responseDto = new ResponseDto(null, "스팀 유저를 찾을 수 없음");
+            ResTokenDto responseDto = new ResTokenDto(null, "스팀 유저를 찾을 수 없음");
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         } catch (IllegalArgumentException e) {
             log.warn(e.getMessage());
 
-            ResponseDto responseDto = new ResponseDto(null, e.getMessage());
+            ResTokenDto responseDto = new ResTokenDto(null, e.getMessage());
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         } catch (DataIntegrityViolationException e) {
             log.warn(e.getMessage());
             log.warn("중복된 닉네임 혹은 스팀 키");
 
-            ResponseDto responseDto = new ResponseDto(null, "중복된 닉네임 혹은 스팀 키");
+            ResTokenDto responseDto = new ResTokenDto(null, "중복된 닉네임 혹은 스팀 키");
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         }
     }
