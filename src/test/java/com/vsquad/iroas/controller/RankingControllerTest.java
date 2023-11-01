@@ -35,12 +35,19 @@ class RankingControllerTest {
     @Autowired
     private WebApplicationContext context;
 
+    @Autowired
+    private RankingController rankingController;
+
     @BeforeEach
     public void setup() {
         mvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
+
+//        rankingController = new RankingController();
+//        MockMvcBuilders
+//                .standaloneSetup(rankingController).build();
     }
 
     @Mock
@@ -72,5 +79,12 @@ class RankingControllerTest {
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("랭킹 조회 성공 테스트")
+    void readRankingSuccessTest() {
+
+        
     }
 }
