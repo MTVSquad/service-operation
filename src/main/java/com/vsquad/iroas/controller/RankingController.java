@@ -53,9 +53,12 @@ public class RankingController {
             @ApiResponse(responseCode = "200", description = "랭킹 조회 성공", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "랭킹 조회 실패", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(name = "랭킹 조회 실패", example = "에러 메시지"), mediaType = "application/json"))
     })
-    @Parameters(
-            @Parameter(name = "creatorMapId", description = "커스텀 모드 유즈맵 식별자", example = "test", required = true)
-    )
+    @Parameters({
+            @Parameter(name = "creatorMapId", description = "커스텀 모드 유즈맵 식별자", required = true),
+            @Parameter(name = "page", description = "페이지 번호", example = "0"),
+            @Parameter(name = "size", description = "페이지 크기", example = "10"),
+            @Parameter(name = "sort", description = "정렬 방식")
+    })
     public ResponseEntity<ResponseDto> getRanking(@RequestParam @Parameter(hidden = true) String creatorMapId, @PageableDefault @Parameter(hidden = true) Pageable pageable) {
         try {
             log.info("랭킹 조회");
