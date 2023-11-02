@@ -2,6 +2,7 @@ package com.vsquad.iroas.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vsquad.iroas.aggregate.dto.*;
+import com.vsquad.iroas.aggregate.dto.request.ReqPlayerDto;
 import com.vsquad.iroas.aggregate.entity.CreatorMap;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.entity.Ranking;
@@ -13,6 +14,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -129,11 +133,21 @@ class RankingServiceTest {
             playTotalCount++;
         }
 
+        // 플레이어 조회
+        Player foundPlayer = playerRepository.findById(player.getPlayerId())
+                .orElseThrow(() -> new IllegalArgumentException("플레이어를 찾을 수 없습니다."));
+
         // 랭킹 추가
-        Ranking ranking = new Ranking(player.getPlayerId(), map.getCreatorMapId(), new PlayTime(oneHourAgo, currentDateTime), playTotalCount, clearTotalCount);
+        Ranking ranking = new Ranking(foundPlayer, map.getCreatorMapId(), new PlayTime(oneHourAgo, currentDateTime), playTotalCount, clearTotalCount);
+
+        int page = 0;
+        int size = 10;
+
+        // 페이징 정보 추가
+        Pageable pageable = PageRequest.of(page, size);
 
         // when
-        rankingRepository.findByPlayerIdAndCreatorMapId(player.getPlayerId(), map.getCreatorMapId())
+        rankingRepository.findByPlayerAndCreatorMapId(foundPlayer, map.getCreatorMapId())
                 .ifPresentOrElse(
                         (foundRanking) -> {
                             // 랭킹이 있으면 업데이트
@@ -148,8 +162,66 @@ class RankingServiceTest {
                 );
 
         // then
-        List<Ranking> foundRanking = rankingRepository.findByCreatorMapId(map.getCreatorMapId());
+        Page<Ranking> foundRanking = rankingRepository.findByCreatorMapId(map.getCreatorMapId(), pageable);
         assertFalse(foundRanking.isEmpty());
     }
 
+    @Test
+    @DisplayName("랭킹 조회 성공 테스트")
+    void readRankingSuccessTest() throws JsonProcessingException {
+
+        // given
+        // 플레이어 추가
+        Player player = addPlayer();
+
+        // 크리에이터 맵 추가
+        CreatorMap map = addMap();
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime oneHourAgo = currentDateTime.minusHours(1);
+
+        // 클리어 성공
+        boolean clearYn = true;
+        int clearTotalCount = 0;
+        int playTotalCount = 0;
+
+        if(clearYn) {
+            clearTotalCount++;
+            playTotalCount++;
+        } else {
+            playTotalCount++;
+        }
+
+        // 플레이어 조회
+        Player foundPlayer = playerRepository.findById(player.getPlayerId())
+                .orElseThrow(() -> new IllegalArgumentException("플레이어를 찾을 수 없습니다."));
+
+        // 랭킹 추가
+        Ranking ranking = new Ranking(foundPlayer, map.getCreatorMapId(), new PlayTime(oneHourAgo, currentDateTime), playTotalCount, clearTotalCount);
+
+        int page = 0;
+        int size = 10;
+
+        rankingRepository.findByPlayerAndCreatorMapId(foundPlayer, map.getCreatorMapId())
+                .ifPresentOrElse(
+                        (foundRanking) -> {
+                            // 랭킹이 있으면 업데이트
+                            foundRanking.setPlayTime(new PlayTime(oneHourAgo, currentDateTime));
+                            foundRanking.setPlayCount(foundRanking.getPlayCount() + 1);
+                            foundRanking.setClearCount(foundRanking.getClearCount() + 1);
+                        },
+                        () -> {
+                            // 랭킹이 없으면 추가
+                            rankingRepository.save(ranking);
+                        }
+                );
+
+        // when
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Ranking> foundRanking = rankingRepository.findByCreatorMapId(map.getCreatorMapId(), pageable);
+
+        // then
+        assertFalse(foundRanking.isEmpty());
+    }
 }
