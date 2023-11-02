@@ -10,8 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ResMessageDto {
-
-    @Schema(description = "응답 메시지")
+public class ResErrorMessage {
+    @Schema(description = "에러 메시지")
     private String message;
 }

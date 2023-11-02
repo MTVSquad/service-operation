@@ -12,7 +12,7 @@ import lombok.ToString;
 @ToString
 public class ResponseDto<T> {
 
-    @Schema(name = "body", description = "응답 몸체111")
+    @Schema(name = "body", description = "응답 몸체")
     private T body;
 
     @Schema(name = "message", description = "응답 메시지")
