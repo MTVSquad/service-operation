@@ -1,5 +1,6 @@
 package com.vsquad.iroas.service;
 
+import com.vsquad.iroas.aggregate.dto.PlayerDto;
 import com.vsquad.iroas.aggregate.dto.ReqPlayerDto;
 import com.vsquad.iroas.aggregate.entity.Avatar;
 import com.vsquad.iroas.aggregate.entity.Item;
@@ -17,9 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +55,7 @@ class PlayerServiceTest {
                 .nickname(new Nickname("히에로스"))
                 .playerMoney(1000L)
                 .playerItems("[1,2,3]")
+                .playerRole("ROLE_PLAYER")
                 .build();
 
         player = playerRepository.save(player);
@@ -100,14 +99,16 @@ class PlayerServiceTest {
     void steamLoginSuccessTest() {
 
         // given
-        String uuid = player.getPlayerSteamKey();
+        Long playerId = player.getPlayerId();
+        String playerSteamKey = player.getPlayerSteamKey();
+        String playerNickname = player.getNickname().getPlayerNickname();
+        String playerRole = player.getPlayerRole();
+
+        // player 정보 반환 하기 위해 dto로 변환
+        PlayerDto playerDto = new PlayerDto(playerId, playerSteamKey, playerNickname, playerRole);
 
         // when
-        UserDetails user = userService.loadUserByUsername(uuid);
-
-        TokenMapping tokenMapping = customTokenProviderService.createToken((Authentication) user.getAuthorities());
-
-        String token = tokenMapping.getAccessToken();
+        String token = customTokenProviderService.generateToken(playerDto);
 
         // then
         assertNotNull(token);
