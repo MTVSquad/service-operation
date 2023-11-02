@@ -12,9 +12,9 @@ import lombok.ToString;
 @ToString
 public class ResponseDto<T> {
 
-    @Schema(name = "응답 몸체")
+    @Schema(description = "응답 몸체")
     private T body;
 
-    @Schema(name = "응답 메시지")
+    @Schema(description = "응답 메시지")
     private String message;
 }
