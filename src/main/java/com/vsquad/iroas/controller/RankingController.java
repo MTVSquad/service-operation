@@ -8,6 +8,8 @@ import com.vsquad.iroas.service.RankingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +34,9 @@ public class RankingController {
     @PostMapping
     @Operation(summary = "랭킹 추가", description = "랭킹을 추가합니다.", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "랭킹 추가 성공", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "랭킹 추가 실패", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(name = "랭킹 추가 실패", example = "에러 메시지"), mediaType = "application/json"))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "랭킹 추가 실패", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(name = "랭킹 추가 실패", example = "에러 메시지"), mediaType = "application/json")),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "랭킹 추가 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "랭킹 추가 실패", content = @Content(schema = @Schema(name = "랭킹 추가 실패", example = "에러 메시지"), mediaType = "application/json"))
     })
     public ResponseEntity<ResMessageDto> addRanking(@RequestBody ReqRankingDto req) {
         try {
@@ -51,7 +55,11 @@ public class RankingController {
     @GetMapping
     @Operation(summary = "랭킹 조회", responses = {
             @ApiResponse(responseCode = "200", description = "랭킹 조회 성공", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "랭킹 조회 실패", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(name = "랭킹 조회 실패", example = "에러 메시지"), mediaType = "application/json"))
+            @ApiResponse(responseCode = "400", description = "랭킹 조회 실패", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(name = "랭킹 조회 실패", example = "에러 메시지"), mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "랭킹 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "랭킹 조회 실패",
+                    content = @Content(schema = @Schema(name = "랭킹 조회 실패", example = "에러 메시지"),
+                    mediaType = "application/json"))
     })
     @Parameters({
             @Parameter(name = "creatorMapId", description = "커스텀 모드 유즈맵 식별자", required = true),

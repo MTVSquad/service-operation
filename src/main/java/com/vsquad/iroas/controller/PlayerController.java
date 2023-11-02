@@ -160,7 +160,7 @@ public class PlayerController {
             @ApiResponse(responseCode = "201", description = "플레이어 아바타 추가 성공", content = @Content(schema = @Schema(name = "플레이어 아바타 추가 성공", example = "성공 메시지(문자열)"), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "플레이어 아바타 추가 실패", content = @Content(schema = @Schema(name = "플레이어 아바타 추가 실패", example = "에러 메시지(플레이어 정보 없음 등)"), mediaType = "application/json"))
     })
-    public ResponseEntity<ResMessageDto> addPlayerAvatar(@RequestBody ReqAvatarDto reqBody) {
+    public ResponseEntity<ResMessageDto> addPlayerAvatar(@RequestBody com.vsquad.iroas.aggregate.dto.request.ReqAvatarDto reqBody) {
 
         String maskColor = reqBody.getMaskColor();
 
@@ -187,7 +187,7 @@ public class PlayerController {
             @ApiResponse(responseCode = "200", description = "플레이어 아바타 변경 성공", content = @Content(schema = @Schema(implementation = ResPlayerInfoDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "플레이어 아바타 변경 실패", content = @Content(schema = @Schema(name = "플레이어 아바타 변경 실패", example = "에러 메시지(플레이어 정보 없음 등)"), mediaType = "application/json"))
     })
-    public ResponseEntity<ResPlayerInfoDto> changePlayerAvatar(@RequestBody ReqAvatarDto reqBody) {
+    public ResponseEntity<ResPlayerInfoDto> changePlayerAvatar(@RequestBody com.vsquad.iroas.aggregate.dto.request.ReqAvatarDto reqBody) {
 
         String maskColor = reqBody.getMaskColor();
 
