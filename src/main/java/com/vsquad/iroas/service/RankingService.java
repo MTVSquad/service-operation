@@ -1,8 +1,7 @@
 package com.vsquad.iroas.service;
 
-import com.vsquad.iroas.aggregate.dto.RankingDto;
-import com.vsquad.iroas.aggregate.dto.ReqRankingDto;
-import com.vsquad.iroas.aggregate.dto.ResRankingDto;
+import com.vsquad.iroas.aggregate.dto.request.ReqRankingDto;
+import com.vsquad.iroas.aggregate.dto.response.ResRankingDto;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.entity.Ranking;
 import com.vsquad.iroas.aggregate.vo.PlayTime;
