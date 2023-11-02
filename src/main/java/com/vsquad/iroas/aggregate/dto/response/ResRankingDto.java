@@ -1,6 +1,5 @@
-package com.vsquad.iroas.aggregate.dto.response;
+package com.vsquad.iroas.aggregate.dto;
 
-import com.vsquad.iroas.aggregate.dto.PlayTimeDto;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.entity.Ranking;
 import io.swagger.v3.oas.annotations.media.Schema;

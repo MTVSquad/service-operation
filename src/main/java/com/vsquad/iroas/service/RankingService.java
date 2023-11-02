@@ -1,7 +1,8 @@
 package com.vsquad.iroas.service;
 
+
+import com.vsquad.iroas.aggregate.dto.ResRankingDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqRankingDto;
-import com.vsquad.iroas.aggregate.dto.response.ResRankingDto;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.entity.Ranking;
 import com.vsquad.iroas.aggregate.vo.PlayTime;
@@ -64,34 +65,34 @@ public class RankingService {
                 long minutes = duration.toMinutes();
 
                 isRaking
-                    .ifPresentOrElse(
-                            (foundRanking) -> {
+                        .ifPresentOrElse(
+                                (foundRanking) -> {
 
-                                // 랭킹이 있으면 업데이트
-                                foundRanking.setPlayTime(new PlayTime(playStartTime, playClearTime));
-                                foundRanking.setPlayCount(foundRanking.getPlayCount() + 1);
-                                foundRanking.setClearCount(foundRanking.getClearCount() + 1);
-                            },
-                            () -> {
-                                // 랭킹이 없으면 추가
-                                Ranking ranking = new Ranking(player, creatorMapId, new PlayTime(playStartTime, playClearTime), 1, 1);
-                                rankingRepository.save(ranking);
-                            }
-                    );
+                                    // 랭킹이 있으면 업데이트
+                                    foundRanking.setPlayTime(new PlayTime(playStartTime, playClearTime));
+                                    foundRanking.setPlayCount(foundRanking.getPlayCount() + 1);
+                                    foundRanking.setClearCount(foundRanking.getClearCount() + 1);
+                                },
+                                () -> {
+                                    // 랭킹이 없으면 추가
+                                    Ranking ranking = new Ranking(player, creatorMapId, new PlayTime(playStartTime, playClearTime), 1, 1);
+                                    rankingRepository.save(ranking);
+                                }
+                        );
             } else {
                 // 랭킹이 있는지 확인
                 isRaking
-                    .ifPresentOrElse(
-                            (foundRanking) -> {
-                                // 랭킹이 있으면 업데이트
-                                foundRanking.setPlayCount(foundRanking.getPlayCount() + 1);
-                            },
-                            () -> {
-                                // 랭킹이 없으면 추가
-                                Ranking ranking = new Ranking(player, creatorMapId, new PlayTime(playStartTime, playClearTime), 1, 0);
-                                rankingRepository.save(ranking);
-                            }
-                    );
+                        .ifPresentOrElse(
+                                (foundRanking) -> {
+                                    // 랭킹이 있으면 업데이트
+                                    foundRanking.setPlayCount(foundRanking.getPlayCount() + 1);
+                                },
+                                () -> {
+                                    // 랭킹이 없으면 추가
+                                    Ranking ranking = new Ranking(player, creatorMapId, new PlayTime(playStartTime, playClearTime), 1, 0);
+                                    rankingRepository.save(ranking);
+                                }
+                        );
             }
         }
     }

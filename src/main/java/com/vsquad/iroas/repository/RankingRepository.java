@@ -1,5 +1,6 @@
 package com.vsquad.iroas.repository;
 
+import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.entity.Ranking;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,5 +17,5 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
     @EntityGraph(attributePaths = {"player"}, type = EntityGraph.EntityGraphType.LOAD)
     Page<Ranking> findByCreatorMapId(String creatorMapId, Pageable pageable);
 
-    Optional<Ranking> findByPlayerIdAndCreatorMapId(Long playerId, String creatorMapId);
+    Optional<Ranking> findByPlayerAndCreatorMapId(Player player, String creatorMapId);
 }
