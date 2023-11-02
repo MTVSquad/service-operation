@@ -12,6 +12,6 @@ import lombok.ToString;
 @ToString
 public class ResMessageDto {
 
-    @Schema(description = "응답 메시지")
+    @Schema(name = "응답 메시지")
     private String message;
 }

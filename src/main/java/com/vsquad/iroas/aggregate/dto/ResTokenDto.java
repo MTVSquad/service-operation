@@ -12,9 +12,9 @@ import lombok.ToString;
 @ToString
 public class ResTokenDto {
 
-    @Schema(description = "토큰")
+    @Schema(name = "토큰")
     private String token;
 
-    @Schema(description = "응답 메시지")
+    @Schema(name = "응답 메시지")
     private String message;
 }
