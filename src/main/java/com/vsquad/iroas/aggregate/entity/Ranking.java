@@ -25,10 +25,9 @@ public class Ranking {
     @Comment("랭킹 식별자")
     private Long rankingId;
 
-    @JoinColumn(name = "PLAYER_ID")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Column(name = "PLAYER_ID")
     @Comment("플레이어")
-    private Player player;
+    private Long playerId;
 
     @Column(name = "CREATOR_MAP_ID")
     @Comment("커스텀 모드 유즈맵")
@@ -45,8 +44,8 @@ public class Ranking {
     @Comment("클리어 횟수")
     private Integer clearCount;
 
-    public Ranking(Player player, String creatorMapId, PlayTime playTime, Integer playCount, Integer clearCount) {
-        this.player = player;
+    public Ranking(Long playerId, String creatorMapId, PlayTime playTime, Integer playCount, Integer clearCount) {
+        this.playerId = playerId;
         this.creatorMapId = creatorMapId;
         this.playTime = playTime;
         this.playCount = playCount;

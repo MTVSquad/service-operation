@@ -1,6 +1,9 @@
 package com.vsquad.iroas.service.auth;
 
+import antlr.Token;
 import com.vsquad.iroas.aggregate.dto.PlayerDto;
+import com.vsquad.iroas.aggregate.dto.ResPlayerInfoDto;
+import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.config.OAuth2Config;
 import com.vsquad.iroas.config.token.PlayerPrincipal;
 import com.vsquad.iroas.config.token.TokenMapping;
@@ -10,14 +13,17 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
