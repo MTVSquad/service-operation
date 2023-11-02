@@ -1,7 +1,7 @@
 package com.vsquad.iroas.service;
 
 import com.vsquad.iroas.aggregate.dto.PlayerDto;
-import com.vsquad.iroas.aggregate.dto.response.ResPlayerInfoDto;
+import com.vsquad.iroas.aggregate.dto.ResPlayerInfoDto;
 import com.vsquad.iroas.aggregate.entity.Avatar;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.vo.Nickname;
@@ -12,6 +12,7 @@ import com.vsquad.iroas.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

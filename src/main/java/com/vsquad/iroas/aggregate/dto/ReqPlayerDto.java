@@ -1,4 +1,4 @@
-package com.vsquad.iroas.aggregate.dto.request;
+package com.vsquad.iroas.aggregate.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
