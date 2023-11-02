@@ -3,6 +3,7 @@ package com.vsquad.iroas.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vsquad.iroas.aggregate.dto.*;
+import com.vsquad.iroas.aggregate.dto.request.ReqAvatarDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqPlayerDto;
 import com.vsquad.iroas.aggregate.dto.response.*;
 import com.vsquad.iroas.config.exception.PlayerNotFoundException;
