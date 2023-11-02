@@ -1,7 +1,7 @@
 package com.vsquad.iroas.service;
 
+import com.vsquad.iroas.aggregate.dto.request.ReqPlayerDto;
 import com.vsquad.iroas.aggregate.dto.PlayerDto;
-import com.vsquad.iroas.aggregate.dto.ReqPlayerDto;
 import com.vsquad.iroas.aggregate.entity.Avatar;
 import com.vsquad.iroas.aggregate.entity.Item;
 import com.vsquad.iroas.aggregate.entity.Player;
@@ -18,12 +18,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 

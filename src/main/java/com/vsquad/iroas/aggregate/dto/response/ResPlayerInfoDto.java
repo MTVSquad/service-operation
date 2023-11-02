@@ -1,4 +1,4 @@
-package com.vsquad.iroas.aggregate.dto;
+package com.vsquad.iroas.aggregate.dto.response;
 
 import com.vsquad.iroas.aggregate.entity.Player;
 import lombok.AllArgsConstructor;

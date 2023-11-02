@@ -1,14 +1,13 @@
 package com.vsquad.iroas.controller;
 
 import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
-import com.vsquad.iroas.aggregate.dto.ResCreatorMapDto;
-import com.vsquad.iroas.aggregate.dto.ResMessageDto;
-import com.vsquad.iroas.aggregate.dto.ResponseDto;
+import com.vsquad.iroas.aggregate.dto.response.*;
 import com.vsquad.iroas.service.CreatorMapService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,8 +31,8 @@ public class CreatorMapController {
 
     @PostMapping
     @Operation(summary = "크리에이터 맵 추가", description = "크리에이터 맵을 추가합니다.", responses = {
-            @ApiResponse(responseCode = "201", description = "맵 추가 성공", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "맵 추가 실패", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(name = "맵 추가 실패", example = "에러 메시지"), mediaType = "application/json"))
+            @ApiResponse(responseCode = "201", description = "맵 추가 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "맵 추가 실패", content = @Content(schema = @Schema(implementation = ResErrorMessage.class), mediaType = "application/json"))
     })
     public ResponseEntity<ResMessageDto> addCreatorMap(@RequestBody CreatorMapDto reqDto) {
         try {
@@ -54,8 +53,8 @@ public class CreatorMapController {
 
     @GetMapping("/{creatorMapId}")
     @Operation(summary = "크리에이터 맵 조회", description = "크리에이터 맵을 조회합니다.", responses = {
-            @ApiResponse(responseCode = "200", description = "맵 조회 성공", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResCreatorMapDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "맵 조회 실패", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(name = "맵 조회 실패", example = "에러 메시지"), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "맵 조회 성공", content = @Content(schema = @Schema(implementation = ResCreatorMapDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "맵 조회 실패", content = @Content(schema = @Schema(implementation = ResponseError.class), mediaType = "application/json"))
     })
     public ResponseEntity<ResCreatorMapDto> getCreatorMap(@PathVariable String creatorMapId) {
         try {
@@ -79,8 +78,8 @@ public class CreatorMapController {
 
     @GetMapping
     @Operation(summary = "크리에이터 맵 목록 조회", description = "정렬 값, 정렬 순서, 페이지 당 요소 수, 페이지 번호를 입력, 조건에 맞는 요소 목록 조회", responses = {
-            @ApiResponse(responseCode = "200", description = "맵 목록 조회 성공", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Page.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "맵 목록 조회 실패", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(name = "맵 목록 조회 실패", example = "에러 메시지"), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "맵 목록 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "맵 목록 조회 실패", content = @Content(schema = @Schema(implementation = ResponseError.class), mediaType = "application/json"))
     })
     @Parameters({
             @Parameter(name = "size", description = "화면에 보여줄 요소의 숫자를 결정합니다.", example = "10"),
@@ -89,7 +88,7 @@ public class CreatorMapController {
                     example = "createTime", in = ParameterIn.QUERY),
             @Parameter(name = "direction", description = "정렬 방향", schema = @Schema(allowableValues = {"asc", "desc"}), example = "asc")
     })
-    public ResponseEntity<ResponseDto> getCreatorMapList(@PageableDefault @Parameter(hidden = true) Pageable pageable) {
+    public ResponseEntity<ResponseDto<Page<CreatorMapDto>>> getCreatorMapList(@PageableDefault @Parameter(hidden = true) Pageable pageable) {
         try {
             log.info("맵 목록 조회");
 
@@ -109,8 +108,8 @@ public class CreatorMapController {
 
     @DeleteMapping("/{creatorMapId}")
     @Operation(summary = "크리에이터 맵 제거", description = "맵을 삭제 합니다.", responses = {
-            @ApiResponse(responseCode = "200", description = "맵 제거 성공", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "맵 제거 실패", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(name = "맵 제거 실패", example = "에러 메시지"), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "맵 제거 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "맵 제거 실패", content = @Content(schema = @Schema(implementation = ResErrorMessage.class), mediaType = "application/json"))
     })
     public ResponseEntity<ResMessageDto> deleteCreatorMap(@PathVariable String creatorMapId) {
         try {
