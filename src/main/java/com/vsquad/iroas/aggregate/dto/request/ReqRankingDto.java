@@ -1,4 +1,4 @@
-package com.vsquad.iroas.aggregate.dto;
+package com.vsquad.iroas.aggregate.dto.request;
 
 import com.vsquad.iroas.aggregate.entity.Ranking;
 import io.swagger.v3.oas.annotations.media.Schema;

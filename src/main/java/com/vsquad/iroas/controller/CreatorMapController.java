@@ -1,9 +1,9 @@
 package com.vsquad.iroas.controller;
 
 import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
-import com.vsquad.iroas.aggregate.dto.ResCreatorMapDto;
-import com.vsquad.iroas.aggregate.dto.ResMessageDto;
-import com.vsquad.iroas.aggregate.dto.ResponseDto;
+import com.vsquad.iroas.aggregate.dto.response.ResCreatorMapDto;
+import com.vsquad.iroas.aggregate.dto.response.ResMessageDto;
+import com.vsquad.iroas.aggregate.dto.response.ResponseDto;
 import com.vsquad.iroas.service.CreatorMapService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

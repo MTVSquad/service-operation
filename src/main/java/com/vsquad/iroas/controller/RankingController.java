@@ -1,9 +1,10 @@
 package com.vsquad.iroas.controller;
 
-import com.vsquad.iroas.aggregate.dto.ReqRankingDto;
-import com.vsquad.iroas.aggregate.dto.ResMessageDto;
-import com.vsquad.iroas.aggregate.dto.ResRankingDto;
-import com.vsquad.iroas.aggregate.dto.ResponseDto;
+import com.vsquad.iroas.aggregate.dto.request.ReqRankingDto;
+import com.vsquad.iroas.aggregate.dto.response.ResMessageDto;
+import com.vsquad.iroas.aggregate.dto.response.ResRankingDto;
+import com.vsquad.iroas.aggregate.dto.response.ResponseDto;
+import com.vsquad.iroas.aggregate.dto.response.ResponseError;
 import com.vsquad.iroas.service.RankingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,10 +34,8 @@ public class RankingController {
 
     @PostMapping
     @Operation(summary = "랭킹 추가", description = "랭킹을 추가합니다.", responses = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "랭킹 추가 성공", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "랭킹 추가 실패", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(name = "랭킹 추가 실패", example = "에러 메시지"), mediaType = "application/json")),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "랭킹 추가 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "랭킹 추가 실패", content = @Content(schema = @Schema(name = "랭킹 추가 실패", example = "에러 메시지"), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "랭킹 추가 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "랭킹 추가 실패", content = @Content(schema = @Schema(implementation = ResponseError.class), mediaType = "application/json"))
     })
     public ResponseEntity<ResMessageDto> addRanking(@RequestBody ReqRankingDto req) {
         try {
@@ -54,11 +53,9 @@ public class RankingController {
 
     @GetMapping
     @Operation(summary = "랭킹 조회", responses = {
-            @ApiResponse(responseCode = "200", description = "랭킹 조회 성공", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "랭킹 조회 실패", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(name = "랭킹 조회 실패", example = "에러 메시지"), mediaType = "application/json")),
             @ApiResponse(responseCode = "200", description = "랭킹 조회 성공"),
             @ApiResponse(responseCode = "400", description = "랭킹 조회 실패",
-                    content = @Content(schema = @Schema(name = "랭킹 조회 실패", example = "에러 메시지"),
+                    content = @Content(schema = @Schema(implementation = ResMessageDto.class),
                     mediaType = "application/json"))
     })
     @Parameters({
@@ -67,7 +64,7 @@ public class RankingController {
             @Parameter(name = "size", description = "페이지 크기", example = "10"),
             @Parameter(name = "sort", description = "정렬 방식")
     })
-    public ResponseEntity<ResponseDto> getRanking(@RequestParam @Parameter(hidden = true) String creatorMapId, @PageableDefault @Parameter(hidden = true) Pageable pageable) {
+    public ResponseEntity<ResponseDto<Page<ResRankingDto>>> getRanking(@RequestParam @Parameter(hidden = true) String creatorMapId, @PageableDefault @Parameter(hidden = true) Pageable pageable) {
         try {
             log.info("랭킹 조회");
 

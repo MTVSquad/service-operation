@@ -1,4 +1,4 @@
-package com.vsquad.iroas.aggregate.dto;
+package com.vsquad.iroas.aggregate.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -10,11 +10,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ResTokenDto {
+public class ResMessageDto {
 
-    @Schema(name = "토큰")
-    private String token;
-
-    @Schema(name = "응답 메시지")
+    @Schema(description = "응답 메시지")
     private String message;
 }
