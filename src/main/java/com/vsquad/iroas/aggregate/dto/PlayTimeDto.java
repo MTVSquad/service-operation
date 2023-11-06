@@ -1,5 +1,6 @@
 package com.vsquad.iroas.aggregate.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.vsquad.iroas.aggregate.vo.PlayTime;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -14,9 +15,11 @@ import java.time.LocalDateTime;
 public class PlayTimeDto {
 
     @Schema(description = "플레이 시작 시간")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime playStartTime;
 
     @Schema(description = "플레이 종료 시간")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime playClearTime;
 
     @Schema(description = "플레이 시간")

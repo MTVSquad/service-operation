@@ -14,9 +14,6 @@ import java.time.LocalDateTime;
 @ToString
 public class ReqRankingDto {
 
-    @Schema(description = "플레이어")
-    private Long playerId;
-
     @Schema(description = "커스텀 모드 유즈맵")
     private String creatorMapId;
 

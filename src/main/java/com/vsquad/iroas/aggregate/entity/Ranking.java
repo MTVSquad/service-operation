@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.Table;
+import org.springframework.data.jpa.repository.Lock;
 
 import javax.persistence.*;
 
@@ -24,6 +25,9 @@ public class Ranking {
     @Column(name = "RANKING_ID")
     @Comment("랭킹 식별자")
     private Long rankingId;
+
+    @Version
+    private Long version;
 
     @JoinColumn(name = "PLAYER_ID")
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

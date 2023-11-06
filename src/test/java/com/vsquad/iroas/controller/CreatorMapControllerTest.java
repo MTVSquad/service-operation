@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.vsquad.iroas.aggregate.dto.EnemySpawnerDto;
 import com.vsquad.iroas.aggregate.dto.PropDto;
 import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
+import com.vsquad.iroas.aggregate.dto.request.ReqCreatorMapDto;
 import com.vsquad.iroas.aggregate.entity.CreatorMap;
 import com.vsquad.iroas.repository.CreatorMapRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +49,7 @@ class CreatorMapControllerTest {
     private CreatorMap creatorMap;
 
     @Mock
-    private CreatorMapDto reqCreatorMapDto;
+    private ReqCreatorMapDto reqCreatorMapDto;
 
     @Autowired
     private CreatorMapRepository creatorMapRepository;
@@ -82,10 +83,14 @@ class CreatorMapControllerTest {
         List<Double> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
-        CreatorMapDto mapDto = new CreatorMapDto(uuid, "testMap", "MELEE", 1L, LocalDateTime.now(),
+        ReqCreatorMapDto mapDto = new ReqCreatorMapDto( "MELEE", LocalDateTime.now(),
                 90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
+        // 플레이어를 추가하기 그래서 임의로 수정함
         CreatorMap map = mapDto.convertToEntity(mapDto);
+        map.setCreatorMapId(uuid);
+        map.setCreatorMapName("testNick의 맵");
+        map.setCreator("testNick");
 
         creatorMap = creatorMapRepository.save(map);
     }
@@ -116,14 +121,15 @@ class CreatorMapControllerTest {
         List<Double> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
-        reqCreatorMapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", 1L, LocalDateTime.now(),
-                90.00D, 90.00D, 90.00D, 90.00D,  "Morning", enemySpawnerList, propList);
+        // 맵 name(player's 맵) player를 추가해야 되서 임의로 작성함
+        reqCreatorMapDto = new ReqCreatorMapDto("MELEE", LocalDateTime.now(),
+                90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
         // dto 객체 json으로 변환
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper
-                        .registerModule(new JavaTimeModule())
-                        .writeValueAsString(reqCreatorMapDto);
+                .registerModule(new JavaTimeModule())
+                .writeValueAsString(reqCreatorMapDto);
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/api/v1/maps")

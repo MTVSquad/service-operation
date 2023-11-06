@@ -1,6 +1,7 @@
 package com.vsquad.iroas.controller;
 
 import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
+import com.vsquad.iroas.aggregate.dto.request.ReqCreatorMapDto;
 import com.vsquad.iroas.aggregate.dto.response.*;
 import com.vsquad.iroas.service.CreatorMapService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,10 +37,10 @@ public class CreatorMapController {
             @ApiResponse(responseCode = "201", description = "맵 추가 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "맵 추가 실패", content = @Content(schema = @Schema(implementation = ResErrorMessage.class), mediaType = "application/json"))
     })
-    public ResponseEntity<ResMessageDto> addCreatorMap(@RequestBody CreatorMapDto reqDto) {
+    public ResponseEntity<ResMessageDto> addCreatorMap(@RequestBody ReqCreatorMapDto reqDto) {
         try {
-            log.info("새로운 맵 추가 ::{}", reqDto.getCreator().toString() + "의" + reqDto.getCreatorMapName() + "맵");
 
+            log.info("크리에이터 맵 추가");
             creatorMapService.addCreatorMap(reqDto);
             ResMessageDto resDto = new ResMessageDto("새로운 맵 추가 완료");
 

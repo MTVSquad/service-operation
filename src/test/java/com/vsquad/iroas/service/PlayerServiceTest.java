@@ -1,7 +1,6 @@
 package com.vsquad.iroas.service;
 
 import com.vsquad.iroas.aggregate.dto.request.ReqPlayerDto;
-import com.vsquad.iroas.aggregate.dto.PlayerDto;
 import com.vsquad.iroas.aggregate.entity.Avatar;
 import com.vsquad.iroas.aggregate.entity.Item;
 import com.vsquad.iroas.aggregate.entity.Player;
@@ -56,7 +55,6 @@ class PlayerServiceTest {
                 .nickname(new Nickname("히에로스"))
                 .playerMoney(1000L)
                 .playerItems("[1,2,3]")
-                .playerRole("ROLE_PLAYER")
                 .build();
 
         player = playerRepository.save(player);
@@ -100,16 +98,14 @@ class PlayerServiceTest {
     void steamLoginSuccessTest() {
 
         // given
-        Long playerId = player.getPlayerId();
-        String playerSteamKey = player.getPlayerSteamKey();
-        String playerNickname = player.getNickname().getPlayerNickname();
-        String playerRole = player.getPlayerRole();
-
-        // player 정보 반환 하기 위해 dto로 변환
-        PlayerDto playerDto = new PlayerDto(playerId, playerSteamKey, playerNickname, playerRole);
+        String uuid = player.getPlayerSteamKey();
 
         // when
-        String token = customTokenProviderService.generateToken(playerDto);
+        UserDetails user = userService.loadUserByUsername(uuid);
+
+        TokenMapping tokenMapping = customTokenProviderService.createToken((Authentication) user.getAuthorities());
+
+        String token = tokenMapping.getAccessToken();
 
         // then
         assertNotNull(token);
@@ -355,7 +351,7 @@ class PlayerServiceTest {
         });
 
         Assertions.assertThrows(NoSuchElementException.class, () -> {
-           avatarRepository.findByPlayerId(foundPlayer.getPlayerId()).orElseThrow();
+            avatarRepository.findByPlayerId(foundPlayer.getPlayerId()).orElseThrow();
         }, "에러 출력 되지 않음...");
 
         assertNull(changedPlayer.getPlayerAvatar());
@@ -400,83 +396,83 @@ class PlayerServiceTest {
     @DisplayName("중복된 닉네임 체크")
     void duplicatedNicknameCheckTest() {
 
-            // given
-            String nickname = player.getNickname().getPlayerNickname();
-            Nickname newNickname = new Nickname(nickname);
+        // given
+        String nickname = player.getNickname().getPlayerNickname();
+        Nickname newNickname = new Nickname(nickname);
 
-            // then
-            Assertions.assertThrows(IllegalArgumentException.class, () -> {
-                Player foundPlayer = playerRepository.findByNickname(newNickname).orElseThrow(() -> {
-                    throw new IllegalArgumentException("플레이어 정보를 찾을 수 없습니다.");
-                });
+        // then
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            Player foundPlayer = playerRepository.findByNickname(newNickname).orElseThrow(() -> {
+                throw new IllegalArgumentException("플레이어 정보를 찾을 수 없습니다.");
+            });
 
-                if(foundPlayer != null) {
-                    throw new IllegalArgumentException("중복된 닉네임");
-                }
+            if(foundPlayer != null) {
+                throw new IllegalArgumentException("중복된 닉네임");
+            }
 
-            }, "에러 출력 되지 않음...");
+        }, "에러 출력 되지 않음...");
     }
 
     @Test
     @DisplayName("플레이어 정보 조회 실패, 닉네임 불일치")
     void readPlayerInfoFailTest() {
 
-            // given
-            Long playerId = player.getPlayerId();
+        // given
+        Long playerId = player.getPlayerId();
 
-            // 플레이어 아바타 추가
-            String playerMaskColor = "red";
+        // 플레이어 아바타 추가
+        String playerMaskColor = "red";
 
-            Avatar avatar = new Avatar(playerId, playerMaskColor);
-            avatarRepository.save(avatar);
+        Avatar avatar = new Avatar(playerId, playerMaskColor);
+        avatarRepository.save(avatar);
 
-            Nickname testNickname = new Nickname("테스트1");
+        Nickname testNickname = new Nickname("테스트1");
 
-            // when
-            assertNotEquals(player.getNickname(), testNickname);
+        // when
+        assertNotEquals(player.getNickname(), testNickname);
 
-            // then
-            Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        // then
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
 
-                playerRepository.findByNickname(testNickname).orElseThrow(() -> {
-                    throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
-                });
-            }, "에러 출력 되지 않음...");
+            playerRepository.findByNickname(testNickname).orElseThrow(() -> {
+                throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
+            });
+        }, "에러 출력 되지 않음...");
     }
 
     @Test
     @DisplayName("아이템 추가")
     void saveItemTest() {
 
-            // given
-            Item item = new Item("기관총", "총", 100);
+        // given
+        Item item = new Item("기관총", "총", 100);
 
-            // when
-            itemRepository.save(item);
+        // when
+        itemRepository.save(item);
 
-            // then
-            Item foundItem = itemRepository.findById(item.getItemId()).orElseThrow(() -> {
-                throw new IllegalArgumentException("저장된 아이템이 없습니다.");
-            });
+        // then
+        Item foundItem = itemRepository.findById(item.getItemId()).orElseThrow(() -> {
+            throw new IllegalArgumentException("저장된 아이템이 없습니다.");
+        });
 
-            assertNotNull(foundItem);
+        assertNotNull(foundItem);
     }
 
     @Test
     @DisplayName("플레이어 아이템 정보 조회 성공")
     void readPlayerItemsSuccessTest() {
 
-            // given
-            // 아이템 정보 추가
-            saveItemTest();
+        // given
+        // 아이템 정보 추가
+        saveItemTest();
 
-            // when
-            Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> {
-                throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
-            });
+        // when
+        Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> {
+            throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
+        });
 
-            // then
-            assertNotNull(foundPlayer.getPlayerItems());
+        // then
+        assertNotNull(foundPlayer.getPlayerItems());
     }
 
     @Test
@@ -507,16 +503,16 @@ class PlayerServiceTest {
     @DisplayName("플레이어 소지금 정보 조회 성공 테스트 ")
     void readPlayerMoneySuccessTest() {
 
-            // given
-            savePlayerMoneySuccessTest();
+        // given
+        savePlayerMoneySuccessTest();
 
-            // when
-            Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> {
-                throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
-            });
+        // when
+        Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> {
+            throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
+        });
 
-            // then
-            assertNotNull(foundPlayer.getPlayerMoney());
+        // then
+        assertNotNull(foundPlayer.getPlayerMoney());
     }
 
     @Test

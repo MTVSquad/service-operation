@@ -57,7 +57,7 @@ class RankingControllerTest {
         boolean clearYn = true;
 
         // dto 객체 생성
-        dto = new ReqRankingDto(1L, "abc998", oneHourAgo, currentDateTime, clearYn);
+        dto = new ReqRankingDto("abc998", oneHourAgo, currentDateTime, clearYn);
 
         // dto 객체 json으로 변환
         ObjectMapper objectMapper = new ObjectMapper();

@@ -1,13 +1,19 @@
-package com.vsquad.iroas.aggregate.dto;
+package com.vsquad.iroas.aggregate.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
+import com.vsquad.iroas.aggregate.dto.CustomLocalDateTimeDeserializer;
+import com.vsquad.iroas.aggregate.dto.EnemySpawnerDto;
+import com.vsquad.iroas.aggregate.dto.PropDto;
 import com.vsquad.iroas.aggregate.entity.CreatorMap;
 import com.vsquad.iroas.aggregate.entity.EnemySpawner;
 import com.vsquad.iroas.aggregate.entity.Prop;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
@@ -17,20 +23,10 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreatorMapDto {
-
-    @Schema(name = "creatorMapId", description = "맵 식별자")
-    private String creatorMapId;
-
-    @Schema(name = "creatorMapName", description = "맵 이름은 2~12자 한글, 영문 대소문자, 숫자만 가능")
-    @Pattern(regexp = "^[가-힣a-zA-Z0-9]{2,12}$")
-    private String creatorMapName;
+public class ReqCreatorMapDto {
 
     @Schema(name = "creatorMapType", description = "맵 타입", allowableValues = {"MELEE", "TIME_ATTACK"})
     private String creatorMapType;
-
-    @Schema(name = "creator", description = "맵 생성자")
-    private String creator;
 
     @Schema(name = "createTime", description = "맵 생성 시간", example = "2023-10-25 06:25:56", defaultValue = "2023-10-25 06:25:56")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -58,7 +54,7 @@ public class CreatorMapDto {
     @Schema(name = "propList", description = "구조물 목록")
     private List<PropDto> propList;
 
-    public CreatorMap convertToEntity(CreatorMapDto creatorMapDto) throws JsonProcessingException {
+    public CreatorMap convertToEntity(ReqCreatorMapDto creatorMapDto) throws JsonProcessingException {
 
         if(creatorMapDto == null) {
             return null;
@@ -79,10 +75,7 @@ public class CreatorMapDto {
         }
 
         CreatorMap creatorMap = new CreatorMap();
-//        creatorMap.setCreatorMapId(creatorMapDto.getCreatorMapId());
-//        creatorMap.setCreatorMapName(creatorMapDto.getCreatorMapName());
         creatorMap.setCreatorMapType(creatorMapDto.getCreatorMapType());
-//        creatorMap.setCreator(creatorMapDto.getCreator());
         creatorMap.setCreateTime(creatorMapDto.getCreateTime());
         creatorMap.setPlayerStartPointXLocation(creatorMapDto.getPlayerStartPointXLocation());
         creatorMap.setPlayerStartPointYLocation(creatorMapDto.getPlayerStartPointYLocation());

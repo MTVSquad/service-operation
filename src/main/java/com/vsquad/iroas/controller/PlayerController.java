@@ -3,8 +3,12 @@ package com.vsquad.iroas.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vsquad.iroas.aggregate.dto.*;
+import com.vsquad.iroas.aggregate.dto.request.ReqAvatarDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqPlayerDto;
-import com.vsquad.iroas.aggregate.dto.response.*;
+import com.vsquad.iroas.aggregate.dto.response.ResMessageDto;
+import com.vsquad.iroas.aggregate.dto.response.ResPlayerInfoDto;
+import com.vsquad.iroas.aggregate.dto.response.ResTokenDto;
+import com.vsquad.iroas.aggregate.dto.response.ResponseDto;
 import com.vsquad.iroas.config.exception.PlayerNotFoundException;
 import com.vsquad.iroas.config.exception.SteamUserNotFoundException;
 import com.vsquad.iroas.service.PlayerService;
@@ -50,7 +54,7 @@ public class PlayerController {
     @GetMapping("/login")
     @Operation(summary = "로그인", description = "스팀에서 받아온 식별 정보를 가지고 로그인 합니다.", responses = {
             @ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(schema = @Schema(implementation = ResponseDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "로그인 실패", content = @Content(schema = @Schema(implementation = ResponseError.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "400", description = "로그인 실패", content = @Content(schema = @Schema(name = "로그인 실패", example = "에러 메시지(스팀 유저를 찾을 수 없음 등)"), mediaType = "application/json"))
     })
     @Parameter(name = "steamKey", description = "스팀에서 받아온 회원 식별 정보", in = ParameterIn.QUERY)
     public ResponseEntity<ResTokenDto> steamLogin(@RequestParam String steamKey) {
@@ -85,7 +89,7 @@ public class PlayerController {
     @PostMapping
     @Operation(summary = "플레이어 추가", description = "스팀에서 받아온 식별 정보와 닉네임을 가지고 플레이어를 생성 합니다.", responses = {
             @ApiResponse(responseCode = "201", description = "플레이어 추가 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "플레이어 추가 실패", content = @Content(schema = @Schema(implementation = ResponseError.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "400", description = "플레이어 추가 실패", content = @Content(schema = @Schema(name = "플레이어 추가 실패", example = "에러 메시지(닉네임 중복 등)"), mediaType = "application/json"))
     })
     public ResponseEntity<ResTokenDto> addPlayer(@RequestBody ReqPlayerDto reqBody) {
 
@@ -158,10 +162,10 @@ public class PlayerController {
 
     @PostMapping("/avatar")
     @Operation(summary = "플레이어 아바타 추가", description = "플레이어 아바타를 추가 합니다.", responses = {
-            @ApiResponse(responseCode = "201", description = "플레이어 아바타 추가 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "플레이어 아바타 추가 실패", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "201", description = "플레이어 아바타 추가 성공", content = @Content(schema = @Schema(name = "플레이어 아바타 추가 성공", example = "성공 메시지(문자열)"), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "플레이어 아바타 추가 실패", content = @Content(schema = @Schema(name = "플레이어 아바타 추가 실패", example = "에러 메시지(플레이어 정보 없음 등)"), mediaType = "application/json"))
     })
-    public ResponseEntity<ResMessageDto> addPlayerAvatar(@RequestBody com.vsquad.iroas.aggregate.dto.request.ReqAvatarDto reqBody) {
+    public ResponseEntity<ResMessageDto> addPlayerAvatar(@RequestBody ReqAvatarDto reqBody) {
 
         String maskColor = reqBody.getMaskColor();
 
@@ -170,7 +174,7 @@ public class PlayerController {
             playerService.addPlayerAvatar(maskColor);
 
             ResMessageDto resDto = new ResMessageDto("플레이어 아바타가 추가되었습니다.");
-            
+
             log.info("플레이어 아바타 추가 성공");
             return new ResponseEntity<>(resDto, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
@@ -186,9 +190,9 @@ public class PlayerController {
     @PatchMapping("/avatar")
     @Operation(summary = "플레이어 아바타 변경", description = "플레이어 아바타에서 마스크 컬러를 변경 합니다.", responses = {
             @ApiResponse(responseCode = "200", description = "플레이어 아바타 변경 성공", content = @Content(schema = @Schema(implementation = ResPlayerInfoDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "플레이어 아바타 변경 실패", content = @Content(schema = @Schema(implementation = ResErrorMessage.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "400", description = "플레이어 아바타 변경 실패", content = @Content(schema = @Schema(name = "플레이어 아바타 변경 실패", example = "에러 메시지(플레이어 정보 없음 등)"), mediaType = "application/json"))
     })
-    public ResponseEntity<ResPlayerInfoDto> changePlayerAvatar(@RequestBody com.vsquad.iroas.aggregate.dto.request.ReqAvatarDto reqBody) {
+    public ResponseEntity<ResPlayerInfoDto> changePlayerAvatar(@RequestBody ReqAvatarDto reqBody) {
 
         String maskColor = reqBody.getMaskColor();
 
@@ -209,39 +213,37 @@ public class PlayerController {
     @GetMapping("/info")
     @Operation(summary = "플레이어 정보 조회", description = "플레이어 정보를 조회 합니다.", responses = {
             @ApiResponse(responseCode = "200", description = "플레이어 정보 조회 성공", content = @Content(schema = @Schema(implementation = ResPlayerInfoDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "플레이어 정보 조회 실패", content = @Content(schema = @Schema(implementation = ResponseError.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "400", description = "플레이어 정보 조회 실패", content = @Content(schema = @Schema(name = "플레이어 정보 조회 실패", example = "에러 메시지(플레이어 정보 없음 등)"), mediaType = "application/json"))
     })
-    public ResponseEntity<ResponseDto<ResPlayerInfoDto>> readPlayerInfo() {
+    public ResponseEntity<ResPlayerInfoDto> readPlayerInfo() {
 
         try {
             log.info("플레이어 정보 조회");
             ResPlayerInfoDto resDto = playerService.readPlayerInfo();
 
             log.info("플레이어 정보 조회 완료");
-            ResponseDto responseDto = new ResponseDto(resDto, "플레이어 정보 조회 완료");
-            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+            return new ResponseEntity<>(resDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             log.info("플레이어 정보 조회 실패");
             log.warn(e.getMessage());
 
-            ResponseDto responseDto = new ResponseDto(null, e.getMessage());
-            return ResponseEntity.badRequest().body(responseDto);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @PatchMapping("/nickname")
     @Operation(summary = "플레이어 닉네임 변경", description = "플레이어 닉네임을 수정합니다.", responses = {
-            @ApiResponse(responseCode = "200", description = "플레이어 닉네임 수정 성공", content = @Content(schema = @Schema(implementation = ResponseDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "플레이어 닉네임 수정 실패", content = @Content(schema = @Schema(implementation = ResponseError.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "플레이어 닉네임 수정 성공", content = @Content(schema = @Schema(implementation = ResPlayerInfoDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "플레이어 닉네임 수정 실패", content = @Content(schema = @Schema(name = "플레이어 닉네임 수정 실패", example = "에러 메시지(닉네임 중복)"), mediaType = "application/json"))
     })
     @Parameter(name = "nickname", description = "변경할 닉네임", example = "test", in = ParameterIn.QUERY)
-    public ResponseEntity<ResponseDto<ResPlayerInfoDto>> changePlayerNickname(@RequestParam String nickname) {
+    public ResponseEntity<ResponseDto> changePlayerNickname(@RequestParam String nickname) {
 
         try {
             log.info("플레이어 닉네임 수정");
             ResPlayerInfoDto body = playerService.changePlayerNickname(nickname);
             ResponseDto responseDto = new ResponseDto(body, "플레이어 닉네임이 수정되었습니다.");
-            
+
             log.info("플레이어 닉네임 수정 완료");
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -260,7 +262,7 @@ public class PlayerController {
     @DeleteMapping("/avatar")
     @Operation(summary = "플레이어 아바타 초기화", description = "플레이어 아바타를 초기화 합니다.", responses = {
             @ApiResponse(responseCode = "200", description = "플레이어 아바타 초기화 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "플레이어 아바타 초기화 실패", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "400", description = "플레이어 아바타 초기화 실패", content = @Content(schema = @Schema(name = "플레이어 아바타 제거 실패", example = "에러 메시지(플레이어 정보 없음 등)"), mediaType = "application/json"))
     })
     public ResponseEntity<ResMessageDto> deletePlayerAvatar() {
 
@@ -269,9 +271,9 @@ public class PlayerController {
 
             playerService.resetPlayerInfo();
             ResMessageDto resDto = new ResMessageDto("플레이어 아바타가 초기화 되었습니다.");
-            
+
             log.info("플레이어 아바타 초기화 완료");
-            
+
             return new ResponseEntity<>(resDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             log.warn(e.getMessage());
