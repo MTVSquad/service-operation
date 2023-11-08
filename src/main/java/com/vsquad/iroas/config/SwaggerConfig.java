@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 @OpenAPIDefinition(
         info = @Info(
@@ -24,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
         )
 )
 @Configuration
+@Profile({"prod", "dev"})
 public class SwaggerConfig {
 
         @Bean
