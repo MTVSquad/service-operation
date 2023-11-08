@@ -7,7 +7,8 @@ import org.hibernate.annotations.Table;
 import javax.persistence.*;
 
 @Entity
-@Table(appliesTo = "TB_CHANNEL", comment = "채널(서버 ex: 듀로탄 서버, 굴단 서버)")
+@javax.persistence.Table(name = "tb_channel")
+@Table(appliesTo = "tb_channel", comment = "채널(서버 ex: 듀로탄 서버, 굴단 서버)")
 @Data
 public class Channel {
 
@@ -17,7 +18,7 @@ public class Channel {
     @Comment("채널 식별자")
     private Integer channelId;
 
-    @Column(name = "CHANNEL-NAME")
+    @Column(name = "CHANNEL_NAME")
     @Comment("채널 이름")
     private String channelName;
 }

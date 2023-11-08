@@ -1,14 +1,19 @@
 package com.vsquad.iroas.aggregate.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.Table;
 
 import javax.persistence.*;
 
 @Entity
-@Table(appliesTo = "TB_Item", comment = "아이템")
+@javax.persistence.Table(name = "tb_item")
+@Table(appliesTo = "tb_item", comment = "아이템")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Item {
 
     @Id
@@ -28,4 +33,10 @@ public class Item {
     @Column(name = "ITEM_DAMAGE")
     @Comment("아이템 데미지")
     private Integer damage;
+
+    public Item(String itemName, String itemType, Integer damage) {
+        this.itemName = itemName;
+        this.itemType = itemType;
+        this.damage = damage;
+    }
 }
