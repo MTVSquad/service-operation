@@ -127,7 +127,7 @@ public class PlayerService {
 
             foundPlayer.setNickname(newNickname);
 
-            ResPlayerInfoDto resPlayerDto = new ResPlayerInfoDto(foundPlayer.getPlayerId(), foundPlayer.getPlayerSteamKey(), foundPlayer.getNickname().getPlayerNickname(), null, null);
+            ResPlayerInfoDto resPlayerDto = new ResPlayerInfoDto(foundPlayer.getPlayerId(), foundPlayer.getPlayerSteamKey(), foundPlayer.getNickname().getPlayerNickname());
 
             return resPlayerDto;
         } else {
@@ -153,16 +153,10 @@ public class PlayerService {
 
             Long foundPlayerId = foundPlayer.getPlayerId();
 
-            Avatar foundAvatar = avatarRepository.findByPlayerId(foundPlayerId).orElseThrow(() -> {
-                throw new NoSuchElementException("저장된 아바타가 없습니다.");
-            });
-
             String resPlayerNickname = foundPlayer.getNickname().getPlayerNickname();
             String resPlayerSteamKey = foundPlayer.getPlayerSteamKey();
-            Long avatarId = foundAvatar.getAvatarId();
-
             // player 정보 반환 하기 위해 dto로 변환
-            ResPlayerInfoDto resPlayerDto = new ResPlayerInfoDto(foundPlayerId, resPlayerNickname, resPlayerSteamKey, avatarId, "ROLE_PLAYER");
+            ResPlayerInfoDto resPlayerDto = new ResPlayerInfoDto(foundPlayerId, resPlayerNickname, resPlayerSteamKey);
             return resPlayerDto;
 
         } else {
