@@ -93,7 +93,12 @@ public class CreatorMapService {
 
             String nickname = userDetails.getName();
 
-            creatorMapRepository.deleteCreatorMapByCreatorMapIdAndCreator(creatorMapId, nickname);
+            creatorMapRepository.findByCreatorMapIdAndCreator(creatorMapId, nickname).orElseThrow(
+                    () -> new IllegalArgumentException()
+            );
+
+            creatorMapRepository.deleteById(creatorMapId);
+
         } else {
             throw new UsernameNotFoundException("플레이어 인증 정보를 찾을 수 없습니다.");
         }

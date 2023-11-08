@@ -123,10 +123,11 @@ public class CreatorMapController {
 
             ResMessageDto res = new ResMessageDto("맵 삭제 성공");
             return new ResponseEntity<>(res, HttpStatus.OK);
-        } catch (EmptyResultDataAccessException e) {
-            log.warn("맵 삭제 인자가 잘못 되었습니다.");
+        } catch (IllegalArgumentException e) {
+            String reason = "크리에이터 본인만 제거 가능";
+            log.warn(reason);
 
-            ResMessageDto res = new ResMessageDto("맵 삭제 실패, 파라미터 확인 필요");
+            ResMessageDto res = new ResMessageDto(reason);
             return ResponseEntity.badRequest().body(res);
         } catch (Exception e) {
             log.warn("맵 삭제 실패");
