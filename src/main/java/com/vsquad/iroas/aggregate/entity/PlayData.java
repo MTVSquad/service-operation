@@ -22,6 +22,10 @@ public class PlayData {
     @Comment("플레이어 식별자")
     private Long playerId;
 
+    @Column(name = "CREATOR_MAP_ID")
+    @Comment("크리에이터 맵 식별자")
+    private String creatorMapId;
+
     @Column(name = "PLAY_TIME")
     @Comment("플레이 시간")
     private LocalDateTime playTime;

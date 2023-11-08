@@ -21,6 +21,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -28,6 +32,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 
 @RestController
@@ -91,10 +97,10 @@ public class PlayerController {
             @ApiResponse(responseCode = "201", description = "플레이어 추가 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "플레이어 추가 실패", content = @Content(schema = @Schema(name = "플레이어 추가 실패", example = "에러 메시지(닉네임 중복 등)"), mediaType = "application/json"))
     })
-    public ResponseEntity<ResTokenDto> addPlayer(@RequestBody ReqPlayerDto reqBody) {
+    public ResponseEntity<ResTokenDto> addPlayer(@RequestBody ReqPlayerDto reqBody) throws ParseException {
 
         String steamKey = reqBody.getSteamKey();
-        String nickname = reqBody.getPlayerNickName();
+        AtomicReference<String> nickname = new AtomicReference<>();
 
         try {
 
@@ -113,6 +119,19 @@ public class PlayerController {
 
                         log.info("스팀 응답 값 {}", response);
 
+                        JSONParser parser = new JSONParser();
+
+                        try {
+                            JSONObject obj = (JSONObject) parser.parse(response);
+                            JSONObject responseObject = (JSONObject) obj.get("response");
+                            JSONArray playersArray = (JSONArray) responseObject.get("players");
+                            JSONObject players = (JSONObject) playersArray.get(0);
+                            nickname.set(players.get("personaname") + "#" + players.get("steamid"));
+
+                        } catch (ParseException e) {
+                            log.warn("Json Parser Error :: {}", e.getMessage());
+                        }
+
                         ObjectMapper mapper = new ObjectMapper();
                         JsonNode rootNode;
                         try {
@@ -126,7 +145,7 @@ public class PlayerController {
                             return Mono.error(new SteamUserNotFoundException());
                         }
 
-                        if (response == null || response.startsWith("player")) {
+                        if (response == null || response.startsWith("players")) {
                             return Mono.error(new Exception("Response is empty"));
                         }
 
@@ -135,7 +154,7 @@ public class PlayerController {
 
             json.block();
 
-            PlayerDto player = playerService.addPlayer(steamKey, nickname);
+            PlayerDto player = playerService.addPlayer(steamKey, nickname.get());
             String token = customTokenProviderService.generateToken(player);
 
             ResTokenDto responseDto = new ResTokenDto(token, "플레이어가 추가되었습니다.");

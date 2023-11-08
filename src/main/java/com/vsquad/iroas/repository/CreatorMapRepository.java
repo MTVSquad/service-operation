@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CreatorMapRepository extends JpaRepository<CreatorMap, String> {
     Page<CreatorMap> findAll(Pageable pageable);
+
+    void deleteCreatorMapByCreatorMapIdAndCreator(String creatorMapId, String creator);
 }
