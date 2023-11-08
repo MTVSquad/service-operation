@@ -59,10 +59,6 @@ public class RankingService {
             Optional<Ranking> isRaking = rankingRepository.findByPlayerAndCreatorMapId(player, dto.getCreatorMapId());
 
             if(isClear) {
-
-                Duration duration = Duration.between(playStartTime, playClearTime);
-                long minutes = duration.toMinutes();
-
                 isRaking
                         .ifPresentOrElse(
                                 (foundRanking) -> {

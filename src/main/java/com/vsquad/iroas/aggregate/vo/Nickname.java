@@ -23,7 +23,7 @@ public class Nickname {
     public Nickname() {}
 
     public Nickname(String playerNickname) {
-        validateNickname(playerNickname);
+//        validateNickname(playerNickname);
         this.playerNickname = playerNickname;
     }
 

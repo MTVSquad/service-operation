@@ -82,7 +82,20 @@ public class CreatorMapService {
     }
 
     @Transactional
+//    @ExceptionHandler(EmptyResultDataAccessException.ca)
     public void deleteCreatorMap(String creatorMapId) {
-        creatorMapRepository.deleteById(creatorMapId);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null) {
+
+            PlayerPrincipal userDetails = (PlayerPrincipal) authentication.getPrincipal();
+
+            String nickname = userDetails.getName();
+
+            creatorMapRepository.deleteCreatorMapByCreatorMapIdAndCreator(creatorMapId, nickname);
+        } else {
+            throw new UsernameNotFoundException("플레이어 인증 정보를 찾을 수 없습니다.");
+        }
     }
 }
