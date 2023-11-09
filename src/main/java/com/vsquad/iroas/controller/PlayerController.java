@@ -9,6 +9,7 @@ import com.vsquad.iroas.aggregate.dto.response.ResMessageDto;
 import com.vsquad.iroas.aggregate.dto.response.ResPlayerInfoDto;
 import com.vsquad.iroas.aggregate.dto.response.ResTokenDto;
 import com.vsquad.iroas.aggregate.dto.response.ResponseDto;
+import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.config.exception.PlayerNotFoundException;
 import com.vsquad.iroas.config.exception.SteamUserNotFoundException;
 import com.vsquad.iroas.service.PlayerService;
@@ -63,14 +64,16 @@ public class PlayerController {
             @ApiResponse(responseCode = "400", description = "로그인 실패", content = @Content(schema = @Schema(name = "로그인 실패", example = "에러 메시지(스팀 유저를 찾을 수 없음 등)"), mediaType = "application/json"))
     })
     @Parameter(name = "steamKey", description = "스팀에서 받아온 회원 식별 정보", in = ParameterIn.QUERY)
-    public ResponseEntity<ResTokenDto> steamLogin(@RequestParam String steamKey) {
+    public ResponseEntity<ResTokenDto> steamLogin(@RequestParam String key, @RequestParam String type) {
 
         try {
-            PlayerDto player = playerService.readPlayer(steamKey);
+            PlayerDto player = playerService.readPlayer(key, type);
 
             String token = customTokenProviderService.generateToken(player);
 
             ResTokenDto responseDto = new ResTokenDto(token, "로그인 성공");
+
+            log.info("로그인 성공");
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (PlayerNotFoundException e) {
             log.warn(e.getMessage());
@@ -99,65 +102,75 @@ public class PlayerController {
     })
     public ResponseEntity<ResTokenDto> addPlayer(@RequestBody ReqPlayerDto reqBody) throws ParseException {
 
-        String steamKey = reqBody.getSteamKey();
+        String key = reqBody.getKey();
+        String type = reqBody.getType();
         AtomicReference<String> nickname = new AtomicReference<>();
 
-        try {
+        if(key == null || key.isEmpty()) {
+            throw new IllegalArgumentException("회원 식별 정보가 없습니다.");
+        }
 
-            if(steamKey == null || steamKey.isEmpty()) {
-                throw new IllegalArgumentException("스팀에서 받아온 회원 식별 정보가 없습니다.");
+        try {
+            PlayerDto player;
+
+            if(type.equals("steam")) {
+
+                Mono<String> json = webClient.get()
+                        .uri(uriBuilder -> uriBuilder.path("/ISteamUser/GetPlayerSummaries/v0002/")
+                                .queryParam("key", steamApiKey)
+                                .queryParam("steamids", key)
+                                .build())
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .flatMap(response -> {
+
+                            log.info("스팀 응답 값 {}", response);
+
+                            JSONParser parser = new JSONParser();
+
+                            try {
+                                JSONObject obj = (JSONObject) parser.parse(response);
+                                JSONObject responseObject = (JSONObject) obj.get("response");
+                                JSONArray playersArray = (JSONArray) responseObject.get("players");
+                                JSONObject players = (JSONObject) playersArray.get(0);
+                                nickname.set(players.get("personaname") + "#" + players.get("steamid"));
+
+                            } catch (ParseException e) {
+                                log.warn("Json Parser Error :: {}", e.getMessage());
+                            }
+
+                            ObjectMapper mapper = new ObjectMapper();
+                            JsonNode rootNode;
+                            try {
+                                rootNode = mapper.readTree(response);
+                            } catch (Exception e) {
+                                return Mono.error(new Exception("Invalid JSON response"));
+                            }
+
+                            JsonNode playersNode = rootNode.path("response").path("players");
+                            if (playersNode.isArray() && playersNode.isEmpty()) {
+                                return Mono.error(new SteamUserNotFoundException());
+                            }
+
+                            if (response == null || response.startsWith("players")) {
+                                return Mono.error(new Exception("Response is empty"));
+                            }
+
+                            return Mono.just(response);
+                        });
+
+                json.block();
+
+                player = playerService.addSteamPlayer(key, nickname.get(), type);
+            } else {
+                player = playerService.addLocalPlayer(key, type);
             }
 
-            Mono<String> json = webClient.get()
-                    .uri(uriBuilder -> uriBuilder.path("/ISteamUser/GetPlayerSummaries/v0002/")
-                            .queryParam("key", steamApiKey)
-                            .queryParam("steamids", steamKey)
-                            .build())
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .flatMap(response -> {
-
-                        log.info("스팀 응답 값 {}", response);
-
-                        JSONParser parser = new JSONParser();
-
-                        try {
-                            JSONObject obj = (JSONObject) parser.parse(response);
-                            JSONObject responseObject = (JSONObject) obj.get("response");
-                            JSONArray playersArray = (JSONArray) responseObject.get("players");
-                            JSONObject players = (JSONObject) playersArray.get(0);
-                            nickname.set(players.get("personaname") + "#" + players.get("steamid"));
-
-                        } catch (ParseException e) {
-                            log.warn("Json Parser Error :: {}", e.getMessage());
-                        }
-
-                        ObjectMapper mapper = new ObjectMapper();
-                        JsonNode rootNode;
-                        try {
-                            rootNode = mapper.readTree(response);
-                        } catch (Exception e) {
-                            return Mono.error(new Exception("Invalid JSON response"));
-                        }
-
-                        JsonNode playersNode = rootNode.path("response").path("players");
-                        if (playersNode.isArray() && playersNode.isEmpty()) {
-                            return Mono.error(new SteamUserNotFoundException());
-                        }
-
-                        if (response == null || response.startsWith("players")) {
-                            return Mono.error(new Exception("Response is empty"));
-                        }
-
-                        return Mono.just(response);
-                    });
-
-            json.block();
-
-            PlayerDto player = playerService.addPlayer(steamKey, nickname.get());
             String token = customTokenProviderService.generateToken(player);
 
             ResTokenDto responseDto = new ResTokenDto(token, "플레이어가 추가되었습니다.");
+
+            log.info("플레이어 추가 성공");
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
         } catch (SteamUserNotFoundException e) {
             log.warn(e.getMessage());

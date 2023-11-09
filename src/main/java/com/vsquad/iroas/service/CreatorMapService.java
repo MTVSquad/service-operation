@@ -82,7 +82,6 @@ public class CreatorMapService {
     }
 
     @Transactional
-//    @ExceptionHandler(EmptyResultDataAccessException.ca)
     public void deleteCreatorMap(String creatorMapId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -92,6 +91,10 @@ public class CreatorMapService {
             PlayerPrincipal userDetails = (PlayerPrincipal) authentication.getPrincipal();
 
             String nickname = userDetails.getName();
+
+            creatorMapRepository.findByCreatorMapIdAndCreator(creatorMapId, nickname).orElseThrow(
+                    () -> new IllegalArgumentException()
+            );
 
             creatorMapRepository.deleteCreatorMapByCreatorMapIdAndCreator(creatorMapId, nickname);
         } else {

@@ -16,13 +16,13 @@ public class ResPlayerInfoDto {
 
     private String playerNickName;
 
-    private Long avatarId;
+    private String playerType;
 
     private String playerRole;
 
     public static ResPlayerInfoDto convertToDto(Player player) {
 
-        return new ResPlayerInfoDto(player.getPlayerId(), player.getPlayerSteamKey(), player.getNickname().getPlayerNickname(),
-                player.getPlayerAvatar(), player.getPlayerRole());
+        return new ResPlayerInfoDto(player.getPlayerId(), player.getKey(), player.getNickname().getPlayerNickname(),
+                player.getType(), player.getPlayerRole());
     }
 }

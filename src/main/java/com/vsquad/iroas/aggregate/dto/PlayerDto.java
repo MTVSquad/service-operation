@@ -16,11 +16,7 @@ public class PlayerDto {
 
     private String playerNickName;
 
-    private String playerRole;
+    private String playerType;
 
-//    public static PlayerDto convertToDto(Player player) {
-//
-//        return new PlayerDto(player.getPlayerId(), player.getPlayerSteamKey(), player.getNickname().getPlayerNickname(),
-//                player.getPlayerRole());
-//    }
+    private String playerRole;
 }

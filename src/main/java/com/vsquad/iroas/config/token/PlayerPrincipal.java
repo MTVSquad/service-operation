@@ -12,15 +12,16 @@ import java.util.Map;
 public class PlayerPrincipal implements OAuth2User, UserDetails {
 
     private Long id;
-
     private String steamKey;
     private String nickname;
+    private String type;
     private GrantedAuthority authorities;
 
-    public PlayerPrincipal(Long id, String steamKey, String nickname, GrantedAuthority authorities) {
+    public PlayerPrincipal(Long id, String steamKey, String nickname, String type, GrantedAuthority authorities) {
         this.id = id;
         this.steamKey = steamKey;
         this.nickname = nickname;
+        this.type = type;
         this.authorities = authorities;
     }
 
@@ -30,8 +31,9 @@ public class PlayerPrincipal implements OAuth2User, UserDetails {
 
         return new PlayerPrincipal(
             player.getPlayerId(),
-            player.getPlayerSteamKey(),
+            player.getKey(),
             player.getNickname().getPlayerNickname(),
+            player.getType(),
             authorities
         );
     }
@@ -39,6 +41,8 @@ public class PlayerPrincipal implements OAuth2User, UserDetails {
     public Long getId() {
         return id;
     }
+
+    public String getType() {return type; }
 
     @Override
     public String getPassword() {
