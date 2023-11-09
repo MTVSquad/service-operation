@@ -8,7 +8,9 @@ import org.hibernate.annotations.Table;
 import javax.persistence.*;
 
 @Entity
-@javax.persistence.Table(name = "tb_avatar")
+@javax.persistence.Table(name = "tb_avatar", uniqueConstraints = {
+        @UniqueConstraint(name = "UK_PLAYER_ID", columnNames = {"PLAYER_ID"})
+})
 @Table(appliesTo = "tb_avatar", comment = "플레이어 아바타")
 @NoArgsConstructor
 @Data

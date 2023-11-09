@@ -13,11 +13,9 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 public class ReqPlayerDto {
 
-    @Schema(name = "steamKey", description = "스팀 플레이어 식별정보", example = "76561197960435530")
-    private String steamKey;
+    @Schema(name = "key", description = "플레이어 식별정보", example = "76561197960435530")
+    private String key;
 
-//    @Schema(name = "playerNickName", description = "닉네임은 2~8자 한글, 영문 대소문자, 숫자만 가능", example = "히에로스")
-//    @NonNull
-//    @Pattern(regexp = "^[가-힣a-zA-Z0-9]{2,8}$")
-//    private String playerNickName;
+    @Schema(name = "type", description = "플레이어 식별 타입", allowableValues = {"steam", "local"}, example = "steam")
+    private String type;
 }

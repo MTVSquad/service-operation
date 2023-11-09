@@ -71,16 +71,17 @@ class PlayerControllerTest {
     @BeforeTransaction
     public void accountSetup() throws Exception {
         player = Player.builder()
-                .playerSteamKey("123456789012345678")
+                .key("123456789012345678")
                 .nickname(new Nickname("히에로스"))
+                .type("local")
                 .playerRole("ROLE_PLAYER")
                 .build();
 
         player = playerRepository.save(player);
 
         //Security Context에 유저정보 등록, 토큰발급
-        PlayerDto playerDto = new PlayerDto(player.getPlayerId(), player.getPlayerSteamKey()
-                , player.getNickname().getPlayerNickname(), player.getPlayerRole());
+        PlayerDto playerDto = new PlayerDto(player.getPlayerId(), player.getKey()
+                , player.getNickname().getPlayerNickname(), player.getType(), player.getPlayerRole());
 
         String jwt = customTokenProviderService.generateToken(playerDto);
 

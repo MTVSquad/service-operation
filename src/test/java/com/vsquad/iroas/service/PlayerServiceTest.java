@@ -51,8 +51,9 @@ class PlayerServiceTest {
     @BeforeTransaction
     public void accountSetup() {
         player = Player.builder()
-                .playerSteamKey("123456789012345678")
+                .key("123456789012345678")
                 .nickname(new Nickname("히에로스"))
+                .type("local")
                 .playerMoney(1000L)
                 .playerItems("[1,2,3]")
                 .build();
@@ -79,14 +80,14 @@ class PlayerServiceTest {
 
         // when
         Player newPlayer = new Player();
-        newPlayer.setPlayerSteamKey(playerKey);
+        newPlayer.setKey(playerKey);
         newPlayer.setPlayerRole("ROLE_PLAYER");
 
         // 저장
         playerRepository.save(newPlayer);
 
         // 저장된 플레이어 조회
-        Player foundPlayer = playerRepository.findByPlayerSteamKey(playerKey).orElseThrow();
+        Player foundPlayer = playerRepository.findByKey(playerKey).orElseThrow();
 
         // then
         // 조회한 값이 있는지 조회
@@ -98,7 +99,7 @@ class PlayerServiceTest {
     void steamLoginSuccessTest() {
 
         // given
-        String uuid = player.getPlayerSteamKey();
+        String uuid = player.getKey();
 
         // when
         UserDetails user = userService.loadUserByUsername(uuid);
@@ -122,7 +123,7 @@ class PlayerServiceTest {
 
         ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
 
-        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName(), 0L, "ROLE_PLAYER");
+        Player player = new Player(reqPlayerDto.getKey(), reqPlayerDto.getPlayerNickName(), 0L, "ROLE_PLAYER");
 
         // when
         playerRepository.save(player);
@@ -171,7 +172,7 @@ class PlayerServiceTest {
         String inputNickname2 = "테스트닉네임";
         String steamKey2 = "testKey2";
 
-        Player player1 = new Player(steamKey1, inputNickname, 0L, "ROLE_PLAYER" );
+        Player player1 = new Player(steamKey1, inputNickname, 0L, "ROLE_PLAYER");
         playerRepository.save(player1);
 
 
@@ -181,7 +182,7 @@ class PlayerServiceTest {
 
             playerRepository.findByNickname(new Nickname(inputNickname)).orElseThrow();
 
-            Player player2 = new Player(steamKey2, inputNickname2, 0L, "ROLE_PLAYER" );
+            Player player2 = new Player(steamKey2, inputNickname2, 0L, "ROLE_PLAYER");
             playerRepository.save(player2);
 
         }, "에러 출력 되지 않음...");
