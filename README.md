@@ -1,9 +1,6 @@
 # IROAS-Server
 Iroas VR 운영 관련 서버
 
-## 시스템 구성도
-![image](https://github.com/MTVSquad/service-operation/assets/94158097/7bdb4d59-9473-4c44-b765-638f5b711296)
-
 ## Domain
 ![image](https://github.com/MTVSquad/service-operation/assets/94158097/c982f56d-c6cf-4319-90d4-badb68156a53)
 
@@ -12,4 +9,3 @@ Iroas VR 운영 관련 서버
 
 ## Entity Relation
 ![image](https://github.com/MTVSquad/service-operation/assets/94158097/3a755216-a2a3-473e-be5d-e9a77467537b)
-
