@@ -15,18 +15,19 @@ import java.time.LocalDateTime;
 public class PlayTimeDto {
 
     @Schema(description = "플레이 시작 시간")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime playStartTime;
+    private String playStartTime;
 
     @Schema(description = "플레이 종료 시간")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime playClearTime;
+    private String playClearTime;
 
     @Schema(description = "플레이 시간")
     private Long playMilliSecond;
 
     public static PlayTimeDto convertToDto(PlayTime playTime) {
 
-        return new PlayTimeDto(playTime.getPlayStartTime(), playTime.getPlayClearTime(), playTime.getPlayMilliSecond());
+        String playStartTime = playTime.getPlayStartTime().toString();
+        String playClearTime = playTime.getPlayClearTime().toString();
+
+        return new PlayTimeDto(playStartTime, playClearTime, playTime.getPlayMilliSecond());
     }
 }
