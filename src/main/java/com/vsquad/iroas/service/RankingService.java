@@ -17,7 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -59,14 +58,22 @@ public class RankingService {
             Optional<Ranking> isRaking = rankingRepository.findByPlayerAndCreatorMapId(player, dto.getCreatorMapId());
 
             if(isClear) {
+                // 클리어한 경우
                 isRaking
                         .ifPresentOrElse(
                                 (foundRanking) -> {
 
-                                    // 랭킹이 있으면 업데이트
-                                    foundRanking.setPlayTime(new PlayTime(playStartTime, playClearTime));
-                                    foundRanking.setPlayCount(foundRanking.getPlayCount() + 1);
-                                    foundRanking.setClearCount(foundRanking.getClearCount() + 1);
+                                    PlayTime playTime = new PlayTime(playStartTime, playClearTime);
+
+                                    if(playTime.getPlayMinutes() > foundRanking.getPlayTime().getPlayMinutes()) {
+                                        // 랭킹이 있으면 업데이트
+                                        foundRanking.setPlayTime(new PlayTime(playStartTime, playClearTime));
+                                        foundRanking.setPlayCount(foundRanking.getPlayCount() + 1);
+                                        foundRanking.setClearCount(foundRanking.getClearCount() + 1);
+                                    } else {
+                                        foundRanking.setPlayCount(foundRanking.getPlayCount() + 1);
+                                        foundRanking.setClearCount(foundRanking.getClearCount() + 1);
+                                    }
                                 },
                                 () -> {
                                     // 랭킹이 없으면 추가

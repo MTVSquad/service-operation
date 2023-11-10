@@ -123,7 +123,7 @@ class PlayerServiceTest {
 
         ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
 
-        Player player = new Player(reqPlayerDto.getKey(), reqPlayerDto.getPlayerNickName(), 0L, "ROLE_PLAYER");
+        Player player = new Player(reqPlayerDto.getKey(), inputData, "local", 0L, "ROLE_PLAYER");
 
         // when
         playerRepository.save(player);
@@ -172,7 +172,7 @@ class PlayerServiceTest {
         String inputNickname2 = "테스트닉네임";
         String steamKey2 = "testKey2";
 
-        Player player1 = new Player(steamKey1, inputNickname, 0L, "ROLE_PLAYER");
+        Player player1 = new Player(steamKey1, inputNickname, "local", 0L, "ROLE_PLAYER");
         playerRepository.save(player1);
 
 
@@ -182,7 +182,7 @@ class PlayerServiceTest {
 
             playerRepository.findByNickname(new Nickname(inputNickname)).orElseThrow();
 
-            Player player2 = new Player(steamKey2, inputNickname2, 0L, "ROLE_PLAYER");
+            Player player2 = new Player(steamKey2, inputNickname2, "local", 0L, "ROLE_PLAYER");
             playerRepository.save(player2);
 
         }, "에러 출력 되지 않음...");
@@ -197,7 +197,7 @@ class PlayerServiceTest {
         // 최소 2자, 최대 8자, 특수 문자x, 한글 / 영문
         String inputData = "아바라abcf";
         ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
-        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName(), 0L, "ROLE_PLAYER");
+        Player player = new Player(reqPlayerDto.getKey(), inputData, "local", 0L, "ROLE_PLAYER");
         playerRepository.save(player);
 
         // when
@@ -223,7 +223,7 @@ class PlayerServiceTest {
         String playerKey = "key";
         String inputData = "바닐라라떼";
         ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
-        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName(), 0L, "ROLE_PLAYER");
+        Player player = new Player(reqPlayerDto.getKey(), inputData, "local", 0L, "ROLE_PLAYER");
         playerRepository.save(player);
 
         // when
@@ -290,7 +290,7 @@ class PlayerServiceTest {
         // 플레이어 추가
         String playerKey = "key";
         Player newPlayer = new Player();
-        newPlayer.setPlayerSteamKey(playerKey);
+        newPlayer.setKey(playerKey);
         Player savedPlayer = playerRepository.save(newPlayer);
 
         // 플레이어 아바타 추가
@@ -322,7 +322,7 @@ class PlayerServiceTest {
         // 플레이어 추가
         String playerKey = "key";
         Player newPlayer = new Player();
-        newPlayer.setPlayerSteamKey(playerKey);
+        newPlayer.setKey(playerKey);
         Player savedPlayer = playerRepository.save(newPlayer);
 
         // 플레이어 아바타 추가
@@ -368,7 +368,7 @@ class PlayerServiceTest {
         String playerKey = "key";
 
         Player newPlayer = new Player();
-        newPlayer.setPlayerSteamKey(playerKey);
+        newPlayer.setKey(playerKey);
 
         Player savedPlayer = playerRepository.save(newPlayer);
 

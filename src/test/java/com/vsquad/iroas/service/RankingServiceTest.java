@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ class RankingServiceTest {
         while (true) {
             playerKey = UUID.randomUUID().toString();
 
-            Optional<Player> isDuplicated = playerRepository.findByPlayerSteamKey(playerKey);
+            Optional<Player> isDuplicated = playerRepository.findByKey(playerKey);
 
             if (!isDuplicated.isPresent()) {
                 break;
@@ -58,7 +59,7 @@ class RankingServiceTest {
 
         ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
 
-        Player player = new Player(reqPlayerDto.getSteamKey(), reqPlayerDto.getPlayerNickName(), 0L, "ROLE_PLAYER");
+        Player player = new Player(reqPlayerDto.getKey(), "랭킹테스트1", "local", 0L, "ROLE_PLAYER");
 
         Player foundPlayer = playerRepository.save(player);
 
@@ -223,5 +224,24 @@ class RankingServiceTest {
 
         // then
         assertFalse(foundRanking.isEmpty());
+    }
+
+    @Test
+    @DisplayName("랭킹 추가 시간 차 구하기")
+    void caculateTimeSuccessTest() {
+        LocalDateTime startTime = LocalDateTime.now().minusMinutes(5).minusSeconds(30);
+        LocalDateTime endTime = LocalDateTime.now();
+
+        Duration duration = Duration.between(startTime, endTime);
+
+        long minutes = duration.toMinutes();
+        long seconds = duration.getSeconds() % 60;
+        long milliSec = duration.toMillis();
+
+        String result = minutes + "분" + seconds + "초";
+
+        System.out.println(result);
+
+        assertEquals("5분30초", result);
     }
 }

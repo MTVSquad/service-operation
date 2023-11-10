@@ -58,6 +58,18 @@ public class CreatorMapDto {
     @Schema(name = "propList", description = "구조물 목록")
     private List<PropDto> propList;
 
+    public CreatorMapDto(String creatorMapType, LocalDateTime createTime, Double playerStartPointXLocation, Double playerStartPointYLocation, Double playerStartPointZLocation, Double playerStartPointYaw, String timezone, List<EnemySpawnerDto> enemySpawnerList, List<PropDto> propList) {
+        this.creatorMapType = creatorMapType;
+        this.createTime = createTime;
+        this.playerStartPointXLocation = playerStartPointXLocation;
+        this.playerStartPointYLocation = playerStartPointYLocation;
+        this.playerStartPointZLocation = playerStartPointZLocation;
+        this.playerStartPointYaw = playerStartPointYaw;
+        this.timezone = timezone;
+        this.enemySpawnerList = enemySpawnerList;
+        this.propList = propList;
+    }
+
     public CreatorMap convertToEntity(CreatorMapDto creatorMapDto) throws JsonProcessingException {
 
         if(creatorMapDto == null) {
