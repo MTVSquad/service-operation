@@ -24,7 +24,7 @@ public class PlayTime {
     @Comment("게임 깬 시간")
     private LocalDateTime playClearTime;
 
-    @Column(name = "PLAY_MINUTES")
+    @Column(name = "PLAY_MILLI_SECOND")
     @Comment("랭킹 기록한 플레이 총 소요 시간")
     private Long playMilliSecond;
 
