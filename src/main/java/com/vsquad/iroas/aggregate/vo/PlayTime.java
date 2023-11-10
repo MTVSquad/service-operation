@@ -25,7 +25,7 @@ public class PlayTime {
     private LocalDateTime playClearTime;
 
     @Column(name = "PLAY_MINUTES")
-    @Comment("랭킹 기록한 플레이 총 소요 시간(분)")
+    @Comment("랭킹 기록한 플레이 총 소요 시간")
     private Long playMinutes;
 
     public PlayTime(LocalDateTime playStartTime, LocalDateTime playClearTime) {
@@ -40,7 +40,7 @@ public class PlayTime {
         boolean isAfter = playStartTime.isAfter(playClearTime);
 
         if(isAfter) {
-            throw new IllegalArgumentException("클리어 시간은 플레이 시작 시간보다 빠를 수 없습니다.");
+            throw new IllegalArgumentException("클리어 시간은 플레이 시작 시간 보다 빠를 수 없음");
         } else {
             this.playStartTime = playStartTime;
             this.playClearTime = playClearTime;
@@ -52,9 +52,12 @@ public class PlayTime {
         // Duration으로 시간 차이 계산
         Duration duration = Duration.between(playStartTime, playClearTime);
 
-        // 분 단위로 출력
-        long minutes = duration.toMinutes();
+        // 분, 초 단위로 출력
+//        long minutes = duration.toMinutes();
+//        long seconds = duration.getSeconds() % 60;
 
-        this.playMinutes = minutes;
+        long milliSec = duration.toMillis();
+
+        this.playMinutes = milliSec;
     }
 }

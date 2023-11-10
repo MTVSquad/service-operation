@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class Nickname {
 
     @NotNull
-    @Column(name = "PLAYER_NICKNAME", length = 40)
+    @Column(name = "PLAYER_NICKNAME", length = 255)
     @Comment("닉네임")
     private String playerNickname;
 
@@ -24,6 +24,7 @@ public class Nickname {
 
     public Nickname(String playerNickname) {
 //        validateNickname(playerNickname);
+        validateByte(playerNickname);
         this.playerNickname = playerNickname;
     }
 
@@ -37,6 +38,15 @@ public class Nickname {
 
         if(!matcher.matches()) {
             throw new IllegalArgumentException("닉네임 생성 규칙과 일치하지 않습니다.");
+        }
+    }
+
+    private void validateByte(String nickname) {
+
+        int length =  nickname.getBytes().length;
+
+        if(length >= 255) {
+            throw new IllegalArgumentException("닉네임 255 byte 초과");
         }
     }
 }

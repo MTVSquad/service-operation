@@ -5,11 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vsquad.iroas.aggregate.dto.*;
 import com.vsquad.iroas.aggregate.dto.request.ReqAvatarDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqPlayerDto;
-import com.vsquad.iroas.aggregate.dto.response.ResMessageDto;
-import com.vsquad.iroas.aggregate.dto.response.ResPlayerInfoDto;
-import com.vsquad.iroas.aggregate.dto.response.ResTokenDto;
-import com.vsquad.iroas.aggregate.dto.response.ResponseDto;
-import com.vsquad.iroas.aggregate.entity.Player;
+import com.vsquad.iroas.aggregate.dto.response.*;
 import com.vsquad.iroas.config.exception.PlayerNotFoundException;
 import com.vsquad.iroas.config.exception.SteamUserNotFoundException;
 import com.vsquad.iroas.service.PlayerService;
@@ -58,15 +54,17 @@ public class PlayerController {
         this.customTokenProviderService = customTokenProviderService;
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     @Operation(summary = "로그인", description = "스팀에서 받아온 식별 정보를 가지고 로그인 합니다.", responses = {
             @ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(schema = @Schema(implementation = ResponseDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "로그인 실패", content = @Content(schema = @Schema(name = "로그인 실패", example = "에러 메시지(스팀 유저를 찾을 수 없음 등)"), mediaType = "application/json"))
+            @ApiResponse(responseCode = "400", description = "로그인 실패", content = @Content(schema = @Schema(implementation = ResponseError.class), mediaType = "application/json"))
     })
-    @Parameter(name = "steamKey", description = "스팀에서 받아온 회원 식별 정보", in = ParameterIn.QUERY)
-    public ResponseEntity<ResTokenDto> steamLogin(@RequestParam String key, @RequestParam String type) {
+    public ResponseEntity<ResTokenDto> steamLogin(@RequestBody ReqPlayerDto reqPlayer) {
 
         try {
+            String key = reqPlayer.getKey();
+            String type = reqPlayer.getType();
+
             PlayerDto player = playerService.readPlayer(key, type);
 
             String token = customTokenProviderService.generateToken(player);
@@ -97,8 +95,8 @@ public class PlayerController {
 
     @PostMapping
     @Operation(summary = "플레이어 추가", description = "스팀에서 받아온 식별 정보와 닉네임을 가지고 플레이어를 생성 합니다.", responses = {
-            @ApiResponse(responseCode = "201", description = "플레이어 추가 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "플레이어 추가 실패", content = @Content(schema = @Schema(name = "플레이어 추가 실패", example = "에러 메시지(닉네임 중복 등)"), mediaType = "application/json"))
+            @ApiResponse(responseCode = "201", description = "플레이어 추가 성공", content = @Content(schema = @Schema(implementation = ResTokenDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "플레이어 추가 실패", content = @Content(schema = @Schema(implementation = ResponseError.class), mediaType = "application/json"))
     })
     public ResponseEntity<ResTokenDto> addPlayer(@RequestBody ReqPlayerDto reqBody) throws ParseException {
 
@@ -245,7 +243,7 @@ public class PlayerController {
     @GetMapping("/info")
     @Operation(summary = "플레이어 정보 조회", description = "플레이어 정보를 조회 합니다.", responses = {
             @ApiResponse(responseCode = "200", description = "플레이어 정보 조회 성공", content = @Content(schema = @Schema(implementation = ResPlayerInfoDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "플레이어 정보 조회 실패", content = @Content(schema = @Schema(name = "플레이어 정보 조회 실패", example = "에러 메시지(플레이어 정보 없음 등)"), mediaType = "application/json"))
+            @ApiResponse(responseCode = "400", description = "플레이어 정보 조회 실패", content = @Content(schema = @Schema(implementation = ResponseError.class), mediaType = "application/json"))
     })
     public ResponseEntity<ResPlayerInfoDto> readPlayerInfo() {
 
@@ -266,7 +264,7 @@ public class PlayerController {
     @PatchMapping("/nickname")
     @Operation(summary = "플레이어 닉네임 변경", description = "플레이어 닉네임을 수정합니다.", responses = {
             @ApiResponse(responseCode = "200", description = "플레이어 닉네임 수정 성공", content = @Content(schema = @Schema(implementation = ResPlayerInfoDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "플레이어 닉네임 수정 실패", content = @Content(schema = @Schema(name = "플레이어 닉네임 수정 실패", example = "에러 메시지(닉네임 중복)"), mediaType = "application/json"))
+            @ApiResponse(responseCode = "400", description = "플레이어 닉네임 수정 실패", content = @Content(schema = @Schema(implementation = ResponseError.class), mediaType = "application/json"))
     })
     @Parameter(name = "nickname", description = "변경할 닉네임", example = "test", in = ParameterIn.QUERY)
     public ResponseEntity<ResponseDto> changePlayerNickname(@RequestParam String nickname) {
@@ -294,7 +292,7 @@ public class PlayerController {
     @DeleteMapping("/avatar")
     @Operation(summary = "플레이어 아바타 초기화", description = "플레이어 아바타를 초기화 합니다.", responses = {
             @ApiResponse(responseCode = "200", description = "플레이어 아바타 초기화 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "플레이어 아바타 초기화 실패", content = @Content(schema = @Schema(name = "플레이어 아바타 제거 실패", example = "에러 메시지(플레이어 정보 없음 등)"), mediaType = "application/json"))
+            @ApiResponse(responseCode = "400", description = "플레이어 아바타 초기화 실패", content = @Content(schema = @Schema(implementation = ResponseError.class), mediaType = "application/json"))
     })
     public ResponseEntity<ResMessageDto> deletePlayerAvatar() {
 
