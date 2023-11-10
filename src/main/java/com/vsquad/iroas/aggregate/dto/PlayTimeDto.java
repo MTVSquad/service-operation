@@ -23,10 +23,10 @@ public class PlayTimeDto {
     private LocalDateTime playClearTime;
 
     @Schema(description = "플레이 시간")
-    private Long playMinutes;
+    private Long playMilliSecond;
 
     public static PlayTimeDto convertToDto(PlayTime playTime) {
 
-        return new PlayTimeDto(playTime.getPlayStartTime(), playTime.getPlayClearTime(), playTime.getPlayMinutes());
+        return new PlayTimeDto(playTime.getPlayStartTime(), playTime.getPlayClearTime(), playTime.getPlayMilliSecond());
     }
 }

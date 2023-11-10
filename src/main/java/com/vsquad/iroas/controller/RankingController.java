@@ -62,8 +62,8 @@ public class RankingController {
             @Parameter(name = "creatorMapId", description = "커스텀 모드 유즈맵 식별자", required = true),
             @Parameter(name = "page", description = "페이지 번호", example = "0"),
             @Parameter(name = "size", description = "페이지 크기", example = "10"),
-            @Parameter(name = "sort", description = "정렬 기준(playCount : 플레이 횟수, clearCount : 클리어 횟수, playTime.playMinutes : 플레이 시간)", schema = @Schema(allowableValues = {"playCount", "clearCount", "playTime.playMinutes"}),
-                    example = "createTime", in = ParameterIn.QUERY),
+            @Parameter(name = "sort", description = "정렬 기준(playCount : 플레이 횟수, clearCount : 클리어 횟수, playTime.playMilliSecond : 플레이 시간)", schema = @Schema(allowableValues = {"playCount", "clearCount", "playTime.playMilliSecond"}),
+                    example = "playTime.playMinutes", in = ParameterIn.QUERY),
             @Parameter(name = "direction", description = "정렬 방향", schema = @Schema(allowableValues = {"asc", "desc"}), example = "asc")
     })
     public ResponseEntity<ResponseDto<Page<ResRankingDto>>> getRanking(@RequestParam @Parameter(hidden = true) String creatorMapId, @PageableDefault @Parameter(hidden = true) Pageable pageable) {

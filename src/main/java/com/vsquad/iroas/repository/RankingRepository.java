@@ -14,7 +14,6 @@ import java.util.Optional;
 @Repository
 public interface RankingRepository extends JpaRepository<Ranking, Long> {
 
-    @EntityGraph(attributePaths = {"player"}, type = EntityGraph.EntityGraphType.LOAD)
     Page<Ranking> findByCreatorMapId(String creatorMapId, Pageable pageable);
 
     Optional<Ranking> findByPlayerAndCreatorMapId(Player player, String creatorMapId);

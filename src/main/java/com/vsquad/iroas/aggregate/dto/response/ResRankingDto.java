@@ -22,7 +22,7 @@ public class ResRankingDto {
     @Schema(description = "커스텀 모드 유즈맵 이름")
     private String creatorMapId;
 
-    @Schema(description = "플레이 시간")
+    @Schema(name = "playTime", description = "플레이 시간")
     private PlayTimeDto playTime;
 
     @Schema(description = "플레이 횟수")

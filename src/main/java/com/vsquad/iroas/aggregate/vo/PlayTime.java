@@ -26,7 +26,7 @@ public class PlayTime {
 
     @Column(name = "PLAY_MINUTES")
     @Comment("랭킹 기록한 플레이 총 소요 시간")
-    private Long playMinutes;
+    private Long playMilliSecond;
 
     public PlayTime(LocalDateTime playStartTime, LocalDateTime playClearTime) {
         if(playStartTime != null && playClearTime != null) {
@@ -58,6 +58,6 @@ public class PlayTime {
 
         long milliSec = duration.toMillis();
 
-        this.playMinutes = milliSec;
+        this.playMilliSecond = milliSec;
     }
 }

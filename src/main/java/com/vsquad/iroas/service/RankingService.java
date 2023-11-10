@@ -65,7 +65,7 @@ public class RankingService {
 
                                     PlayTime playTime = new PlayTime(playStartTime, playClearTime);
 
-                                    if(playTime.getPlayMinutes() > foundRanking.getPlayTime().getPlayMinutes()) {
+                                    if(playTime.getPlayMilliSecond() > foundRanking.getPlayTime().getPlayMilliSecond()) {
                                         // 랭킹이 있으면 업데이트
                                         foundRanking.setPlayTime(new PlayTime(playStartTime, playClearTime));
                                         foundRanking.setPlayCount(foundRanking.getPlayCount() + 1);
