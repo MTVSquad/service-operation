@@ -5,6 +5,7 @@ plugins {
 }
 
 group = 'com.vsquad'
+
 version = '0.0.8'
 
 java {
