@@ -6,35 +6,43 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.nio.file.attribute.UserPrincipal;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public class PlayerPrincipal implements OAuth2User, UserDetails {
 
     private Long id;
+    private String steamKey;
     private String nickname;
+    private String type;
+    private GrantedAuthority authorities;
 
-    public PlayerPrincipal(Long id, String nickname) {
+    public PlayerPrincipal(Long id, String steamKey, String nickname, String type, GrantedAuthority authorities) {
         this.id = id;
+        this.steamKey = steamKey;
         this.nickname = nickname;
+        this.type = type;
+        this.authorities = authorities;
     }
 
     public static PlayerPrincipal create(Player player) {
 
-        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(player.getPlayerRole()));
+        GrantedAuthority authorities = new SimpleGrantedAuthority(player.getPlayerRole());
 
         return new PlayerPrincipal(
             player.getPlayerId(),
-            player.getNickname().getPlayerNickname()
+            player.getKey(),
+            player.getNickname().getPlayerNickname(),
+            player.getType(),
+            authorities
         );
     }
 
     public Long getId() {
         return id;
     }
+
+    public String getType() {return type; }
 
     @Override
     public String getPassword() {
@@ -43,7 +51,7 @@ public class PlayerPrincipal implements OAuth2User, UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return steamKey;
     }
 
     @Override

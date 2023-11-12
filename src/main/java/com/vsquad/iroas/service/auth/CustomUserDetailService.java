@@ -4,14 +4,16 @@ import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.config.token.PlayerPrincipal;
 import com.vsquad.iroas.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.attribute.UserPrincipal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -20,22 +22,24 @@ public class CustomUserDetailService implements UserDetailsService {
 
     private final PlayerRepository playerRepository;
 
-
     @Override
-    public UserDetails loadUserByUsername(String steamKey) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String key) throws UsernameNotFoundException {
 
-        Player player = playerRepository.findByPlayerSteamKey(steamKey).orElseThrow();
+        Player player = playerRepository.findByKey(key).orElseThrow();
 
         if(player == null) {
             throw new UsernameNotFoundException("플레이어 정보를 찾을 수 없습니다.");
         }
 
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(player.getPlayerRole()));
+
         return PlayerPrincipal.create(player);
     }
 
     @Transactional
-    public UserDetails loadPlayerById(Long id) throws Exception {
-        Optional<Player> player = playerRepository.findById(id);
+    public UserDetails loadPlayerById(String key) throws Exception {
+        Optional<Player> player = playerRepository.findByKey(key);
         if(player.isPresent()) {
             return PlayerPrincipal.create(player.get());
         } else {

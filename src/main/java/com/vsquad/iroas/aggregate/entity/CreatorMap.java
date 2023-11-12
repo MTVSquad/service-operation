@@ -1,19 +1,11 @@
 package com.vsquad.iroas.aggregate.entity;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
-import com.vsquad.iroas.aggregate.dto.EnemySpawnerDto;
-import com.vsquad.iroas.aggregate.dto.PropDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import org.hibernate.annotations.Comment;
 
 import javax.persistence.*;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,7 +32,7 @@ public class CreatorMap {
 
     @Column(name = "CREATOR")
     @Comment("맵 생성자")
-    private Long creator;
+    private String creator;
 
     @Column(name = "CREATE_TIME")
     @Comment("맵 생성 시간")

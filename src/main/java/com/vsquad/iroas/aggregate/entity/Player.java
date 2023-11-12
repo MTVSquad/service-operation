@@ -38,7 +38,12 @@ public class Player {
     @NotNull
     @Column(name = "PLAYER_STEAM_KEY")
     @Comment("플레이어 스팀 식별 키")
-    private String playerSteamKey;
+    private String key;
+
+    @NotNull
+    @Column(name = "PLAYER_TYPE")
+    @Comment("플레이어 타입")
+    private String type;
 
     @Embedded
     private Nickname nickname;
@@ -61,8 +66,11 @@ public class Player {
     @Comment("플레이어 권한")
     private String playerRole;
 
-    public Player(String steamKey, String nickname) {
-        this.playerSteamKey = steamKey;
+    public Player(String key, String nickname, String type, Long playerMoney, String playerRole) {
+        this.key = key;
         this.nickname = new Nickname(nickname);
+        this.type = type;
+        this.playerMoney = playerMoney;
+        this.playerRole = playerRole;
     }
 }

@@ -2,7 +2,7 @@ package com.vsquad.iroas.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.vsquad.iroas.aggregate.dto.ReqRankingDto;
+import com.vsquad.iroas.aggregate.dto.request.ReqRankingDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,7 +57,7 @@ class RankingControllerTest {
         boolean clearYn = true;
 
         // dto 객체 생성
-        dto = new ReqRankingDto(1L, "abc998", oneHourAgo, currentDateTime, clearYn);
+        dto = new ReqRankingDto("abc998", oneHourAgo, currentDateTime, clearYn);
 
         // dto 객체 json으로 변환
         ObjectMapper objectMapper = new ObjectMapper();

@@ -1,5 +1,6 @@
 package com.vsquad.iroas.aggregate.dto;
 
+import com.vsquad.iroas.aggregate.entity.Player;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,13 +8,15 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResPlayerInfoDto {
+public class PlayerDto {
 
     private Long playerId;
 
-    private String playerNickName;
-
     private String playerSteamKey;
 
-    private AvatarDto avatar;
+    private String playerNickName;
+
+    private String playerType;
+
+    private String playerRole;
 }

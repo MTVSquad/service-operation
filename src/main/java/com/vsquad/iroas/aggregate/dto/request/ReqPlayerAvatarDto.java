@@ -1,4 +1,4 @@
-package com.vsquad.iroas.aggregate.dto;
+package com.vsquad.iroas.aggregate.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
