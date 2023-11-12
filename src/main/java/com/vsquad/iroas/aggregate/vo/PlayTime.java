@@ -1,5 +1,7 @@
 package com.vsquad.iroas.aggregate.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.vsquad.iroas.aggregate.dto.CustomLocalDateTimeDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
@@ -18,6 +20,7 @@ public class PlayTime {
 
     @Column(name = "PLAY_START_TIME")
     @Comment("게임 시작 시간")
+    @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
     private LocalDateTime playStartTime;
 
     @Column(name = "PLAY_CLEAR_TIME")
@@ -26,6 +29,7 @@ public class PlayTime {
 
     @Column(name = "PLAY_MILLI_SECOND")
     @Comment("랭킹 기록한 플레이 총 소요 시간")
+    @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
     private Long playMilliSecond;
 
     public PlayTime(LocalDateTime playStartTime, LocalDateTime playClearTime) {
