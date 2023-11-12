@@ -9,6 +9,7 @@ import com.vsquad.iroas.aggregate.entity.CreatorMap;
 import com.vsquad.iroas.repository.CreatorMapRepository;
 import com.vsquad.iroas.repository.EnemySpawnerRepository;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,6 +17,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -55,7 +61,16 @@ class CreatorMapServiceTest {
     void beforeTransaction() throws JsonProcessingException {
 
         // given
-        String uuid = UUID.randomUUID().toString();
+        String uuid;
+
+        while (true) {
+            uuid = UUID.randomUUID().toString();
+            Optional<CreatorMap> isCreatorMap = creatorMapRepository.findById(uuid);
+
+            if (!isCreatorMap.isPresent()) {
+                break;
+            }
+        }
 
         EnemyDto enemyDto = new EnemyDto("close_range_0", "근거리1", "Melee", 100L, 10L);
 
@@ -75,13 +90,11 @@ class CreatorMapServiceTest {
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
         CreatorMapDto mapDto = new CreatorMapDto(uuid, "testMap", "MELEE", 1L, LocalDateTime.now(),
-                startPoint, "Morning", enemySpawnerList, propList);
+                90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
         CreatorMap map = mapDto.convertToEntity(mapDto);
 
         creatorMap = creatorMapRepository.save(map);
-
-        addCreatorMapSuccessTest();
     }
 
     @AfterTransaction
@@ -94,7 +107,16 @@ class CreatorMapServiceTest {
     void addCreatorMapSuccessTest() throws JsonProcessingException {
 
         // given
-        String uuid = UUID.randomUUID().toString();
+        String uuid;
+
+        while (true) {
+            uuid = UUID.randomUUID().toString();
+            Optional<CreatorMap> isCreatorMap = creatorMapRepository.findById(uuid);
+
+            if (!isCreatorMap.isPresent()) {
+                break;
+            }
+        }
 
         EnemyDto enemyDto = new EnemyDto("close_range_1", "근거리1", "Melee", 100L, 10L);
 
@@ -114,7 +136,7 @@ class CreatorMapServiceTest {
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
         CreatorMapDto mapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", 1L, LocalDateTime.now(),
-                startPoint, "Morning", enemySpawnerList, propList);
+                90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
         CreatorMap map = mapDto.convertToEntity(mapDto);
 
@@ -141,5 +163,67 @@ class CreatorMapServiceTest {
 
         // then
         assertNotNull(foundMap);
+    }
+
+    @DisplayName("크리에이터 맵 51개 추가 성공")
+    void add51CreatorMapSuccessTest(String mepName) throws JsonProcessingException {
+
+        String uuid;
+
+        while (true) {
+            uuid = UUID.randomUUID().toString();
+            Optional<CreatorMap> isCreatorMap = creatorMapRepository.findById(uuid);
+
+            if (!isCreatorMap.isPresent()) {
+                break;
+            }
+        }
+
+        EnemyDto enemyDto = new EnemyDto("close_range_1", "근거리1", "Melee", 100L, 10L);
+
+        List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
+        enemySpawnerList.addAll(List.of(
+                new EnemySpawnerDto("근접 에네미 스포너", 100.00D, 160.00D, 90.00D, 100, 10D, 10D, enemyDto)
+        ));
+
+        List<PropDto> propList = new ArrayList<>();
+        propList.addAll(List.of(
+                new PropDto("prop1", "prop", 100.00D, 160.00D, 100.00D, 90.00D),
+                new PropDto("prop2", "prop", 100.00D, 160.00D, 100.00D, 90.00D),
+                new PropDto("prop3", "prop", 100.00D, 160.00D, 100.00D, 90.00D)
+        ));
+
+        List<Double> startPoint = new ArrayList<>();
+        startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
+
+        CreatorMapDto mapDto = new CreatorMapDto(uuid, mepName, "MELEE", 1L, LocalDateTime.now(),
+                90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
+
+        CreatorMap map = mapDto.convertToEntity(mapDto);
+
+        creatorMapRepository.save(map);
+    }
+
+    @Test
+    @DisplayName("크리에이터 맵 목록 1페이지, 10개, 시간 순 오름 차순 조회 성공")
+    void readCreatorMapListSuccessTest() throws JsonProcessingException {
+
+        // given
+        for(int i = 0; i < 51; i++) {
+            add51CreatorMapSuccessTest("map" + i);
+        }
+
+        int page = 0;
+        int size = 10;
+        String sort = "createTime";
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort).ascending());
+
+        // when
+        Page<CreatorMap> foundMapList = creatorMapRepository.findAll(pageable);
+
+        // then
+        Assertions.assertFalse(foundMapList.isEmpty());
+        Assertions.assertTrue(foundMapList.getNumberOfElements() == 10);
     }
 }

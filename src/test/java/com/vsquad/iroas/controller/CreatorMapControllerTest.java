@@ -86,7 +86,7 @@ class CreatorMapControllerTest {
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
         CreatorMapDto mapDto = new CreatorMapDto(uuid, "testMap", "MELEE", 1L, LocalDateTime.now(),
-                startPoint, "Morning", enemySpawnerList, propList);
+                90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
         CreatorMap map = mapDto.convertToEntity(mapDto);
 
@@ -123,7 +123,7 @@ class CreatorMapControllerTest {
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
         reqCreatorMapDto = new CreatorMapDto(uuid, "myAwesomeMap", "MELEE", 1L, LocalDateTime.now(),
-                startPoint, "Morning", enemySpawnerList, propList);
+                90.00D, 90.00D, 90.00D, 90.00D,  "Morning", enemySpawnerList, propList);
 
         // dto 객체 json으로 변환
         ObjectMapper objectMapper = new ObjectMapper();
