@@ -44,7 +44,7 @@ public class SecurityConfig {
                     .permitAll()
                     .anyRequest()
                     .authenticated()
-            );
+            ).logout();
 
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.authenticationProvider(steamAuthenticationProvider);

@@ -26,6 +26,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -89,6 +91,33 @@ public class PlayerController {
             log.warn("로그인 실패");
 
             ResTokenDto responseDto = new ResTokenDto(null, "로그인 실패");
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃", responses = {
+            @ApiResponse(responseCode = "200", description = "로그아웃 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "로그아웃 실패", content = @Content(schema = @Schema(implementation = ResponseError.class), mediaType = "application/json"))
+    })
+    public ResponseEntity<ResMessageDto> logout() {
+
+        try {
+            playerService.logout();
+
+            log.info("로그아웃 성공");
+
+            ResMessageDto responseDto = new ResMessageDto("로그아웃 성공");
+
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        } catch (IllegalAccessException e) {
+
+            String errorMessage = e.getMessage();
+
+            log.warn(errorMessage);
+            log.warn("로그아웃 실패");
+
+            ResMessageDto responseDto = new ResMessageDto(errorMessage);
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         }
     }

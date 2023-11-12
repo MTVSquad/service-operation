@@ -234,4 +234,16 @@ public class PlayerService {
         return playerDto;
 
     }
+
+    public void logout() throws IllegalAccessException {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth != null) {
+            // 로그아웃 처리 (예: 토큰 블랙리스트에 추가, 로그 기록 등)
+            SecurityContextHolder.getContext().setAuthentication(null);
+        } else {
+            throw new IllegalAccessException("인증 정보 없음");
+        }
+    }
 }
