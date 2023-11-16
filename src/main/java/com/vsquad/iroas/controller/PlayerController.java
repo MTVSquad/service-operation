@@ -69,26 +69,28 @@ public class PlayerController {
 
             String token = customTokenProviderService.generateToken(player);
 
-            ResTokenDto responseDto = new ResTokenDto(token, "로그인 성공");
+            String nickname = player.getPlayerNickName();
+
+            ResTokenDto responseDto = new ResTokenDto(token, nickname, "로그인 성공");
 
             log.info("로그인 성공");
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (PlayerNotFoundException e) {
             log.warn(e.getMessage());
 
-            ResTokenDto responseDto = new ResTokenDto(null, e.getMessage());
+            ResTokenDto responseDto = new ResTokenDto(null, null,  e.getMessage());
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         } catch (SteamUserNotFoundException e) {
             log.warn(e.getMessage());
             log.warn("스팀 유저를 찾을 수 없음");
 
-            ResTokenDto responseDto = new ResTokenDto(null, "스팀 유저를 찾을 수 없음");
+            ResTokenDto responseDto = new ResTokenDto(null, null, "스팀 유저를 찾을 수 없음");
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             log.warn(e.getMessage());
             log.warn("로그인 실패");
 
-            ResTokenDto responseDto = new ResTokenDto(null, "로그인 실패");
+            ResTokenDto responseDto = new ResTokenDto(null, null, "로그인 실패");
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         }
     }
