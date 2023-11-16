@@ -101,7 +101,7 @@ public class RankingService {
 
     public Page<ResRankingDto> getRanking(String creatorMapId, Pageable pageable) {
 
-        Page<Ranking> ranking = rankingRepository.findByCreatorMapId(creatorMapId, pageable);
+        Page<Ranking> ranking = rankingRepository.findByCreatorMapIdAndClearCountIsNot(creatorMapId, 0, pageable);
 
         if(ranking.isEmpty() || ranking == null) {
             throw new NoSuchElementException("랭킹이 존재하지 않습니다.");
