@@ -1,15 +1,18 @@
 package com.vsquad.iroas.aggregate.entity;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_play_data")
 @org.hibernate.annotations.Table(appliesTo = "tb_play_data", comment = "플레이별 맵 데이터")
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class PlayData {
 
@@ -28,7 +31,7 @@ public class PlayData {
 
     @Column(name = "PLAY_TIME")
     @Comment("플레이 시간")
-    private LocalDateTime playTime;
+    private Long playTime;
 
     @Column(name = "PLAY_COUNT")
     @Comment("플레이 횟수")
@@ -37,4 +40,12 @@ public class PlayData {
     @Column(name = "PLAY_CLEAR_COUNT")
     @Comment("플레이 완료 횟수")
     private Integer playClearCount;
+
+    public PlayData(Long playerId, String creatorMapId, Long playTime, Integer playCount, Integer playClearCount) {
+        this.playerId = playerId;
+        this.creatorMapId = creatorMapId;
+        this.playTime = playTime;
+        this.playCount = playCount;
+        this.playClearCount = playClearCount;
+    }
 }

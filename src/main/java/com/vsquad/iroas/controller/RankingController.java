@@ -2,6 +2,7 @@ package com.vsquad.iroas.controller;
 
 import com.vsquad.iroas.aggregate.dto.ResRankingDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqRankingDto;
+import com.vsquad.iroas.aggregate.dto.response.ResErrorMessage;
 import com.vsquad.iroas.aggregate.dto.response.ResMessageDto;
 import com.vsquad.iroas.aggregate.dto.response.ResponseDto;
 import com.vsquad.iroas.service.RankingService;
@@ -34,8 +35,8 @@ public class RankingController {
 
     @PostMapping
     @Operation(summary = "랭킹 추가", description = "랭킹을 추가합니다.", responses = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "랭킹 추가 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "랭킹 추가 실패", content = @Content(schema = @Schema(name = "랭킹 추가 실패", example = "에러 메시지"), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "랭킹 추가 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "랭킹 추가 실패", content = @Content(schema = @Schema(implementation = ResErrorMessage.class), mediaType = "application/json"))
     })
     public ResponseEntity<ResMessageDto> addRanking(@RequestBody ReqRankingDto req) {
         try {

@@ -2,10 +2,10 @@
 Iroas VR 운영 관련 서버
 
 ## Domain
-![image](https://github.com/MTVSquad/service-operation/assets/94158097/c982f56d-c6cf-4319-90d4-badb68156a53)
+![image](https://github.com/MTVSquad/IROAS-Server/assets/94158097/972154c1-0782-4f0b-8812-37283f20ff62)
 
 ## Entity
-![image](https://github.com/MTVSquad/service-operation/assets/94158097/54b8e8fb-12cf-4512-b7eb-40e1784d15f9)
+![image](https://github.com/MTVSquad/IROAS-Server/assets/94158097/4b24fa5f-c18a-4995-88dd-bb8a77de678e)
 
 ## Entity Relation
-![image](https://github.com/MTVSquad/service-operation/assets/94158097/3a755216-a2a3-473e-be5d-e9a77467537b)
+![image](https://github.com/MTVSquad/IROAS-Server/assets/94158097/3e8f4f59-385e-430e-982a-18b6449f65fc)

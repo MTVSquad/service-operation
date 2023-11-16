@@ -15,9 +15,11 @@ import java.time.LocalDateTime;
 public class PlayTimeDto {
 
     @Schema(description = "플레이 시작 시간")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String playStartTime;
 
     @Schema(description = "플레이 종료 시간")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String playClearTime;
 
     @Schema(description = "플레이 시간")
