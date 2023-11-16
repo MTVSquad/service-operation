@@ -168,7 +168,7 @@ public class PlayerController {
 
             String token = customTokenProviderService.generateToken(player);
 
-            ResTokenDto responseDto = new ResTokenDto(token, "플레이어가 추가되었습니다.");
+            ResTokenDto responseDto = new ResTokenDto(token, nickname.get(), "플레이어가 추가되었습니다.");
 
             log.info("플레이어 추가 성공");
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
@@ -176,18 +176,18 @@ public class PlayerController {
             log.warn(e.getMessage());
             log.warn("스팀 유저를 찾을 수 없음");
 
-            ResTokenDto responseDto = new ResTokenDto(null, "스팀 유저를 찾을 수 없음");
+            ResTokenDto responseDto = new ResTokenDto(null, null, "스팀 유저를 찾을 수 없음");
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         } catch (IllegalArgumentException e) {
             log.warn(e.getMessage());
 
-            ResTokenDto responseDto = new ResTokenDto(null, e.getMessage());
+            ResTokenDto responseDto = new ResTokenDto(null, null, e.getMessage());
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         } catch (DataIntegrityViolationException e) {
             log.warn(e.getMessage());
             log.warn("중복된 닉네임 혹은 스팀 키");
 
-            ResTokenDto responseDto = new ResTokenDto(null, "중복된 닉네임 혹은 스팀 키");
+            ResTokenDto responseDto = new ResTokenDto(null, null, "중복된 닉네임 혹은 스팀 키");
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         }
     }
