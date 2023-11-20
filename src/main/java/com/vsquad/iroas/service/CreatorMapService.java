@@ -42,7 +42,7 @@ public class CreatorMapService {
 
             Integer count = creatorMapRepository.maxNumberByCreatorMapName(nickname + "의맵");
 
-            if(count != null && count.equals(0)) {
+            if(count != null && !count.equals(0)) {
                 map.setCreatorMapName(nickname + "의맵" + "_" +  (count + 1));
             } else {
                 map.setCreatorMapName(nickname + "의맵" + "_" + "1");
