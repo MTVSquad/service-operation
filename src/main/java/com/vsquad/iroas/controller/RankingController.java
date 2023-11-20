@@ -68,7 +68,7 @@ public class RankingController {
                     example = "playTime.playMilliSecond", in = ParameterIn.QUERY),
             @Parameter(name = "direction", description = "정렬 방향", schema = @Schema(allowableValues = {"asc", "desc"}), example = "asc")
     })
-    public ResponseEntity<ResponseDto<Page<ResRankingDto>>> getRanking(@RequestParam @Parameter(hidden = true) String creatorMapId, @PageableDefault(sort = {"playTime.playMilliSecond"}) @Parameter(hidden = true) Pageable pageable) {
+    public ResponseEntity<ResponseDto<Page<ResRankingDto>>> getRanking(@RequestParam @Parameter(hidden = true) Long creatorMapId, @PageableDefault(sort = {"playTime.playMilliSecond"}) @Parameter(hidden = true) Pageable pageable) {
         try {
             log.info("랭킹 조회");
 
