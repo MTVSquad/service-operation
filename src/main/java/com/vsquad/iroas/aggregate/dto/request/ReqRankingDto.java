@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class ReqRankingDto {
 
     @Schema(description = "커스텀 모드 유즈맵")
-    private String creatorMapId;
+    private Long creatorMapId;
 
     @Schema(description = "게임 시작 시간")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

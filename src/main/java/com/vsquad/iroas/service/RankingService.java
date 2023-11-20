@@ -48,7 +48,7 @@ public class RankingService {
             // UserDetails에서 사용자 정보 사용
             Long playerId = userDetails.getId();
 
-            String creatorMapId = dto.getCreatorMapId();
+            Long creatorMapId = dto.getCreatorMapId();
 
             // 회원 찾기
             Player player = playerRepository.findById(playerId)
