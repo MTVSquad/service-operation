@@ -20,7 +20,7 @@ public class ResRankingDto {
     private String playerNickname;
 
     @Schema(description = "커스텀 모드 유즈맵 이름")
-    private String creatorMapId;
+    private Long creatorMapId;
 
     @Schema(name = "playTime", description = "플레이 시간")
     private PlayTimeDto playTime;
@@ -35,7 +35,7 @@ public class ResRankingDto {
 
         Long rankingId = ranking.getRankingId();
         String playerNickname = player.getNickname().getPlayerNickname();
-        String creatorMapId = ranking.getCreatorMapId();
+        Long creatorMapId = ranking.getCreatorMapId();
         PlayTimeDto playTime = PlayTimeDto.convertToDto(ranking.getPlayTime());
         Integer playCount = ranking.getPlayCount();
         Integer clearCount = ranking.getClearCount();
