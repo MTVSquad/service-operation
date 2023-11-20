@@ -99,7 +99,7 @@ public class RankingService {
         }
     }
 
-    public Page<ResRankingDto> getRanking(String creatorMapId, Pageable pageable) {
+    public Page<ResRankingDto> getRanking(Long creatorMapId, Pageable pageable) {
 
         Page<Ranking> ranking = rankingRepository.findByCreatorMapIdAndClearCountIsNot(creatorMapId, 0, pageable);
 
