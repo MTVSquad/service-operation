@@ -44,6 +44,11 @@ public class CustomOncePerRequestFilter extends OncePerRequestFilter {
         String bearerToken = request.getHeader("Authorization");
 
         if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
+
+            if(bearerToken.equals("Bearer")) {
+                throw new StringIndexOutOfBoundsException("Bearer 이후 토큰 없음");
+            }
+
             return bearerToken.substring(7, bearerToken.length());
         }
 
