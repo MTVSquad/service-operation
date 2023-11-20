@@ -133,7 +133,7 @@ public class PlayerController {
                                 JSONObject responseObject = (JSONObject) obj.get("response");
                                 JSONArray playersArray = (JSONArray) responseObject.get("players");
                                 JSONObject players = (JSONObject) playersArray.get(0);
-                                nickname.set(players.get("personaname") + "#" + players.get("steamid"));
+                                nickname.set((String) players.get("personaname"));
 
                             } catch (ParseException e) {
                                 log.warn("Json Parser Error :: {}", e.getMessage());
@@ -168,7 +168,7 @@ public class PlayerController {
 
             String token = customTokenProviderService.generateToken(player);
 
-            ResTokenDto responseDto = new ResTokenDto(token, nickname.get(), "플레이어가 추가되었습니다.");
+            ResTokenDto responseDto = new ResTokenDto(token, player.getPlayerNickName(), "플레이어가 추가되었습니다.");
 
             log.info("플레이어 추가 성공");
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);

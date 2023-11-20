@@ -28,16 +28,6 @@ public class CreatorMapService {
     private final ModelMapper modelMapper;
 
     public void addCreatorMap(ReqCreatorMapDto creatorMapDto) throws JsonProcessingException {
-        String uuid;
-
-        while (true) {
-            uuid = UUID.randomUUID().toString();
-            Optional<CreatorMap> isCreatorMap = creatorMapRepository.findById(uuid);
-
-            if (!isCreatorMap.isPresent()) {
-                break;
-            }
-        }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -49,9 +39,15 @@ public class CreatorMapService {
             String nickname = userDetails.getName();
 
             CreatorMap map = creatorMapDto.convertToEntity(creatorMapDto);
-            map.setCreatorMapId(uuid);
 
-            map.setCreatorMapName(nickname + "의 맵");
+            Integer count = creatorMapRepository.maxNumberByCreatorMapName(nickname + "의맵");
+
+            if(count != null && !count.equals(0)) {
+                map.setCreatorMapName(nickname + "의맵" + "_" +  (count + 1));
+            } else {
+                map.setCreatorMapName(nickname + "의맵" + "_" + "1");
+            }
+
             map.setCreator(nickname);
             creatorMapRepository.save(map);
 

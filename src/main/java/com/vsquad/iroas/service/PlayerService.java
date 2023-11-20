@@ -34,12 +34,16 @@ public class PlayerService {
         });
 
         // 닉네임 중복 체크
-        Nickname newNickname = new Nickname(nickname);
-        playerRepository.findByNickname(newNickname).ifPresent(player -> {
-            throw new IllegalArgumentException("중복된 닉네임");
-        });
+        Integer count = playerRepository.maxNumberByNickname(nickname);
 
-        Player newPlayer = new Player(key, nickname, type, 0L, "ROLE_PLAYER");
+        Player newPlayer = new Player();
+
+        if(count != null && !count.equals(0)) {
+            newPlayer = new Player(key, nickname + "#" + (count + 1), type, 0L, "ROLE_PLAYER");
+        } else {
+            newPlayer = new Player(key, nickname + "#" + 1, type, 0L, "ROLE_PLAYER");
+        }
+
         Player savedPlayer = playerRepository.save(newPlayer);
 
         Long playerId = savedPlayer.getPlayerId();
@@ -198,12 +202,18 @@ public class PlayerService {
         });
 
         // 닉네임 중복 체크
-        Nickname newNickname = new Nickname("Local" + "#" + key);
-        playerRepository.findByNickname(newNickname).ifPresent(player -> {
-            throw new IllegalArgumentException("중복된 닉네임");
-        });
+        String nickname = "Local";
 
-        Player newPlayer = new Player(key, newNickname.getPlayerNickname(), type, 0L, "ROLE_PLAYER");
+        Integer count = playerRepository.maxNumberByNickname(nickname);
+
+        Player newPlayer = new Player();
+
+        if(count != null && !count.equals(0)) {
+            newPlayer = new Player(key, nickname + "#" + (count + 1), type, 0L, "ROLE_PLAYER");
+        } else {
+            newPlayer = new Player(key, nickname + "#" + 1, type, 0L, "ROLE_PLAYER");
+        }
+
         Player savedPlayer = playerRepository.save(newPlayer);
 
         Long playerId = savedPlayer.getPlayerId();

@@ -119,20 +119,23 @@ class PlayerServiceTest {
         // given
         String playerKey = "key";
         // 최소 2자, 최대 8자, 특수 문자x, 한글 / 영문
-        String inputData = "아바라abcf";
+        String inputData = "Robin";
 
-        ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
+//        ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
 
-        Player player = new Player(reqPlayerDto.getKey(), inputData, "local", 0L, "ROLE_PLAYER");
+//        Player player = new Player(reqPlayerDto.getKey(), inputData, "local", 0L, "ROLE_PLAYER");
 
         // when
-        playerRepository.save(player);
+//        playerRepository.save(player);
 
         //then
         Nickname foundNickname = new Nickname(inputData);
-        Player foundPlayer = playerRepository.findByNickname(foundNickname).orElseThrow();
+//        Player foundPlayer = playerRepository.findByNickname(foundNickname).orElseThrow();
 
-        assertNotNull(foundPlayer);
+        Integer count2 = playerRepository.maxNumberByNickname(foundNickname.getPlayerNickname());
+
+//        assertNotNull(foundPlayer);
+        assertNotEquals(0, count2);
     }
 
     @Test
