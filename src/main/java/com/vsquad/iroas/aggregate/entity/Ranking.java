@@ -36,7 +36,7 @@ public class Ranking {
 
     @Column(name = "CREATOR_MAP_ID")
     @Comment("커스텀 모드 유즈맵")
-    private String creatorMapId;
+    private Long creatorMapId;
 
     @Embedded
     private PlayTime playTime;
@@ -49,7 +49,7 @@ public class Ranking {
     @Comment("클리어 횟수")
     private Integer clearCount;
 
-    public Ranking(Player player, String creatorMapId, PlayTime playTime, Integer playCount, Integer clearCount) {
+    public Ranking(Player player, Long creatorMapId, PlayTime playTime, Integer playCount, Integer clearCount) {
         this.player = player;
         this.creatorMapId = creatorMapId;
         this.playTime = playTime;

@@ -19,8 +19,9 @@ public class CreatorMap {
 
     @Id
     @Column(name = "CREATOR_MAP_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("크리에이터 툴에 의해 생성된 맵 식별자")
-    private String creatorMapId;
+    private Long creatorMapId;
 
     @Column(name = "CREATOR_TOOL_NAME")
     @Comment("맵 이름")

@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface RankingRepository extends JpaRepository<Ranking, Long> {
 
-    Page<Ranking> findByCreatorMapIdAndClearCountIsNot(String creatorMapId, Integer count, Pageable pageable);
+    Page<Ranking> findByCreatorMapIdAndClearCountIsNot(Long creatorMapId, Integer count, Pageable pageable);
 
-    Optional<Ranking> findByPlayerAndCreatorMapId(Player player, String creatorMapId);
+    Optional<Ranking> findByPlayerAndCreatorMapId(Player player, Long creatorMapId);
 }

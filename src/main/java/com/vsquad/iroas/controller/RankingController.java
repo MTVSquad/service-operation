@@ -5,6 +5,7 @@ import com.vsquad.iroas.aggregate.dto.request.ReqRankingDto;
 import com.vsquad.iroas.aggregate.dto.response.ResErrorMessage;
 import com.vsquad.iroas.aggregate.dto.response.ResMessageDto;
 import com.vsquad.iroas.aggregate.dto.response.ResponseDto;
+import com.vsquad.iroas.aggregate.dto.response.ResponseError;
 import com.vsquad.iroas.service.RankingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -56,7 +57,7 @@ public class RankingController {
     @Operation(summary = "랭킹 조회", responses = {
             @ApiResponse(responseCode = "200", description = "랭킹 조회 성공"),
             @ApiResponse(responseCode = "400", description = "랭킹 조회 실패",
-                    content = @Content(schema = @Schema(name = "랭킹 조회 실패", example = "에러 메시지"),
+                    content = @Content(schema = @Schema(implementation = ResponseError.class),
                             mediaType = "application/json"))
     })
     @Parameters({
@@ -67,7 +68,7 @@ public class RankingController {
                     example = "playTime.playMilliSecond", in = ParameterIn.QUERY),
             @Parameter(name = "direction", description = "정렬 방향", schema = @Schema(allowableValues = {"asc", "desc"}), example = "asc")
     })
-    public ResponseEntity<ResponseDto<Page<ResRankingDto>>> getRanking(@RequestParam @Parameter(hidden = true) String creatorMapId, @PageableDefault(sort = {"playTime.playMilliSecond"}) @Parameter(hidden = true) Pageable pageable) {
+    public ResponseEntity<ResponseDto<Page<ResRankingDto>>> getRanking(@RequestParam @Parameter(hidden = true) Long creatorMapId, @PageableDefault(sort = {"playTime.playMilliSecond"}) @Parameter(hidden = true) Pageable pageable) {
         try {
             log.info("랭킹 조회");
 
