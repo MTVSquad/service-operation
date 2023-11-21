@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqCreatorMapDto;
 import com.vsquad.iroas.aggregate.entity.CreatorMap;
+import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.config.token.PlayerPrincipal;
 import com.vsquad.iroas.repository.CreatorMapRepository;
+import com.vsquad.iroas.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,7 @@ import java.util.UUID;
 public class CreatorMapService {
 
     private final CreatorMapRepository creatorMapRepository;
+    private final PlayerRepository playerRepository;
     private final ModelMapper modelMapper;
 
     public void addCreatorMap(ReqCreatorMapDto creatorMapDto) throws JsonProcessingException {
@@ -36,6 +39,7 @@ public class CreatorMapService {
             PlayerPrincipal userDetails = (PlayerPrincipal) authentication.getPrincipal();
 
             // UserDetails에서 사용자 정보 사용
+            Long id = userDetails.getId();
             String nickname = userDetails.getName();
 
             CreatorMap map = creatorMapDto.convertToEntity(creatorMapDto);
@@ -48,13 +52,14 @@ public class CreatorMapService {
                 map.setCreatorMapName(nickname + "의맵" + "_" + "1");
             }
 
-            map.setCreator(nickname);
+//            map.setCreator(nickname);
+            map.setCreator(id);
             creatorMapRepository.save(map);
 
         } else throw new UsernameNotFoundException("플레이어 인증 정보를 찾을 수 없습니다.");
     }
 
-    public CreatorMapDto getCreatorMap(String creatorMapId) throws IllegalArgumentException {
+    public CreatorMapDto getCreatorMap(Long creatorMapId) throws IllegalArgumentException {
         CreatorMap creatorMap = creatorMapRepository.findById(creatorMapId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 맵이 존재하지 않습니다."));
 
@@ -72,13 +77,22 @@ public class CreatorMapService {
             throw new IllegalArgumentException("해당 맵 목록 없음");
         }
 
-        Page<CreatorMapDto> creatorMapDtoPage = creatorMapPage.map(creatorMap -> modelMapper.map(creatorMap, CreatorMapDto.class));
+        Page<CreatorMapDto> creatorMapDtoPage = creatorMapPage.map(creatorMap -> {
+
+            Player player = playerRepository.findById(creatorMap.getCreator()).orElseThrow();
+
+            CreatorMapDto creatorMapDto = modelMapper.map(creatorMap, CreatorMapDto.class);
+
+            creatorMapDto.setCreator(player.getNickname().getPlayerNickname());
+
+            return creatorMapDto;
+        });
 
         return creatorMapDtoPage;
     }
 
     @Transactional
-    public void deleteCreatorMap(String creatorMapId) {
+    public void deleteCreatorMap(Long creatorMapId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -86,13 +100,14 @@ public class CreatorMapService {
 
             PlayerPrincipal userDetails = (PlayerPrincipal) authentication.getPrincipal();
 
+            Long userId = userDetails.getId();
             String nickname = userDetails.getName();
 
-            creatorMapRepository.findByCreatorMapIdAndCreator(creatorMapId, nickname).orElseThrow(
+            creatorMapRepository.findByCreatorMapIdAndCreator(creatorMapId, userId).orElseThrow(
                     () -> new IllegalArgumentException()
             );
 
-            creatorMapRepository.deleteCreatorMapByCreatorMapIdAndCreator(creatorMapId, nickname);
+            creatorMapRepository.deleteCreatorMapByCreatorMapIdAndCreator(creatorMapId, userId);
         } else {
             throw new UsernameNotFoundException("플레이어 인증 정보를 찾을 수 없습니다.");
         }
