@@ -9,6 +9,7 @@ import com.vsquad.iroas.config.token.PlayerPrincipal;
 import com.vsquad.iroas.repository.CreatorMapRepository;
 import com.vsquad.iroas.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,15 @@ public class CreatorMapService {
     private final CreatorMapRepository creatorMapRepository;
     private final PlayerRepository playerRepository;
     private final ModelMapper modelMapper;
+
+    private void initModelMapper() {
+        modelMapper.getConfiguration().setAmbiguityIgnored(true);
+        // modelMapper의 파라미터 타입 변환 후 원하는 값으로 변환 처리, validate() : 에러 출력
+        modelMapper.typeMap(CreatorMap.class, CreatorMapDto.class)
+                .addMappings(mapper -> mapper.using((Converter<Long, String>) context -> context.getSource() != null ?
+                                playerRepository.findById(context.getSource()).get().getNickname().getPlayerNickname() : null)
+                        .map(CreatorMap::getCreator, CreatorMapDto::setCreator)).validate();      // modelMapper error 출력
+    }
 
     public void addCreatorMap(ReqCreatorMapDto creatorMapDto) throws JsonProcessingException {
 
@@ -52,7 +62,6 @@ public class CreatorMapService {
                 map.setCreatorMapName(nickname + "의맵" + "_" + "1");
             }
 
-//            map.setCreator(nickname);
             map.setCreator(id);
             creatorMapRepository.save(map);
 
@@ -62,6 +71,8 @@ public class CreatorMapService {
     public CreatorMapDto getCreatorMap(Long creatorMapId) throws IllegalArgumentException {
         CreatorMap creatorMap = creatorMapRepository.findById(creatorMapId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 맵이 존재하지 않습니다."));
+
+        initModelMapper();
 
         CreatorMapDto creatorMapDto = modelMapper.map(creatorMap, CreatorMapDto.class);
 
@@ -77,13 +88,11 @@ public class CreatorMapService {
             throw new IllegalArgumentException("해당 맵 목록 없음");
         }
 
+        initModelMapper();
+
         Page<CreatorMapDto> creatorMapDtoPage = creatorMapPage.map(creatorMap -> {
 
-            Player player = playerRepository.findById(creatorMap.getCreator()).orElseThrow();
-
             CreatorMapDto creatorMapDto = modelMapper.map(creatorMap, CreatorMapDto.class);
-
-            creatorMapDto.setCreator(player.getNickname().getPlayerNickname());
 
             return creatorMapDto;
         });
