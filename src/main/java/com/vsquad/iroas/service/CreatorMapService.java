@@ -2,8 +2,10 @@ package com.vsquad.iroas.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
+import com.vsquad.iroas.aggregate.dto.EnemySpawnerDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqCreatorMapDto;
 import com.vsquad.iroas.aggregate.entity.CreatorMap;
+import com.vsquad.iroas.aggregate.entity.EnemySpawner;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.config.token.PlayerPrincipal;
 import com.vsquad.iroas.repository.CreatorMapRepository;
@@ -36,8 +38,8 @@ public class CreatorMapService {
         // modelMapper의 파라미터 타입 변환 후 원하는 값으로 변환 처리, validate() : 에러 출력
         modelMapper.typeMap(CreatorMap.class, CreatorMapDto.class)
                 .addMappings(mapper -> mapper.using((Converter<Long, String>) context -> context.getSource() != null ?
-                                playerRepository.findById(context.getSource()).get().getNickname().getPlayerNickname() : null)
-                        .map(CreatorMap::getCreator, CreatorMapDto::setCreator)).validate();      // modelMapper error 출력
+                        playerRepository.findById(context.getSource()).get().getNickname().getPlayerNickname() : null)
+                .map(CreatorMap::getCreator, CreatorMapDto::setCreator)).validate();   // modelMapper error 출력
     }
 
     public void addCreatorMap(ReqCreatorMapDto creatorMapDto) throws JsonProcessingException {
@@ -79,7 +81,7 @@ public class CreatorMapService {
         return creatorMapDto;
     }
 
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     public Page<CreatorMapDto> readPlayerCreatorMapList(Pageable pageable) {
 
         Page<CreatorMap> creatorMapPage = creatorMapRepository.findAll(pageable);
@@ -110,7 +112,6 @@ public class CreatorMapService {
             PlayerPrincipal userDetails = (PlayerPrincipal) authentication.getPrincipal();
 
             Long userId = userDetails.getId();
-            String nickname = userDetails.getName();
 
             creatorMapRepository.findByCreatorMapIdAndCreator(creatorMapId, userId).orElseThrow(
                     () -> new IllegalArgumentException()

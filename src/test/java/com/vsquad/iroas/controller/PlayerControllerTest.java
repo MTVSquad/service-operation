@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.BeforeTransaction;
@@ -55,7 +56,9 @@ class PlayerControllerTest {
         return Stream.of(
                 Arguments.of(
                         "76561197960435530",
-                        "테스트코드"
+                        "테스트코드",
+                        "steam",
+                        "ROLE_PLAYER"
                 )
         );
     }
@@ -101,9 +104,9 @@ class PlayerControllerTest {
     @ParameterizedTest
     @MethodSource("getPlayerInfo")
     @DisplayName("플레이어 추가 성공 테스트")
-    void addPlayerTest(String steamKey, String nickname) throws Exception {
+    void addPlayerTest(String steamKey, String nickname, String type) throws Exception {
 
-        String requestJson = "{\"steamKey\":\"" + steamKey + "\",\"playerNickName\":\"" + nickname + "\"}";
+        String requestJson = "{\"key\":\"" + steamKey +"\",\"type\":\"" + type + "\"}";
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/api/v1/player")
@@ -159,9 +162,11 @@ class PlayerControllerTest {
     @DisplayName("플레이어 닉네임 변경 실패 테스트")
     void changePlayerNicknameFailTest() throws Exception {
 
+        changePlayerNicknameSuccessTest();
+
         mvc.perform(MockMvcRequestBuilders
                         .patch("/api/v1/player/nickname")
-                        .param("nickname", "변경된닉네임111")
+                        .param("nickname", "변경된닉네임")
                 )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andDo(MockMvcResultHandlers.print());

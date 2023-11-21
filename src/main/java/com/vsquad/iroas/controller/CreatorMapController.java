@@ -14,9 +14,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -90,7 +90,7 @@ public class CreatorMapController {
                     example = "createTime", in = ParameterIn.QUERY),
             @Parameter(name = "direction", description = "정렬 방향", schema = @Schema(allowableValues = {"asc", "desc"}), example = "asc")
     })
-    public ResponseEntity<ResponseDto<Page<CreatorMapDto>>> getCreatorMapList(@PageableDefault @Parameter(hidden = true) Pageable pageable) {
+    public ResponseEntity<ResponseDto<Page<CreatorMapDto>>> getCreatorMapList(@PageableDefault(sort = {"createTime"}, direction = Sort.Direction.ASC) @Parameter(hidden = true) Pageable pageable) {
         try {
             log.info("맵 목록 조회");
 

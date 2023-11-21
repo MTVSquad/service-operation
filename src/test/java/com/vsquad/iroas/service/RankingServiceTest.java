@@ -68,17 +68,6 @@ class RankingServiceTest {
 
     private CreatorMap addMap() throws JsonProcessingException {
 
-        String uuid;
-
-        while (true) {
-            uuid = UUID.randomUUID().toString();
-            Optional<CreatorMap> isCreatorMap = creatorMapRepository.findById(uuid);
-
-            if (!isCreatorMap.isPresent()) {
-                break;
-            }
-        }
-
         List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
         enemySpawnerList.addAll(List.of(
                 new EnemySpawnerDto(100.00D, 160.00D, 90.00D, 100, 10D, 10D,  "Melee", 100L, 10L)
