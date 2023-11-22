@@ -34,17 +34,29 @@ jobs:
 #        chmod +x src/main/resources/application.yml
 #        chmod +x src/main/resources/application-dev.yml
 
-    - name: Copy Secret
-      env:
-        OCCUPY_SECRETS: ${{ secrets.OCCUPY_SECRET }}
-        OCCUPY_DEV_SECRETS: ${{ secrets.OCCUPY_DEV_SECRETS }}
-        OCCUPY_SECRET_DIR: src/main/resources
-        OCCUPY_SECRET_FILE: application.yml
-        OCCUPY_SECRET_DEV_FILE: application-dev.yml
-      run: |
-        echo $OCCUPY_SECRETS | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_FILE &&
-        echo $OCCUPY_DEV_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DEV_FILE
-        find src
+#    - name: Copy Secret
+#      env:
+#        OCCUPY_SECRETS: ${{ secrets.OCCUPY_SECRET }}
+#        OCCUPY_DEV_SECRETS: ${{ secrets.OCCUPY_DEV_SECRETS }}
+#        OCCUPY_SECRET_DIR: src/main/resources
+#        OCCUPY_SECRET_FILE: application.yml
+#        OCCUPY_SECRET_DEV_FILE: application-dev.yml
+#      run: |
+#        echo $OCCUPY_SECRETS | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_FILE &&
+#        echo $OCCUPY_DEV_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DEV_FILE
+#        find src
+
+    - name: make application.yml
+      run:
+        touch ./src/main/resources/application.yml
+        touch ./src/main/resources/application-dev.yml
+      shell: bash
+
+    - name: deliver application
+      run:
+        echo "${{ secrets.OCCUPY_SECRET }}" > ./src/main/resources/application.yml
+        echo "${{ secrets.OCCUPY_DEV_SECRETS }}" > ./src/main/resources/application-dev.yml
+      shell: bash
 
     - name: Setup MySQL
       uses: samin/mysql-action@v1
