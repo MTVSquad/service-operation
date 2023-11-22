@@ -29,8 +29,8 @@ jobs:
       run: |
         mkdir ./src/main/resources
         cd ./src/main/resources
-        touch ./application.yml
-        touch ./application-dev.yml
+#        touch ./application.yml
+#        touch ./application-dev.yml
 #        chmod +x src/main/resources/application.yml
 #        chmod +x src/main/resources/application-dev.yml
 
@@ -42,10 +42,8 @@ jobs:
         OCCUPY_SECRET_FILE: application.yml
         OCCUPY_SECRET_DEV_FILE: application-dev.yml
       run: |
-#        echo $OCCUPY_SECRETS | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_FILE &&
-#        echo $OCCUPY_DEV_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DEV_FILE
-        echo $OCCUPY_SECRETS > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_FILE &&
-        echo $OCCUPY_DEV_SECRET > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DEV_FILE
+        echo $OCCUPY_SECRETS | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_FILE &&
+        echo $OCCUPY_DEV_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DEV_FILE
         find src
 
     - name: Setup MySQL
