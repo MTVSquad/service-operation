@@ -1,0 +1,4 @@
+# action.yml
+
+inputs:
+    character set server: 'utf8'
