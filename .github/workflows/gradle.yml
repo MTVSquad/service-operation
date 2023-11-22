@@ -50,6 +50,11 @@ jobs:
         touch ./src/main/resources/application.yml &&
         touch ./src/main/resources/application-dev.yml
 
+    - name: Check if the file exists
+      run:
+        ls -l ./src/main/resources
+      shell: bash
+
     - name: Check if the file is a regular file
       run: file ./src/main/resources/application.yml
       shell: bash
