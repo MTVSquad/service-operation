@@ -43,7 +43,7 @@ jobs:
           OCCUPY_SECRET_DEV_FILE: application-dev.yml
         run: |
           echo $OCCUPY_SECRETS | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_FILE &&
-          echo $OCCUPY_DEV_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DEV_FILE
+          echo $OCCUPY_DEV_SECRETS | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DEV_FILE &&
           find src
 
       - name: Check if the file exists
@@ -52,7 +52,7 @@ jobs:
         shell: bash
 
       - name: Check if the file is a regular file
-        run: file ./src/main/resources/application.yml
+        run: file ./src/main/resources/application-dev.yml
         shell: bash
 
       - name: Setup MySQL
