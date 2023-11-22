@@ -52,7 +52,7 @@ class PlayerServiceTest {
     @BeforeTransaction
     public void accountSetup() {
         player = Player.builder()
-                .key("1234567890123456789")
+                .key("123456789012345678")
                 .nickname(new Nickname("히에로스"))
                 .type("local")
                 .playerMoney(1000L)
