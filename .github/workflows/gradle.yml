@@ -38,8 +38,8 @@ jobs:
         cd ./src/main/resources 
         touch ./application.yml
         touch ./application-dev.yml
-        chmod +x src/main/resources/application.yml 
-        chmod +x src/main/resources/application-dev.yml
+#        chmod +x src/main/resources/application.yml
+#        chmod +x src/main/resources/application-dev.yml
         
     - name: Copy Secret
       env:
