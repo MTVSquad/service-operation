@@ -20,10 +20,10 @@ import java.util.List;
 public class CreatorMapDto {
 
     @Schema(name = "creatorMapId", description = "맵 식별자")
-    private String creatorMapId;
+    private Long creatorMapId;
 
     @Schema(name = "creatorMapName", description = "맵 이름은 2~12자 한글, 영문 대소문자, 숫자만 가능")
-    @Pattern(regexp = "^[가-힣a-zA-Z0-9]{2,12}$")
+//    @Pattern(regexp = "^[가-힣a-zA-Z0-9]{2,12}$")
     private String creatorMapName;
 
     @Schema(name = "creatorMapType", description = "맵 타입", allowableValues = {"MELEE", "TIME_ATTACK"})

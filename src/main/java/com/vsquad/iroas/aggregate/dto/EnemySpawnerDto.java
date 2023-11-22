@@ -46,9 +46,9 @@ public class EnemySpawnerDto {
         }
 
         EnemySpawner enemySpawner = new EnemySpawner();
-        enemySpawner.setSpawnerAmount(enemySpawnerDto.getEnemySpawnAmount());
-        enemySpawner.setSpawnerInterval(enemySpawnerDto.getEnemySpawnerInterval());
-        enemySpawner.setSpawnerStartDelay(enemySpawnerDto.getEnemySpawnerStartDelay());
+        enemySpawner.setEnemySpawnAmount(enemySpawnerDto.getEnemySpawnAmount());
+        enemySpawner.setEnemySpawnerInterval(enemySpawnerDto.getEnemySpawnerInterval());
+        enemySpawner.setEnemySpawnerStartDelay(enemySpawnerDto.getEnemySpawnerStartDelay());
         enemySpawner.setEnemyStartPointXLocation(enemySpawnerDto.getEnemyStartPointXLocation());
         enemySpawner.setEnemyStartPointYLocation(enemySpawnerDto.getEnemyStartPointYLocation());
         enemySpawner.setEnemyStartPointZLocation(enemySpawnerDto.getEnemyStartPointZLocation());

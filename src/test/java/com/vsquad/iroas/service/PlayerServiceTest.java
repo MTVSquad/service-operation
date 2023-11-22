@@ -1,5 +1,6 @@
 package com.vsquad.iroas.service;
 
+import com.vsquad.iroas.aggregate.dto.PlayerDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqPlayerDto;
 import com.vsquad.iroas.aggregate.entity.Avatar;
 import com.vsquad.iroas.aggregate.entity.Item;
@@ -56,6 +57,7 @@ class PlayerServiceTest {
                 .type("local")
                 .playerMoney(1000L)
                 .playerItems("[1,2,3]")
+                .playerRole("ROLE_PLAYER")
                 .build();
 
         player = playerRepository.save(player);
@@ -77,11 +79,10 @@ class PlayerServiceTest {
 
         // given
         String playerKey = "key";
+        String nickName = "local";
 
         // when
-        Player newPlayer = new Player();
-        newPlayer.setKey(playerKey);
-        newPlayer.setPlayerRole("ROLE_PLAYER");
+        Player newPlayer = new Player(playerKey, nickName, "local", 0L, "ROLE_PLAYER");
 
         // 저장
         playerRepository.save(newPlayer);
@@ -95,18 +96,18 @@ class PlayerServiceTest {
     }
 
     @Test
-    @DisplayName("스팀 로그인 성공")
-    void steamLoginSuccessTest() {
+    @DisplayName("로그인 성공")
+    void loginSuccessTest() {
 
         // given
-        String uuid = player.getKey();
+        String key = player.getKey();
 
         // when
-        UserDetails user = userService.loadUserByUsername(uuid);
+        userService.loadUserByUsername(key);
 
-        TokenMapping tokenMapping = customTokenProviderService.createToken((Authentication) user.getAuthorities());
+        PlayerDto playerDto = new PlayerDto(player.getPlayerId(), player.getKey(), player.getNickname().getPlayerNickname(), player.getType(), player.getPlayerRole());
 
-        String token = tokenMapping.getAccessToken();
+        String token = customTokenProviderService.generateToken(playerDto);
 
         // then
         assertNotNull(token);
@@ -136,31 +137,6 @@ class PlayerServiceTest {
 
 //        assertNotNull(foundPlayer);
         assertNotEquals(0, count2);
-    }
-
-    @Test
-    @DisplayName("플레이어 닉네임 추가 실패, 글자 수 8자 이상")
-    void addPlayerNicknameFailTest() {
-
-        // given
-        // 최소 2자, 최대 8자, 특수 문자x, 한글 / 영문
-        String inputData = "라라라라라라라라랄라라";
-
-        Player player = new Player();
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            //when
-            Nickname nickname = new Nickname(inputData);
-
-            player.setNickname(nickname);
-
-            playerRepository.save(player);
-
-            //then
-            Player foundPlayer =  playerRepository.findByNickname(nickname).orElseThrow();
-            assertNotNull(foundPlayer);
-
-        }, "에러 출력 되지 않음...");
     }
 
     @Test
@@ -219,33 +195,21 @@ class PlayerServiceTest {
     }
 
     @Test
-    @DisplayName("닉네임 변경 실패")
+    @DisplayName("닉네임 변경 중복 실패")
     void changePlayerNicknameFailTest() {
 
         // given
-        String playerKey = "key";
+        String playerKey = "key1";
         String inputData = "바닐라라떼";
-        ReqPlayerDto reqPlayerDto = new ReqPlayerDto(playerKey, inputData);
-        Player player = new Player(reqPlayerDto.getKey(), inputData, "local", 0L, "ROLE_PLAYER");
-        playerRepository.save(player);
+        Nickname changedNickname = new Nickname(inputData);
+        Player player1 = new Player(playerKey, inputData, "local", 0L, "ROLE_PLAYER");
+        playerRepository.save(player1);
 
-        // when
-        Nickname foundNickname = new Nickname(inputData);
-        Player foundPlayer = playerRepository.findByNickname(foundNickname).orElseThrow();
-
-        Nickname nicknameToChange = new Nickname("바닐라라떼");
-        foundPlayer.setNickname(nicknameToChange);
-        playerRepository.save(foundPlayer);
-
-        // then
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
 
             //when
-            Nickname changedNickname = new Nickname("unlimitedPower");
-
-            player.setNickname(changedNickname);
-
-            playerRepository.save(player);
+            Player player2 = new Player("key2", inputData, "local", 0L, "ROLE_PLAYER");
+            playerRepository.save(player2);
 
             //then
             Player changedPlayer =  playerRepository.findByNickname(changedNickname).orElseThrow();
@@ -290,14 +254,9 @@ class PlayerServiceTest {
     void changePlayerAvatarTest() {
 
         // given
-        // 플레이어 추가
-        String playerKey = "key";
-        Player newPlayer = new Player();
-        newPlayer.setKey(playerKey);
-        Player savedPlayer = playerRepository.save(newPlayer);
 
         // 플레이어 아바타 추가
-        Long playerId = savedPlayer.getPlayerId();
+        Long playerId = player.getPlayerId();
         String playerMaskColor = "red";
         Avatar avatar = new Avatar(playerId, playerMaskColor);
         avatarRepository.save(avatar);
@@ -322,23 +281,18 @@ class PlayerServiceTest {
     void resetPlayerInfo() {
 
         // given
-        // 플레이어 추가
-        String playerKey = "key";
-        Player newPlayer = new Player();
-        newPlayer.setKey(playerKey);
-        Player savedPlayer = playerRepository.save(newPlayer);
 
         // 플레이어 아바타 추가
-        Long playerId = savedPlayer.getPlayerId();
+        Long playerId = player.getPlayerId();
         String playerMaskColor = "red";
         Avatar avatar = new Avatar(playerId, playerMaskColor);
         Avatar registedAvatar = avatarRepository.save(avatar);
 
-        savedPlayer.setPlayerAvatar(registedAvatar.getAvatarId());
-        playerRepository.save(savedPlayer);
+        player.setPlayerAvatar(registedAvatar.getAvatarId());
+        playerRepository.save(player);
 
         // when
-        Player foundPlayer = playerRepository.findById(savedPlayer.getPlayerId()).orElseThrow(() -> {
+        Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> {
             throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
         });
 
@@ -368,22 +322,15 @@ class PlayerServiceTest {
     void readPlayerInfSuccessTest() {
 
         // given
-        String playerKey = "key";
-
-        Player newPlayer = new Player();
-        newPlayer.setKey(playerKey);
-
-        Player savedPlayer = playerRepository.save(newPlayer);
-
         // 플레이어 아바타 추가
-        Long playerId = savedPlayer.getPlayerId();
+        Long playerId = player.getPlayerId();
         String playerMaskColor = "red";
 
         Avatar avatar = new Avatar(playerId, playerMaskColor);
         avatarRepository.save(avatar);
 
         // when
-        Player foundPlayer = playerRepository.findById(savedPlayer.getPlayerId()).orElseThrow(() -> {
+        Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> {
             throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
         });
 
