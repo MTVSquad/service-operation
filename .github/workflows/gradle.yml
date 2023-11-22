@@ -26,7 +26,7 @@ jobs:
       run: echo "${{ secrets.OCCUPY_SECRET }}"
 
     - name: Make application.yml executable
-      run: |
+      run:
         mkdir ./src/main/resources
 #        touch ./application.yml
 #        touch ./application-dev.yml
@@ -47,8 +47,11 @@ jobs:
 
     - name: make application.yml
       run:
-        touch ./src/main/resources/application.yml
+        touch ./src/main/resources/application.yml |
         touch ./src/main/resources/application-dev.yml
+
+    - name: Check if the file is a regular file
+      run: file ./src/main/resources/application.yml
       shell: bash
 
     - name: deliver application
@@ -67,11 +70,7 @@ jobs:
 
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew |
-           chmod +x src/main/resources
-
-    - name: Check if the file is a regular file
-      run: file ./src/main/resources/application.yml
-      shell: bash
+           chmod +x ./src/main/resources
 
     - name: Test with Gradle
       run: ./gradlew --info test
