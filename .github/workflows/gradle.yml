@@ -46,8 +46,8 @@ jobs:
 #        find src
 
     - name: make application.yml
-      run:
-        touch ./src/main/resources/application.yml |
+      run: |
+        touch ./src/main/resources/application.yml &&
         touch ./src/main/resources/application-dev.yml
 
     - name: Check if the file is a regular file
