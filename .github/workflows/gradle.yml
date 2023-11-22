@@ -35,7 +35,7 @@ jobs:
     - name: Make application.yml executable
       run: |
         mkdir ./src/main/resources
-        cd ./src/main/resources 
+        cd ./src/main/resources
 #        touch ./application.yml
 #        touch ./application-dev.yml
 #        chmod +x src/main/resources/application.yml
@@ -44,13 +44,14 @@ jobs:
     - name: Copy Secret
       env:
         OCCUPY_SECRETS: ${{ secrets.OCCUPY_SECRET }}
-        OCCUPY_DEV_SECRETS: ${{ secrets.OCCUPY_DEV_SECRET }}
+        OCCUPY_DEV_SECRETS: ${{ secrets.OCCUPY_DEV_SECRETS }}
         OCCUPY_SECRET_DIR: src/main/resources
         OCCUPY_SECRET_FILE: application.yml
         OCCUPY_SECRET_DEV_FILE: application-dev.yml
       run: |
         echo $OCCUPY_SECRETS | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_FILE &&
         echo $OCCUPY_DEV_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DEV_FILE
+        find src
 
     - name: Setup MySQL
       uses: samin/mysql-action@v1
@@ -64,5 +65,6 @@ jobs:
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
         arguments: build
+
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
