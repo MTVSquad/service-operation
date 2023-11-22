@@ -47,8 +47,7 @@ jobs:
 
     - name: make application.yml
       run: |
-        touch ./src/main/resources/application.yml &&
-        touch ./src/main/resources/application-dev.yml
+        touch ./src/main/resources/application.yml
 
     - name: Check if the file exists
       run:
