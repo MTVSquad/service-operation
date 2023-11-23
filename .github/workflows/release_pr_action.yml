@@ -43,7 +43,7 @@ jobs:
           OCCUPY_SECRET_PROD_FILE: application-prod.yml
         run: |
           echo $OCCUPY_SECRETS | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_FILE &&
-          echo OCCUPY_PROD_SECRETS | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_PROD_FILE &&
+          echo $OCCUPY_PROD_SECRETS | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_PROD_FILE &&
           find src
 
       - name: Check if the file exists
