@@ -2,6 +2,7 @@ package com.vsquad.iroas.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vsquad.iroas.aggregate.dto.*;
+import com.vsquad.iroas.aggregate.dto.request.ReqCreatorMapDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqPlayerDto;
 import com.vsquad.iroas.aggregate.entity.CreatorMap;
 import com.vsquad.iroas.aggregate.entity.Player;
@@ -83,7 +84,7 @@ class RankingServiceTest {
         List<Double> startPoint = new ArrayList<>();
         startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
 
-        CreatorMapDto mapDto = new CreatorMapDto("MELEE", LocalDateTime.now(),
+        ReqCreatorMapDto mapDto = new ReqCreatorMapDto("MELEE", LocalDateTime.now(),
                 90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
 
         CreatorMap map = mapDto.convertToEntity(mapDto);
