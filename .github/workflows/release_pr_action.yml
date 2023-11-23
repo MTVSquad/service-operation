@@ -30,6 +30,15 @@ jobs:
           echo "${{ secrets.RDS_HOSTNAME }}" |
           echo "${{ secrets.RDS_PORT }}"
 
+      - name: Set Yaml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/main/resources/application-prod.yml
+        env:
+            spring.datasource.url: ${{ secrets.DB_HOSTNAME }}:${{ secrets.DB_PORT }}/iroas?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+            spring.datasource.username: ${{ secrets.DB_USERNAME }}
+            spring.datasource.password: ${{ secrets.DB_PASSWORD }}
+
       - name: Make application.yml executable
         run: |
           mkdir ./src/main/resources
