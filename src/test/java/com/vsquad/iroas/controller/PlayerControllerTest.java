@@ -55,7 +55,7 @@ class PlayerControllerTest {
     private static Stream<Arguments> getPlayerInfo() {
         return Stream.of(
                 Arguments.of(
-                        "76561197960435530",
+                        "76561198263911489",
                         "테스트코드",
                         "steam",
                         "ROLE_PLAYER"
