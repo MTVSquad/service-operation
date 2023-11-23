@@ -3,7 +3,6 @@ package com.vsquad.iroas.aggregate.dto.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
 import com.vsquad.iroas.aggregate.dto.CustomLocalDateTimeDeserializer;
 import com.vsquad.iroas.aggregate.dto.EnemySpawnerDto;
 import com.vsquad.iroas.aggregate.dto.PropDto;
@@ -15,7 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

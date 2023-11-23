@@ -36,15 +36,15 @@ public class EnemySpawner {
 
     @Column(name = "SPAWNER_AMOUNT")
     @Comment("에너미 스포너 소환 수")
-    private Integer spawnerAmount;
+    private Integer enemySpawnAmount;
 
     @Column(name = "SPAWNER_START_DELAY")
     @Comment("에너미 스포너 시작 딜레이")
-    private Double spawnerStartDelay;
+    private Double enemySpawnerStartDelay;
 
     @Column(name = "SPAWNER_INTERVAL")
     @Comment("에너미 스포너 소환 간격")
-    private Double spawnerInterval;
+    private Double enemySpawnerInterval;
 
     @Column(name = "ENEMY_TYPE", columnDefinition = "ENUM('Melee', 'Ranged_Ground', 'Ranged_Air', 'Elite')")
     @Comment("에너미 종류(근접, 원거리)")
