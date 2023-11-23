@@ -12,13 +12,18 @@ import javax.persistence.*;
 public class Prop {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PROP_ID")
     @Comment("PROP 식별자")
-    private String propId;
+    private Long propId;
 
     @Column(name = "PROP_NAME")
     @Comment("PROP 이름")
     private String propName;
+
+    @Column(name = "PROP_FILE_PATH")
+    @Comment("PROP 파일 경로")
+    private String propFilePath;
 
     @Column(name = "PROP_LOCATION_X")
     @Comment("PROP 위치 값 x")
