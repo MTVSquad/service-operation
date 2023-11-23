@@ -25,6 +25,11 @@ jobs:
       - name: print env
         run: echo "${{ secrets.APPLICATION_RELEASE_ENV }}"
 
+      - name: print rds
+        run:
+          echo "${{ secrets.RDS_HOSTNAME }}" |
+          echo "${{ secrets.RDS_PORT }}"
+
       - name: Make application.yml executable
         run: |
           mkdir ./src/main/resources
