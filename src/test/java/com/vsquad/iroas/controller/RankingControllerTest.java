@@ -2,7 +2,16 @@ package com.vsquad.iroas.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.vsquad.iroas.aggregate.dto.EnemySpawnerDto;
+import com.vsquad.iroas.aggregate.dto.PlayerDto;
+import com.vsquad.iroas.aggregate.dto.PropDto;
+import com.vsquad.iroas.aggregate.dto.request.ReqCreatorMapDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqRankingDto;
+import com.vsquad.iroas.aggregate.entity.CreatorMap;
+import com.vsquad.iroas.aggregate.entity.Player;
+import com.vsquad.iroas.aggregate.vo.Nickname;
+import com.vsquad.iroas.repository.PlayerRepository;
+import com.vsquad.iroas.service.auth.CustomTokenProviderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,7 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.transaction.AfterTransaction;
+import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -21,6 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
@@ -32,6 +47,15 @@ class RankingControllerTest {
 
     private MockMvc mvc;
 
+    @Mock
+    private Player player;
+
+    @Autowired
+    private PlayerRepository playerRepository;
+
+    @Autowired
+    private CustomTokenProviderService customTokenProviderService;
+
     @Autowired
     private WebApplicationContext context;
 
@@ -41,6 +65,35 @@ class RankingControllerTest {
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
+    }
+
+    @BeforeTransaction
+    void beforeTransaction() throws Exception {
+
+        player = Player.builder()
+                .key("123456789012345678")
+                .nickname(new Nickname("히에로스"))
+                .type("local")
+                .playerRole("ROLE_PLAYER")
+                .build();
+
+        player = playerRepository.save(player);
+
+        //Security Context에 유저정보 등록, 토큰발급
+        PlayerDto playerDto = new PlayerDto(player.getPlayerId(), player.getKey()
+                , player.getNickname().getPlayerNickname(), player.getType(), player.getPlayerRole());
+
+        String jwt = customTokenProviderService.generateToken(playerDto);
+
+        UsernamePasswordAuthenticationToken authentication =
+                customTokenProviderService.getAuthenticationById(jwt);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    @AfterTransaction
+    void afterTransaction() {
+        playerRepository.deleteById(player.getPlayerId());
     }
 
     @Mock
@@ -57,7 +110,7 @@ class RankingControllerTest {
         boolean clearYn = true;
 
         // dto 객체 생성
-        dto = new ReqRankingDto("abc998", oneHourAgo, currentDateTime, clearYn);
+        dto = new ReqRankingDto(1L, oneHourAgo, currentDateTime, clearYn);
 
         // dto 객체 json으로 변환
         ObjectMapper objectMapper = new ObjectMapper();

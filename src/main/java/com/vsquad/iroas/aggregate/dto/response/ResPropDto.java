@@ -1,6 +1,5 @@
-package com.vsquad.iroas.aggregate.dto;
+package com.vsquad.iroas.aggregate.dto.response;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vsquad.iroas.aggregate.entity.Prop;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -10,7 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PropDto {
+public class ResPropDto {
+
+    @Schema(name = "propId", description = "구조물 식별자")
+    private Long propId;
 
     @Schema(name = "propName", description = "구조물 이름")
     private String propName;
@@ -30,7 +32,7 @@ public class PropDto {
     @Schema(name = "propYawValue", description = "구조물 회전값")
     private Double propYawValue;
 
-    public static Prop convertToEntity(PropDto propDto) {
+    public static Prop convertToEntity(ResPropDto propDto) {
 
         if(propDto == null) {
             return null;

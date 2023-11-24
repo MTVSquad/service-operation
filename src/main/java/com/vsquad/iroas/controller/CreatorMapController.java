@@ -1,6 +1,6 @@
 package com.vsquad.iroas.controller;
 
-import com.vsquad.iroas.aggregate.dto.CreatorMapDto;
+import com.vsquad.iroas.aggregate.dto.response.ResCreatorMapDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqCreatorMapDto;
 import com.vsquad.iroas.aggregate.dto.response.*;
 import com.vsquad.iroas.service.CreatorMapService;
@@ -14,9 +14,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,16 +55,16 @@ public class CreatorMapController {
 
     @GetMapping("/{creatorMapId}")
     @Operation(summary = "크리에이터 맵 조회", description = "크리에이터 맵을 조회합니다.", responses = {
-            @ApiResponse(responseCode = "200", description = "맵 조회 성공", content = @Content(schema = @Schema(implementation = ResCreatorMapDto.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "맵 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "맵 조회 실패", content = @Content(schema = @Schema(implementation = ResponseError.class), mediaType = "application/json"))
     })
-    public ResponseEntity<ResCreatorMapDto> getCreatorMap(@PathVariable String creatorMapId) {
+    public ResponseEntity<ResponseDto<ResCreatorMapDto>> getCreatorMap(@PathVariable Long creatorMapId) {
         try {
             log.info("맵 조회 ::{}", creatorMapId + "의 맵");
 
-            CreatorMapDto resDto = creatorMapService.getCreatorMap(creatorMapId);
+            ResCreatorMapDto resDto = creatorMapService.getCreatorMap(creatorMapId);
 
-            ResCreatorMapDto res = new ResCreatorMapDto(resDto, "맵 조회 성공");
+            ResponseDto res = new ResponseDto(resDto, "맵 조회 성공");
 
             log.info("맵 조회 성공");
 
@@ -73,7 +73,7 @@ public class CreatorMapController {
             log.warn("맵 조회 실패");
             log.warn(e.getMessage());
 
-            ResCreatorMapDto res = new ResCreatorMapDto(null, "맵 조회 실패");
+            ResponseDto res = new ResponseDto(null, "맵 조회 실패");
             return ResponseEntity.badRequest().body(res);
         }
     }
@@ -90,11 +90,11 @@ public class CreatorMapController {
                     example = "createTime", in = ParameterIn.QUERY),
             @Parameter(name = "direction", description = "정렬 방향", schema = @Schema(allowableValues = {"asc", "desc"}), example = "asc")
     })
-    public ResponseEntity<ResponseDto<Page<CreatorMapDto>>> getCreatorMapList(@PageableDefault @Parameter(hidden = true) Pageable pageable) {
+    public ResponseEntity<ResponseDto<Page<ResCreatorMapDto>>> getCreatorMapList(@PageableDefault(sort = {"createTime"}, direction = Sort.Direction.ASC) @Parameter(hidden = true) Pageable pageable) {
         try {
             log.info("맵 목록 조회");
 
-            Page<CreatorMapDto> resDto = creatorMapService.readPlayerCreatorMapList(pageable);
+            Page<ResCreatorMapDto> resDto = creatorMapService.readPlayerCreatorMapList(pageable);
             ResponseDto res = new ResponseDto(resDto, "맵 목록 조회 성공");
 
             log.info("맵 목록 조회 성공");
@@ -113,7 +113,7 @@ public class CreatorMapController {
             @ApiResponse(responseCode = "200", description = "맵 제거 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "맵 제거 실패", content = @Content(schema = @Schema(implementation = ResErrorMessage.class), mediaType = "application/json"))
     })
-    public ResponseEntity<ResMessageDto> deleteCreatorMap(@PathVariable String creatorMapId) {
+    public ResponseEntity<ResMessageDto> deleteCreatorMap(@PathVariable Long creatorMapId) {
         try {
             log.info("맵 삭제 ::{}", creatorMapId + "의 맵");
 

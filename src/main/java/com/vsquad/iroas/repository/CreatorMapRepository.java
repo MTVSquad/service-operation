@@ -11,12 +11,12 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface CreatorMapRepository extends JpaRepository<CreatorMap, String> {
+public interface CreatorMapRepository extends JpaRepository<CreatorMap, Long> {
     Page<CreatorMap> findAll(Pageable pageable);
 
-    void deleteCreatorMapByCreatorMapIdAndCreator(String creatorMapId, String creator);
+    void deleteCreatorMapByCreatorMapIdAndCreator(Long creatorMapId, Long creator);
 
-    Optional<CreatorMap> findByCreatorMapIdAndCreator(String creatorMapId, String creator);
+    Optional<CreatorMap> findByCreatorMapIdAndCreator(Long creatorMapId, Long creator);
 
     @Query(value =
             "SELECT\n" +

@@ -1,4 +1,4 @@
-package com.vsquad.iroas.aggregate.dto;
+package com.vsquad.iroas.aggregate.dto.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vsquad.iroas.aggregate.entity.EnemySpawner;
@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class EnemySpawnerDto {
+public class ResEnemySpawnerDto {
+
+    @Schema(name = "enemySpawnerId", description = "에너미 스포너 식별자", example = "1")
+    private Long enemySpawnerId;
 
     @Schema(name = "enemyStartPointXLocation", description = "에네미 시작 지점 x 좌표", example = "10.00")
     private Double enemyStartPointXLocation;
@@ -39,7 +42,7 @@ public class EnemySpawnerDto {
     @Schema(name = "enemyPower", description = "에네미 공격력", example = "10")
     private Long enemyPower;
 
-    public static EnemySpawner convertToEntity(EnemySpawnerDto enemySpawnerDto) throws JsonProcessingException {
+    public static EnemySpawner convertToEntity(ResEnemySpawnerDto enemySpawnerDto) throws JsonProcessingException {
 
         if(enemySpawnerDto == null) {
             return null;
