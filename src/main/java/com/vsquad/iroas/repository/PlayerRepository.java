@@ -21,7 +21,7 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
     // select count(nickname) from player where nickname like "@_%";
     @Query(value =
             "SELECT \n" +
-            "    MAX(SUBSTRING_INDEX(p.player_nickname, '#', -1)) AS base_nickname \n" +
+            "    MAX(CAST(SUBSTRING_INDEX(p.player_nickname, '#', -1) AS UNSIGNED)) AS nickname_count \n" +
             "FROM \n" +
             "    (SELECT \n" +
             "            player_nickname as player_nickname \n" +
