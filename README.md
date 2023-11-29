@@ -10,6 +10,7 @@ dev 환경 구축하기
 dev DB 구축
 1. yml에서 ddl-auto 옵션 이용하기
 2. create-drop으로 설정(주의 prod, stage 환경에서는 반드시 update, none으로 체크되어 있는지 확인하고 배포 할것)
+3. DB 정보는 Comment 확인할 것
 
 ## Domain
 ![image](https://github.com/MTVSquad/IROAS-Server/assets/94158097/972154c1-0782-4f0b-8812-37283f20ff62)
