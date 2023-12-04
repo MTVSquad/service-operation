@@ -20,7 +20,7 @@ public class EnemySpawner {
 
     @Column(name = "CREATOR_MAP_ID")
     @Comment("크리에이터 툴에 의해 생성된 맵 식별자")
-    private String creatorMapId;
+    private Long creatorMapId;
 
     @Column(name = "ENEMY_START_POINT_X_LOCATION")
     @Comment("에네미 시작 지점 x 좌표")
