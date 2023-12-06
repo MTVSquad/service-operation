@@ -12,6 +12,9 @@ dev DB 구축
 2. create-drop으로 설정(주의 prod, stage 환경에서는 반드시 update, none으로 체크되어 있는지 확인하고 배포 할것)
 3. 테이블 및 컬럼 정보는 Comment 확인할 것
 
+Swagger 문서
+IP주소:포트번호/swagger-ui/index.html
+
 ## Domain
 ![image](https://github.com/MTVSquad/IROAS-Server/assets/94158097/972154c1-0782-4f0b-8812-37283f20ff62)
 
