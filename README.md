@@ -13,7 +13,7 @@ dev DB 구축
 3. 테이블 및 컬럼 정보는 Comment 확인할 것
 
 Swagger 문서
-IP주소:포트번호/swagger-ui/index.html
+1. IP주소:포트번호/swagger-ui/index.html
 
 ## Domain
 ![image](https://github.com/MTVSquad/IROAS-Server/assets/94158097/972154c1-0782-4f0b-8812-37283f20ff62)
