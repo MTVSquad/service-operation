@@ -32,4 +32,7 @@ public class ReqRankingDto {
 
     @Schema(description = "클리어 여부")
     private Boolean clearYn;
+
+    @Schema(description = "게임 소요 시간", example = "280000")
+    private Long elapsedTime;
 }
