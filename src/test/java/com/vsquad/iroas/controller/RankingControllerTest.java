@@ -105,12 +105,13 @@ class RankingControllerTest {
 
         LocalDateTime currentDateTime = LocalDateTime.now();
         LocalDateTime oneHourAgo = currentDateTime.minusHours(1);
+        Long playElapsedTime = 30000L;
 
         // 클리어 성공
         boolean clearYn = true;
 
         // dto 객체 생성
-        dto = new ReqRankingDto(1L, oneHourAgo, currentDateTime, clearYn);
+        dto = new ReqRankingDto(1L, oneHourAgo, currentDateTime, clearYn, playElapsedTime);
 
         // dto 객체 json으로 변환
         ObjectMapper objectMapper = new ObjectMapper();

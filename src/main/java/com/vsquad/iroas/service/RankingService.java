@@ -47,8 +47,8 @@ public class RankingService {
 
             // UserDetails에서 사용자 정보 사용
             Long playerId = userDetails.getId();
-
             Long creatorMapId = dto.getCreatorMapId();
+            Long playElapsedTime = dto.getElapsedTime();
 
             // 회원 찾기
             Player player = playerRepository.findById(playerId)
@@ -63,11 +63,11 @@ public class RankingService {
                         .ifPresentOrElse(
                                 (foundRanking) -> {
 
-                                    PlayTime playTime = new PlayTime(playStartTime, playClearTime);
+                                    PlayTime playTime = new PlayTime(playStartTime, playClearTime, playElapsedTime);
 
                                     if(playTime.getPlayMilliSecond() < foundRanking.getPlayTime().getPlayMilliSecond()) {
                                         // 랭킹이 있으면 업데이트
-                                        foundRanking.setPlayTime(new PlayTime(playStartTime, playClearTime));
+                                        foundRanking.setPlayTime(new PlayTime(playStartTime, playClearTime, playElapsedTime));
                                         foundRanking.setPlayCount(foundRanking.getPlayCount() + 1);
                                         foundRanking.setClearCount(foundRanking.getClearCount() + 1);
                                     } else {
@@ -77,7 +77,7 @@ public class RankingService {
                                 },
                                 () -> {
                                     // 랭킹이 없으면 추가
-                                    Ranking ranking = new Ranking(player, creatorMapId, new PlayTime(playStartTime, playClearTime), 1, 1);
+                                    Ranking ranking = new Ranking(player, creatorMapId, new PlayTime(playStartTime, playClearTime, playElapsedTime), 1, 1);
                                     rankingRepository.save(ranking);
                                 }
                         );
@@ -91,7 +91,7 @@ public class RankingService {
                                 },
                                 () -> {
                                     // 랭킹이 없으면 추가
-                                    Ranking ranking = new Ranking(player, creatorMapId, new PlayTime(playStartTime, playClearTime), 1, 0);
+                                    Ranking ranking = new Ranking(player, creatorMapId, new PlayTime(playStartTime, playClearTime, playElapsedTime), 1, 0);
                                     rankingRepository.save(ranking);
                                 }
                         );

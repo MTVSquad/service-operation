@@ -32,14 +32,18 @@ public class PlayTime {
     @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
     private Long playMilliSecond;
 
-    public PlayTime(LocalDateTime playStartTime, LocalDateTime playClearTime) {
+    @Column(name = "PLAY_ELAPSED_TIME")
+    @Comment("랭킹 기록한 플레이 총 소요 시간")
+    private Long playElapsedTime;
+
+    public PlayTime(LocalDateTime playStartTime, LocalDateTime playClearTime, Long playElapsedTime) {
         if(playStartTime != null && playClearTime != null) {
-            validateTime(playStartTime, playClearTime);
+            validateTime(playStartTime, playClearTime, playElapsedTime);
             calculateTime(playStartTime, playClearTime);
         }
     }
 
-    private void validateTime(LocalDateTime playStartTime, LocalDateTime playClearTime) {
+    private void validateTime(LocalDateTime playStartTime, LocalDateTime playClearTime, Long playElapsedTime) {
 
         boolean isAfter = playStartTime.isAfter(playClearTime);
 
@@ -48,6 +52,7 @@ public class PlayTime {
         } else {
             this.playStartTime = playStartTime;
             this.playClearTime = playClearTime;
+            this.playElapsedTime = playElapsedTime;
         }
     }
 
