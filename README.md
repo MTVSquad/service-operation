@@ -15,6 +15,9 @@ dev DB 구축
 Swagger 문서
 1. IP주소:포트번호/swagger-ui/index.html
 
+Rule
+1. release/** 브랜치에는 PR 거쳐서 진행, 직접 PUSH 금지
+
 ## Domain
 ![image](https://github.com/MTVSquad/IROAS-Server/assets/94158097/972154c1-0782-4f0b-8812-37283f20ff62)
 
