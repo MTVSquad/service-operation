@@ -20,16 +20,19 @@ public class ReqRankingDto {
     @Schema(description = "커스텀 모드 유즈맵")
     private Long creatorMapId;
 
-    @Schema(description = "게임 시작 시간")
+    @Schema(description = "게임 시작 시간", example = "2023-12-06 00:00:00", type = "string")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
     private LocalDateTime playStartTime;
 
-    @Schema(description = "게임 깬 시간")
+    @Schema(description = "게임 깬 시간", example = "2023-12-06 00:05:00", type = "string")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
     private LocalDateTime playClearTime;
 
     @Schema(description = "클리어 여부")
     private Boolean clearYn;
+
+    @Schema(description = "게임 소요 시간", example = "280000")
+    private Long elapsedTime;
 }
