@@ -116,6 +116,7 @@ class RankingServiceTest {
         boolean clearYn = true;
         int clearTotalCount = 0;
         int playTotalCount = 0;
+        long playElapsedTime = 30000L;
 
         if(clearYn) {
             clearTotalCount++;
@@ -129,7 +130,7 @@ class RankingServiceTest {
                 .orElseThrow(() -> new IllegalArgumentException("플레이어를 찾을 수 없습니다."));
 
         // 랭킹 추가
-        Ranking ranking = new Ranking(foundPlayer, map.getCreatorMapId(), new PlayTime(oneHourAgo, currentDateTime), playTotalCount, clearTotalCount);
+        Ranking ranking = new Ranking(foundPlayer, map.getCreatorMapId(), new PlayTime(oneHourAgo, currentDateTime, playElapsedTime), playTotalCount, clearTotalCount);
 
         int page = 0;
         int size = 10;
@@ -142,7 +143,7 @@ class RankingServiceTest {
                 .ifPresentOrElse(
                         (foundRanking) -> {
                             // 랭킹이 있으면 업데이트
-                            foundRanking.setPlayTime(new PlayTime(oneHourAgo, currentDateTime));
+                            foundRanking.setPlayTime(new PlayTime(oneHourAgo, currentDateTime, playElapsedTime));
                             foundRanking.setPlayCount(foundRanking.getPlayCount() + 1);
                             foundRanking.setClearCount(foundRanking.getClearCount() + 1);
                         },
@@ -175,6 +176,7 @@ class RankingServiceTest {
         boolean clearYn = true;
         int clearTotalCount = 0;
         int playTotalCount = 0;
+        long playElapsedTime = 30000L;
 
         if(clearYn) {
             clearTotalCount++;
@@ -188,7 +190,7 @@ class RankingServiceTest {
                 .orElseThrow(() -> new IllegalArgumentException("플레이어를 찾을 수 없습니다."));
 
         // 랭킹 추가
-        Ranking ranking = new Ranking(foundPlayer, map.getCreatorMapId(), new PlayTime(oneHourAgo, currentDateTime), playTotalCount, clearTotalCount);
+        Ranking ranking = new Ranking(foundPlayer, map.getCreatorMapId(), new PlayTime(oneHourAgo, currentDateTime, playElapsedTime), playTotalCount, clearTotalCount);
 
         int page = 0;
         int size = 10;
@@ -197,7 +199,7 @@ class RankingServiceTest {
                 .ifPresentOrElse(
                         (foundRanking) -> {
                             // 랭킹이 있으면 업데이트
-                            foundRanking.setPlayTime(new PlayTime(oneHourAgo, currentDateTime));
+                            foundRanking.setPlayTime(new PlayTime(oneHourAgo, currentDateTime, playElapsedTime));
                             foundRanking.setPlayCount(foundRanking.getPlayCount() + 1);
                             foundRanking.setClearCount(foundRanking.getClearCount() + 1);
                         },

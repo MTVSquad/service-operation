@@ -43,5 +43,5 @@ public class Prop {
 
     @Column(name = "CREATOR_MAP_ID")
     @Comment("크리에이터 툴에 의해 생성된 맵 식별자")
-    private String creatorMapId;
+    private Long creatorMapId;
 }
