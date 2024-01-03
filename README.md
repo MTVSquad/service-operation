@@ -26,3 +26,8 @@ Rule
 
 ## Entity Relation
 ![image](https://github.com/MTVSquad/IROAS-Server/assets/94158097/3e8f4f59-385e-430e-982a-18b6449f65fc)
+
+## ERD
+![image](https://github.com/MTVSquad/IROAS-Server/assets/94158097/83c3bd9a-5939-4310-a87f-95304732f97e)
+
+
