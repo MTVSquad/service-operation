@@ -11,7 +11,6 @@ import org.hibernate.annotations.Table;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 
 @Entity

@@ -69,9 +69,7 @@ public class CreatorMapService {
 
         initModelMapper();
 
-        ResCreatorMapDto resCreatorMapDto = modelMapper.map(creatorMap, ResCreatorMapDto.class);
-
-        return resCreatorMapDto;
+        return modelMapper.map(creatorMap, ResCreatorMapDto.class);
     }
 
 //    @Transactional(readOnly = true)
@@ -85,14 +83,7 @@ public class CreatorMapService {
 
         initModelMapper();
 
-        Page<ResCreatorMapDto> creatorMapDtoPage = creatorMapPage.map(creatorMap -> {
-
-            ResCreatorMapDto creatorMapDto = modelMapper.map(creatorMap, ResCreatorMapDto.class);
-
-            return creatorMapDto;
-        });
-
-        return creatorMapDtoPage;
+        return creatorMapPage.map(creatorMap -> modelMapper.map(creatorMap, ResCreatorMapDto.class));
     }
 
     @Transactional
@@ -107,7 +98,7 @@ public class CreatorMapService {
             Long userId = userDetails.getId();
 
             creatorMapRepository.findByCreatorMapIdAndCreator(creatorMapId, userId).orElseThrow(
-                    () -> new IllegalArgumentException()
+                    IllegalArgumentException::new
             );
 
             creatorMapRepository.deleteCreatorMapByCreatorMapIdAndCreator(creatorMapId, userId);

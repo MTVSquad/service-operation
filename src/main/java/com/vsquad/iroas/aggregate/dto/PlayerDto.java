@@ -17,10 +17,10 @@ public class PlayerDto {
 
 
     public PlayerDto(Player player) {
-        this.playerId = player.getPlayerId();;
-        this.playerKey = player.getKey();;
+        this.playerId = player.getPlayerId();
+        this.playerKey = player.getKey();
         this.playerNickName = player.getNickname();
-        this.playerType = player.getType();;
+        this.playerType = player.getType();
         this.playerRole =  player.getPlayerRole();
     }
 }

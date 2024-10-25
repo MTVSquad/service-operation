@@ -16,10 +16,10 @@ public class ResPlayerInfoDto {
     private String playerRole;
 
     public ResPlayerInfoDto(Player player) {
-        this.playerId = player.getPlayerId();;
-        this.playerKey = player.getKey();;
+        this.playerId = player.getPlayerId();
+        this.playerKey = player.getKey();
         this.playerNickName = player.getNickname();
-        this.playerType = player.getType();;
+        this.playerType = player.getType();
         this.playerRole =  player.getPlayerRole();
     }
 }

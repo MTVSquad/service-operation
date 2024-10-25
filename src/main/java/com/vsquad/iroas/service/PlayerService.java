@@ -4,7 +4,6 @@ import com.vsquad.iroas.aggregate.dto.PlayerDto;
 import com.vsquad.iroas.aggregate.dto.response.ResPlayerInfoDto;
 import com.vsquad.iroas.aggregate.entity.Avatar;
 import com.vsquad.iroas.aggregate.entity.Player;
-import com.vsquad.iroas.aggregate.vo.Nickname;
 import com.vsquad.iroas.config.exception.PlayerNotFoundException;
 import com.vsquad.iroas.config.token.PlayerPrincipal;
 import com.vsquad.iroas.repository.AvatarRepository;
