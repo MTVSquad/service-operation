@@ -102,7 +102,7 @@ class PlayerServiceTest {
         // when
         userService.loadUserByUsername(key);
 
-        PlayerDto playerDto = new PlayerDto(player.getPlayerId(), player.getKey(), player.getNickname(), player.getType(), player.getPlayerRole());
+        PlayerDto playerDto = new PlayerDto(player);
 
         String token = customTokenProviderService.generateToken(playerDto);
 

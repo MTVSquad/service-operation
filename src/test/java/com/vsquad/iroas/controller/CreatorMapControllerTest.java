@@ -95,7 +95,7 @@ class CreatorMapControllerTest {
 
         //Security Context에 유저정보 등록, 토큰발급
         PlayerDto playerDto = new PlayerDto(player.getPlayerId(), player.getKey()
-                , player.getNickname().getPlayerNickname(), player.getType(), player.getPlayerRole());
+                , player.getNickname(), player.getType(), player.getPlayerRole());
 
         String jwt = customTokenProviderService.generateToken(playerDto);
 
