@@ -16,10 +16,10 @@ import java.util.List;
 
 @Entity
 @javax.persistence.Table(name = "tb_player", indexes = {
-        @Index(name = "IDX_PLAYER_STEAM_KEY", columnList = "PLAYER_STEAM_KEY", unique = true),
+        @Index(name = "IDX_PLAYER_KEY", columnList = "PLAYER_KEY", unique = true),
         @Index(name = "IDX_PLAYER_NICKNAME", columnList = "PLAYER_NICKNAME", unique = true)
 }, uniqueConstraints = {
-        @UniqueConstraint(name = "UK_PLAYER_STEAM_KEY", columnNames = {"PLAYER_STEAM_KEY"}),
+        @UniqueConstraint(name = "UK_PLAYER_KEY", columnNames = {"PLAYER_KEY"}),
         @UniqueConstraint(name = "UK_PLAYER_NICKNAME", columnNames = {"PLAYER_NICKNAME"})
 })
 @Table(appliesTo = "tb_player", comment = "플레이어")
@@ -36,8 +36,8 @@ public class Player {
     private Long playerId;
 
     @NotNull
-    @Column(name = "PLAYER_STEAM_KEY")
-    @Comment("플레이어 스팀 식별 키")
+    @Column(name = "PLAYER_KEY")
+    @Comment("플레이어 식별 키(스팀, 로컬)")
     private String key;
 
     @NotNull
@@ -72,5 +72,19 @@ public class Player {
         this.type = type;
         this.playerMoney = playerMoney;
         this.playerRole = playerRole;
+    }
+
+    public String getNickname() {
+        return this.nickname.getPlayerNickname();
+    }
+
+    public void changeNickname(String nickname) {
+        this.nickname = new Nickname(nickname);  // 내부에서 Nickname 객체 생성
+    }
+
+    public void resetPlayerStatus() {
+        this.setPlayerItems(null);
+        this.setPlayerMoney(0L);
+        this.setPlayerAvatar(null);
     }
 }

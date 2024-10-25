@@ -31,7 +31,7 @@ public class CreatorMapService {
         // modelMapper의 파라미터 타입 변환 후 원하는 값으로 변환 처리, validate() : 에러 출력
         modelMapper.typeMap(CreatorMap.class, ResCreatorMapDto.class)
                 .addMappings(mapper -> mapper.using((Converter<Long, String>) context -> context.getSource() != null ?
-                        playerRepository.findById(context.getSource()).get().getNickname().getPlayerNickname() : null)
+                        playerRepository.findById(context.getSource()).get().getNickname() : null)
                 .map(CreatorMap::getCreator, ResCreatorMapDto::setCreator)).validate();   // modelMapper error 출력
     }
 

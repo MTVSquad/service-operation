@@ -67,7 +67,7 @@ public class CustomTokenProviderService {
 
     public String generateToken(PlayerDto player) {
 
-        String identifier = player.getPlayerSteamKey();
+        String identifier = player.getPlayerKey();
 
         // 고정된 secretKey
         String fixedSecretKeyString = secretKey;

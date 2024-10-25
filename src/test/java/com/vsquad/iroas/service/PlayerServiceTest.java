@@ -105,7 +105,7 @@ class PlayerServiceTest {
         // when
         userService.loadUserByUsername(key);
 
-        PlayerDto playerDto = new PlayerDto(player.getPlayerId(), player.getKey(), player.getNickname().getPlayerNickname(), player.getType(), player.getPlayerRole());
+        PlayerDto playerDto = new PlayerDto(player.getPlayerId(), player.getKey(), player.getNickname(), player.getType(), player.getPlayerRole());
 
         String token = customTokenProviderService.generateToken(playerDto);
 
@@ -189,7 +189,7 @@ class PlayerServiceTest {
 
         // then
         Player changedPlayer =  playerRepository.findByNickname(nicknameToChange).orElseThrow();
-        String changedNickname = changedPlayer.getNickname().getPlayerNickname();
+        String changedNickname = changedPlayer.getNickname();
 
         assertEquals("바닐라라떼", changedNickname);
     }
@@ -348,7 +348,7 @@ class PlayerServiceTest {
     void duplicatedNicknameCheckTest() {
 
         // given
-        String nickname = player.getNickname().getPlayerNickname();
+        String nickname = player.getNickname();
         Nickname newNickname = new Nickname(nickname);
 
         // then

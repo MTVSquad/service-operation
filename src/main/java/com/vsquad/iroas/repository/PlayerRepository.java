@@ -18,6 +18,8 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     Optional<Player> findByNickname(Nickname nickname);
 
+    Optional<Player> findByNickname_PlayerNickname(String playerNickname);
+
     // select count(nickname) from player where nickname like "@_%";
     @Query(value =
             "SELECT \n" +
