@@ -32,7 +32,7 @@ public class PlayerPrincipal implements OAuth2User, UserDetails {
         return new PlayerPrincipal(
             player.getPlayerId(),
             player.getKey(),
-            player.getNickname().getPlayerNickname(),
+            player.getNickname(),
             player.getType(),
             authorities
         );

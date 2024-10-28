@@ -1,7 +1,7 @@
 package com.vsquad.iroas.service;
 
-import com.vsquad.iroas.aggregate.dto.ResRankingDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqRankingDto;
+import com.vsquad.iroas.aggregate.dto.response.ResRankingDto;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.entity.Ranking;
 import com.vsquad.iroas.aggregate.vo.PlayTime;
@@ -103,7 +103,7 @@ public class RankingService {
 
         Page<Ranking> ranking = rankingRepository.findByCreatorMapIdAndClearCountIsNot(creatorMapId, 0, pageable);
 
-        if(ranking.isEmpty() || ranking == null) {
+        if(ranking.isEmpty()) {
             throw new NoSuchElementException("랭킹이 존재하지 않습니다.");
         }
 

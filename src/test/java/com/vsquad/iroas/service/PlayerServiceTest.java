@@ -6,7 +6,6 @@ import com.vsquad.iroas.aggregate.entity.Avatar;
 import com.vsquad.iroas.aggregate.entity.Item;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.vo.Nickname;
-import com.vsquad.iroas.config.token.TokenMapping;
 import com.vsquad.iroas.repository.AvatarRepository;
 import com.vsquad.iroas.repository.ItemRepository;
 import com.vsquad.iroas.repository.PlayerRepository;
@@ -18,8 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,7 +102,7 @@ class PlayerServiceTest {
         // when
         userService.loadUserByUsername(key);
 
-        PlayerDto playerDto = new PlayerDto(player.getPlayerId(), player.getKey(), player.getNickname().getPlayerNickname(), player.getType(), player.getPlayerRole());
+        PlayerDto playerDto = new PlayerDto(player);
 
         String token = customTokenProviderService.generateToken(playerDto);
 
@@ -189,7 +186,7 @@ class PlayerServiceTest {
 
         // then
         Player changedPlayer =  playerRepository.findByNickname(nicknameToChange).orElseThrow();
-        String changedNickname = changedPlayer.getNickname().getPlayerNickname();
+        String changedNickname = changedPlayer.getNickname();
 
         assertEquals("바닐라라떼", changedNickname);
     }
@@ -237,13 +234,9 @@ class PlayerServiceTest {
         playerRepository.save(player);
 
         // then
-        Avatar foundAvatar = avatarRepository.findByPlayerId(playerId).orElseThrow(() -> {
-            throw new IllegalArgumentException("플레이어 정보가 일치하지 않습니다.");
-        });
+        Avatar foundAvatar = avatarRepository.findByPlayerId(playerId).orElseThrow(() -> new IllegalArgumentException("플레이어 정보가 일치하지 않습니다."));
 
-        Player foundPlayer = playerRepository.findById(playerId).orElseThrow(() -> {
-            throw new IllegalArgumentException("플레이어 정보가 일치하지 않습니다.");
-        });
+        Player foundPlayer = playerRepository.findById(playerId).orElseThrow(() -> new IllegalArgumentException("플레이어 정보가 일치하지 않습니다."));
 
         assertNotNull(foundAvatar);
         assertEquals(savedAvatar.getAvatarId(), foundPlayer.getPlayerAvatar());
@@ -262,16 +255,12 @@ class PlayerServiceTest {
         avatarRepository.save(avatar);
 
         // when
-        Avatar foundAvatar = avatarRepository.findByPlayerId(playerId).orElseThrow(() -> {
-            throw new IllegalArgumentException("플레이어 정보가 일치하지 않습니다.");
-        });
+        Avatar foundAvatar = avatarRepository.findByPlayerId(playerId).orElseThrow(() -> new IllegalArgumentException("플레이어 정보가 일치하지 않습니다."));
         foundAvatar.setMask("blue");
         avatarRepository.save(foundAvatar);
 
         // then
-        Avatar changedAvatar =  avatarRepository.findByPlayerId(playerId).orElseThrow(() -> {
-            throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
-        });
+        Avatar changedAvatar =  avatarRepository.findByPlayerId(playerId).orElseThrow(() -> new IllegalArgumentException("저장된 플레이어가 없습니다."));
 
         assertEquals("blue", changedAvatar.getMask());
     }
@@ -292,9 +281,7 @@ class PlayerServiceTest {
         playerRepository.save(player);
 
         // when
-        Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> {
-            throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
-        });
+        Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> new IllegalArgumentException("저장된 플레이어가 없습니다."));
 
         avatarRepository.deleteById(foundPlayer.getPlayerAvatar());
 
@@ -304,16 +291,12 @@ class PlayerServiceTest {
         playerRepository.save(foundPlayer);
 
         // then
-        Player changedPlayer = playerRepository.findById(foundPlayer.getPlayerId()).orElseThrow(() -> {
-            throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
-        });
+        Player changedPlayer = playerRepository.findById(foundPlayer.getPlayerId()).orElseThrow(() -> new IllegalArgumentException("저장된 플레이어가 없습니다."));
 
-        Assertions.assertThrows(NoSuchElementException.class, () -> {
-            avatarRepository.findByPlayerId(foundPlayer.getPlayerId()).orElseThrow();
-        }, "에러 출력 되지 않음...");
+        Assertions.assertThrows(NoSuchElementException.class, () -> avatarRepository.findByPlayerId(foundPlayer.getPlayerId()).orElseThrow(), "에러 출력 되지 않음...");
 
         assertNull(changedPlayer.getPlayerAvatar());
-        assertEquals(null, changedPlayer.getPlayerItems());
+        assertNull(changedPlayer.getPlayerItems());
         assertEquals(0L, changedPlayer.getPlayerMoney());
     }
 
@@ -330,13 +313,9 @@ class PlayerServiceTest {
         avatarRepository.save(avatar);
 
         // when
-        Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> {
-            throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
-        });
+        Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> new IllegalArgumentException("저장된 플레이어가 없습니다."));
 
-        Avatar foundAvatar = avatarRepository.findByPlayerId(foundPlayer.getPlayerId()).orElseThrow(() -> {
-            throw new IllegalArgumentException("저장된 아바타가 없습니다.");
-        });
+        Avatar foundAvatar = avatarRepository.findByPlayerId(foundPlayer.getPlayerId()).orElseThrow(() -> new IllegalArgumentException("저장된 아바타가 없습니다."));
 
         // then
         assertNotNull(foundPlayer);
@@ -348,14 +327,12 @@ class PlayerServiceTest {
     void duplicatedNicknameCheckTest() {
 
         // given
-        String nickname = player.getNickname().getPlayerNickname();
+        String nickname = player.getNickname();
         Nickname newNickname = new Nickname(nickname);
 
         // then
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Player foundPlayer = playerRepository.findByNickname(newNickname).orElseThrow(() -> {
-                throw new IllegalArgumentException("플레이어 정보를 찾을 수 없습니다.");
-            });
+            Player foundPlayer = playerRepository.findByNickname(newNickname).orElseThrow(() -> new IllegalArgumentException("플레이어 정보를 찾을 수 없습니다."));
 
             if(foundPlayer != null) {
                 throw new IllegalArgumentException("중복된 닉네임");
@@ -385,9 +362,7 @@ class PlayerServiceTest {
         // then
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
 
-            playerRepository.findByNickname(testNickname).orElseThrow(() -> {
-                throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
-            });
+            playerRepository.findByNickname(testNickname).orElseThrow(() -> new IllegalArgumentException("저장된 플레이어가 없습니다."));
         }, "에러 출력 되지 않음...");
     }
 
@@ -402,9 +377,7 @@ class PlayerServiceTest {
         itemRepository.save(item);
 
         // then
-        Item foundItem = itemRepository.findById(item.getItemId()).orElseThrow(() -> {
-            throw new IllegalArgumentException("저장된 아이템이 없습니다.");
-        });
+        Item foundItem = itemRepository.findById(item.getItemId()).orElseThrow(() -> new IllegalArgumentException("저장된 아이템이 없습니다."));
 
         assertNotNull(foundItem);
     }
@@ -418,9 +391,7 @@ class PlayerServiceTest {
         saveItemTest();
 
         // when
-        Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> {
-            throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
-        });
+        Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> new IllegalArgumentException("저장된 플레이어가 없습니다."));
 
         // then
         assertNotNull(foundPlayer.getPlayerItems());
@@ -435,16 +406,12 @@ class PlayerServiceTest {
         Long playerMoney = 1000L;
 
         // when
-        Player foundPlayer = playerRepository.findById(playerId).orElseThrow(() -> {
-            throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
-        });
+        Player foundPlayer = playerRepository.findById(playerId).orElseThrow(() -> new IllegalArgumentException("저장된 플레이어가 없습니다."));
 
         foundPlayer.setPlayerMoney(playerMoney);
 
         // then
-        Player changedPlayer = playerRepository.findById(playerId).orElseThrow(() -> {
-            throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
-        });
+        Player changedPlayer = playerRepository.findById(playerId).orElseThrow(() -> new IllegalArgumentException("저장된 플레이어가 없습니다."));
 
 
         assertEquals(playerMoney, changedPlayer.getPlayerMoney());
@@ -458,9 +425,7 @@ class PlayerServiceTest {
         savePlayerMoneySuccessTest();
 
         // when
-        Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> {
-            throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
-        });
+        Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> new IllegalArgumentException("저장된 플레이어가 없습니다."));
 
         // then
         assertNotNull(foundPlayer.getPlayerMoney());
@@ -477,13 +442,9 @@ class PlayerServiceTest {
         addPlayerAvatarTest();
 
         // when
-        Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> {
-            throw new IllegalArgumentException("저장된 플레이어가 없습니다.");
-        });
+        Player foundPlayer = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> new IllegalArgumentException("저장된 플레이어가 없습니다."));
 
-        Avatar foundAvatar = avatarRepository.findByPlayerId(foundPlayer.getPlayerId()).orElseThrow(() -> {
-            throw new IllegalArgumentException("저장된 아바타가 없습니다.");
-        });
+        Avatar foundAvatar = avatarRepository.findByPlayerId(foundPlayer.getPlayerId()).orElseThrow(() -> new IllegalArgumentException("저장된 아바타가 없습니다."));
 
         foundAvatar.setMask(changeColor);
 

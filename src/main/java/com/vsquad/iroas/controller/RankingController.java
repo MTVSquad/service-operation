@@ -1,11 +1,7 @@
 package com.vsquad.iroas.controller;
 
-import com.vsquad.iroas.aggregate.dto.ResRankingDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqRankingDto;
-import com.vsquad.iroas.aggregate.dto.response.ResErrorMessage;
-import com.vsquad.iroas.aggregate.dto.response.ResMessageDto;
-import com.vsquad.iroas.aggregate.dto.response.ResponseDto;
-import com.vsquad.iroas.aggregate.dto.response.ResponseError;
+import com.vsquad.iroas.aggregate.dto.response.*;
 import com.vsquad.iroas.service.RankingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

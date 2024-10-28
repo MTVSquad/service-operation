@@ -1,6 +1,6 @@
-package com.vsquad.iroas.aggregate.dto;
+package com.vsquad.iroas.aggregate.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.vsquad.iroas.aggregate.dto.PlayTimeDto;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.entity.Ranking;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,7 +34,7 @@ public class ResRankingDto {
     public static ResRankingDto convertToDto(Ranking ranking, Player player) {
 
         Long rankingId = ranking.getRankingId();
-        String playerNickname = player.getNickname().getPlayerNickname();
+        String playerNickname = player.getNickname();
         Long creatorMapId = ranking.getCreatorMapId();
         PlayTimeDto playTime = PlayTimeDto.convertToDto(ranking.getPlayTime());
         Integer playCount = ranking.getPlayCount();

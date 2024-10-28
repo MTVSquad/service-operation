@@ -34,8 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
@@ -80,8 +78,7 @@ class RankingControllerTest {
         player = playerRepository.save(player);
 
         //Security Context에 유저정보 등록, 토큰발급
-        PlayerDto playerDto = new PlayerDto(player.getPlayerId(), player.getKey()
-                , player.getNickname().getPlayerNickname(), player.getType(), player.getPlayerRole());
+        PlayerDto playerDto = new PlayerDto(player);
 
         String jwt = customTokenProviderService.generateToken(playerDto);
 
