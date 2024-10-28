@@ -17,7 +17,4 @@ public class ResTokenDto {
 
     @Schema(description = "닉네임")
     private String nickname;
-
-    @Schema(description = "응답 메시지")
-    private String message;
 }

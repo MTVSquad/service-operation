@@ -4,12 +4,13 @@ import com.vsquad.iroas.aggregate.dto.PlayerDto;
 import com.vsquad.iroas.aggregate.dto.response.ResPlayerInfoDto;
 import com.vsquad.iroas.aggregate.entity.Avatar;
 import com.vsquad.iroas.aggregate.entity.Player;
+import com.vsquad.iroas.config.exception.AvatarNotFoundException;
+import com.vsquad.iroas.config.exception.NicknameAlreadyExistsException;
 import com.vsquad.iroas.config.exception.PlayerNotFoundException;
 import com.vsquad.iroas.config.token.PlayerPrincipal;
 import com.vsquad.iroas.repository.AvatarRepository;
 import com.vsquad.iroas.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,110 +71,73 @@ public class PlayerService {
 
     @Transactional
     public void addPlayerAvatar(String maskColor) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        PlayerPrincipal userDetails = (PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (authentication != null) {
+        // UserDetails에서 사용자 정보 사용
+        Long playerId = userDetails.getId();
 
-            PlayerPrincipal userDetails = (PlayerPrincipal) authentication.getPrincipal();
+        Avatar avatar = new Avatar(playerId, maskColor);
+        Avatar addedAvatar = avatarRepository.save(avatar);
 
-            // UserDetails에서 사용자 정보 사용
-            Long playerId = userDetails.getId();
+        Player player = playerRepository.findById(playerId).orElseThrow(() -> new NoSuchElementException("플레이어 정보를 찾을 수 없습니다."));
 
-            Avatar avatar = new Avatar(playerId, maskColor);
-            Avatar addedAvatar = avatarRepository.save(avatar);
-
-            Player player = playerRepository.findById(playerId).orElseThrow(() -> new NoSuchElementException("플레이어 정보를 찾을 수 없습니다."));
-
-            player.setPlayerAvatar(addedAvatar.getAvatarId());
-
-        } else {
-            throw new NoSuchElementException("플레이어 정보를 찾을 수 없습니다.");
-        }
+        player.setPlayerAvatar(addedAvatar.getAvatarId());
     }
 
     @Transactional
     public ResPlayerInfoDto changePlayerAvatar(String maskColor) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        PlayerPrincipal userDetails = (PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (authentication != null) {
+        Long playerId = userDetails.getId();
 
-            PlayerPrincipal userDetails = (PlayerPrincipal) authentication.getPrincipal();
+        Avatar foundAvatar = avatarRepository.findByPlayerId(playerId).orElseThrow(() -> new AvatarNotFoundException("아바타 정보를 찾을 수 없습니다."));
 
-            Long playerId = userDetails.getId();
+        foundAvatar.setMask(maskColor);
 
-            Avatar foundAvatar = avatarRepository.findByPlayerId(playerId).orElseThrow(() -> new NoSuchElementException("아바타 정보를 찾을 수 없습니다."));
-
-            foundAvatar.setMask(maskColor);
-
-            return readPlayerInfo();
-        } else {
-            throw new NoSuchElementException("플레이어 정보를 찾을 수 없습니다.");
-        }
+        return readPlayerInfo();
     }
 
     @Transactional
     public ResPlayerInfoDto changePlayerNickname(String nickname) {
 
         playerRepository.findByNickname_PlayerNickname(nickname).ifPresent(player -> {
-            throw new IllegalArgumentException("중복된 닉네임");
+            throw new NicknameAlreadyExistsException("중복된 닉네임");
         });
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        PlayerPrincipal userDetails = (PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (authentication != null) {
+        Long playerId = userDetails.getId();
 
-            PlayerPrincipal userDetails = (PlayerPrincipal) authentication.getPrincipal();
+        Player foundPlayer = playerRepository.findById(playerId).orElseThrow(() -> new PlayerNotFoundException("플레이어 정보를 찾을 수 없습니다."));
 
-            Long playerId = userDetails.getId();
+        foundPlayer.changeNickname(nickname);
 
-            Player foundPlayer = playerRepository.findById(playerId).orElseThrow(() -> new NoSuchElementException("플레이어 정보를 찾을 수 없습니다."));
-
-            foundPlayer.changeNickname(nickname);
-
-            return new ResPlayerInfoDto(foundPlayer);
-        } else {
-            throw new NoSuchElementException("플레이어 정보를 찾을 수 없습니다.");
-        }
+        return new ResPlayerInfoDto(foundPlayer);
     }
 
     @Transactional
     public void resetPlayerInfo() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        PlayerPrincipal userDetails = (PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if(authentication != null) {
-            PlayerPrincipal userDetails = (PlayerPrincipal) authentication.getPrincipal();
+        // UserDetails에서 사용자 정보 사용
+        Long playerId = userDetails.getId();
 
-            // UserDetails에서 사용자 정보 사용
-            Long playerId = userDetails.getId();
+        Player foundPlayer = playerRepository.findById(playerId).orElseThrow(() -> new PlayerNotFoundException("저장된 플레이어가 없습니다."));
 
-            Player foundPlayer = playerRepository.findById(playerId).orElseThrow(() -> new NoSuchElementException("저장된 플레이어가 없습니다."));
-
-            foundPlayer.resetPlayerStatus();
-
-        } else {
-            throw new NoSuchElementException("플레이어 정보를 찾을 수 없습니다.");
-        }
+        foundPlayer.resetPlayerStatus();
     }
 
     public ResPlayerInfoDto readPlayerInfo() {
+        PlayerPrincipal userDetails = (PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // UserDetails에서 사용자 정보 사용
+        String key = userDetails.getUsername();
+        String type = userDetails.getType();
 
-        if (authentication != null) {
+        Player foundPlayer = playerRepository.findByKeyAndType(key, type).orElseThrow(() -> new PlayerNotFoundException("저장된 플레이어가 없습니다."));
 
-            PlayerPrincipal userDetails = (PlayerPrincipal) authentication.getPrincipal();
-
-            // UserDetails에서 사용자 정보 사용
-            String key = userDetails.getUsername();
-            String type = userDetails.getType();
-
-            Player foundPlayer = playerRepository.findByKeyAndType(key, type).orElseThrow(() -> new NoSuchElementException("저장된 플레이어가 없습니다."));
-
-            return new ResPlayerInfoDto(foundPlayer);
-        } else {
-            throw new NoSuchElementException("플레이어 정보를 찾을 수 없습니다.");
-        }
+        return new ResPlayerInfoDto(foundPlayer);
     }
 
     public PlayerDto readPlayer(String key, String type) {
