@@ -1,9 +1,10 @@
 package com.vsquad.iroas.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vsquad.iroas.aggregate.dto.response.ResCreatorMapDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqCreatorMapDto;
 import com.vsquad.iroas.aggregate.entity.CreatorMap;
+import com.vsquad.iroas.config.exception.CreatorMapNotFoundException;
+import com.vsquad.iroas.config.exception.PlayerNotFoundException;
 import com.vsquad.iroas.config.token.PlayerPrincipal;
 import com.vsquad.iroas.repository.CreatorMapRepository;
 import com.vsquad.iroas.repository.PlayerRepository;
@@ -12,9 +13,7 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,37 +34,31 @@ public class CreatorMapService {
                 .map(CreatorMap::getCreator, ResCreatorMapDto::setCreator)).validate();   // modelMapper error 출력
     }
 
-    public void addCreatorMap(ReqCreatorMapDto creatorMapDto) throws JsonProcessingException {
+    public ResCreatorMapDto addCreatorMap(ReqCreatorMapDto creatorMapDto) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        PlayerPrincipal userDetails = (PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (authentication != null) {
+        // UserDetails에서 사용자 정보 사용
+        Long id = userDetails.getId();
+        String nickname = userDetails.getName();
 
-            PlayerPrincipal userDetails = (PlayerPrincipal) authentication.getPrincipal();
+        CreatorMap map = creatorMapDto.convertToEntity(creatorMapDto);
 
-            // UserDetails에서 사용자 정보 사용
-            Long id = userDetails.getId();
-            String nickname = userDetails.getName();
+        Integer count = creatorMapRepository.maxNumberByCreatorMapName(nickname + "의맵");
 
-            CreatorMap map = creatorMapDto.convertToEntity(creatorMapDto);
+        if(count != null && !count.equals(0)) map.setCreatorMapName(nickname + "의맵" + "_" +  (count + 1));
+        else map.setCreatorMapName(nickname + "의맵" + "_" + "1");
 
-            Integer count = creatorMapRepository.maxNumberByCreatorMapName(nickname + "의맵");
+        map.setCreator(id);
+        CreatorMap creatorMap = creatorMapRepository.save(map);
 
-            if(count != null && !count.equals(0)) {
-                map.setCreatorMapName(nickname + "의맵" + "_" +  (count + 1));
-            } else {
-                map.setCreatorMapName(nickname + "의맵" + "_" + "1");
-            }
-
-            map.setCreator(id);
-            creatorMapRepository.save(map);
-
-        } else throw new UsernameNotFoundException("플레이어 인증 정보를 찾을 수 없습니다.");
+        initModelMapper();
+        return modelMapper.map(creatorMap, ResCreatorMapDto.class);
     }
 
     public ResCreatorMapDto getCreatorMap(Long creatorMapId) throws IllegalArgumentException {
         CreatorMap creatorMap = creatorMapRepository.findById(creatorMapId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 맵이 존재하지 않습니다."));
+                .orElseThrow(CreatorMapNotFoundException::new);
 
         initModelMapper();
 
@@ -73,14 +66,25 @@ public class CreatorMapService {
     }
 
 //    @Transactional(readOnly = true)
-    public Page<ResCreatorMapDto> readPlayerCreatorMapList(Pageable pageable) {
+    public Page<ResCreatorMapDto> readPlayerCreatorMapList(String nickname, Pageable pageable) {
 
-        Page<CreatorMap> creatorMapPage = creatorMapRepository.findAll(pageable);
+        Page<CreatorMap> creatorMapPage;
 
-        if(creatorMapPage.isEmpty()) {
-            throw new IllegalArgumentException("해당 맵 목록 없음");
+        if (nickname != null && !nickname.isEmpty()) {
+            // 닉네임 필터가 있는 경우
+
+            Long id = playerRepository.findByNickname_PlayerNickname(nickname)
+                    .orElseThrow(() -> new PlayerNotFoundException("닉네임에 해당하는 회원이 없습니다.")).getPlayerId();
+
+            creatorMapPage = creatorMapRepository.findByCreator(id, pageable);
+        } else {
+            // 닉네임 필터가 없는 경우
+            creatorMapPage = creatorMapRepository.findAll(pageable);
         }
 
+        if(creatorMapPage.isEmpty()) throw new CreatorMapNotFoundException("해당 맵 목록 없음");
+
+        //ResCreatorMapDto 변환
         initModelMapper();
 
         return creatorMapPage.map(creatorMap -> modelMapper.map(creatorMap, ResCreatorMapDto.class));
@@ -89,21 +93,13 @@ public class CreatorMapService {
     @Transactional
     public void deleteCreatorMap(Long creatorMapId) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        PlayerPrincipal userDetails = (PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (authentication != null) {
+        Long userId = userDetails.getId();
 
-            PlayerPrincipal userDetails = (PlayerPrincipal) authentication.getPrincipal();
+        creatorMapRepository.findByCreatorMapIdAndCreator(creatorMapId, userId)
+                .orElseThrow(CreatorMapNotFoundException::new);
 
-            Long userId = userDetails.getId();
-
-            creatorMapRepository.findByCreatorMapIdAndCreator(creatorMapId, userId).orElseThrow(
-                    IllegalArgumentException::new
-            );
-
-            creatorMapRepository.deleteCreatorMapByCreatorMapIdAndCreator(creatorMapId, userId);
-        } else {
-            throw new UsernameNotFoundException("플레이어 인증 정보를 찾을 수 없습니다.");
-        }
+        creatorMapRepository.deleteCreatorMapByCreatorMapIdAndCreator(creatorMapId, userId);
     }
 }

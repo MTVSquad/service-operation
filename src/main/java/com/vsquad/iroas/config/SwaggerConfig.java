@@ -14,12 +14,14 @@ import org.springframework.context.annotation.Configuration;
         info = @Info(
                 title = "iroas",
                 description = "iroas 백엔드 API 명세서 \n" +
-                "\nSwagger 사용 방법 \n" +
+                "\n **Swagger 사용 방법** \n" +
                 "1. 플레이어 API에서 로그인 \n" +
                 "2. 로그인 응답값에서 body 값(토큰)을 복사하세요. \n" +
                 "3. 우측 상단 'Authorize'를 클릭하세요. \n" +
                 "4. 'Value'에 '{복사한 토큰}'을 입력하세요. \n" +
-                "5. 로그인을 제외한 API를 테스트 하세요."
+                "5. 로그인을 제외한 API를 테스트 하세요. \n" +
+                "\n **주의사항** \n" +
+                "1. 서버 재시작하면 반드시 새로고침을 해주세요."
                 , version = "v1"
         )
 )

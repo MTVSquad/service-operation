@@ -52,7 +52,10 @@ public class ReqCreatorMapDto {
     @Schema(name = "propList", description = "구조물 목록")
     private List<PropDto> propList;
 
-    public CreatorMap convertToEntity(ReqCreatorMapDto creatorMapDto) throws JsonProcessingException {
+    @Schema(name = "creator", description = "제작자")
+    private Long creator;
+
+    public CreatorMap convertToEntity(ReqCreatorMapDto creatorMapDto) {
 
         if(creatorMapDto == null) {
             return null;
@@ -62,14 +65,14 @@ public class ReqCreatorMapDto {
         List<EnemySpawner> enemySpawners = new ArrayList<>();
 
         for (EnemySpawnerDto enemySpawnerDto : enemySpawnerDtos) {
-            enemySpawners.add(enemySpawnerDto.convertToEntity(enemySpawnerDto));
+            enemySpawners.add(EnemySpawnerDto.convertToEntity(enemySpawnerDto));
         }
 
         List<PropDto> propDtos = creatorMapDto.getPropList();
         List<Prop> props = new ArrayList<>();
 
         for (PropDto propDto : propDtos) {
-            props.add(propDto.convertToEntity(propDto));
+            props.add(PropDto.convertToEntity(propDto));
         }
 
         CreatorMap creatorMap = new CreatorMap();

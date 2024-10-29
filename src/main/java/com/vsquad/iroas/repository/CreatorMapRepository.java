@@ -13,6 +13,7 @@ import java.util.Optional;
 @Repository
 public interface CreatorMapRepository extends JpaRepository<CreatorMap, Long> {
     Page<CreatorMap> findAll(Pageable pageable);
+    Page<CreatorMap> findByCreator(Long creator, Pageable pageable);
 
     void deleteCreatorMapByCreatorMapIdAndCreator(Long creatorMapId, Long creator);
 
