@@ -3,11 +3,8 @@ package com.vsquad.iroas.aggregate.dto.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.vsquad.iroas.aggregate.dto.CustomLocalDateTimeDeserializer;
-import com.vsquad.iroas.aggregate.entity.Ranking;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Getter
@@ -17,7 +14,7 @@ import java.time.LocalDateTime;
 @ToString
 public class ReqRankingDto {
 
-    @Schema(description = "커스텀 모드 유즈맵")
+    @Schema(description = "커스텀 모드 유즈맵", example = "1")
     private Long creatorMapId;
 
     @Schema(description = "게임 시작 시간", example = "2023-12-06 00:00:00", type = "string")
@@ -35,4 +32,7 @@ public class ReqRankingDto {
 
     @Schema(description = "게임 소요 시간", example = "280000")
     private Long elapsedTime;
+
+    @Schema(description = "유저", example = "101")
+    private Long creator;
 }

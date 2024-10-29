@@ -8,4 +8,9 @@ public class SteamUserNotFoundException extends RuntimeException {
     public SteamUserNotFoundException(String message) {
         super(message);
     }
+
+    public SteamUserNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

@@ -1,7 +1,6 @@
 package com.vsquad.iroas.aggregate.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.vsquad.iroas.aggregate.dto.CustomLocalDateTimeDeserializer;
 import com.vsquad.iroas.aggregate.dto.EnemySpawnerDto;
@@ -52,7 +51,7 @@ public class ReqCreatorMapDto {
     @Schema(name = "propList", description = "구조물 목록")
     private List<PropDto> propList;
 
-    @Schema(name = "creator", description = "제작자")
+    @Schema(name = "creator", description = "제작자", example = "101")
     private Long creator;
 
     public CreatorMap convertToEntity(ReqCreatorMapDto creatorMapDto) {
