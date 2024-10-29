@@ -23,37 +23,42 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SteamUserNotFoundException.class)
     public ResponseEntity<ResponseDto<String>> handleSteamUserNotFoundException(SteamUserNotFoundException e) {
         log.warn("스팀 유저 찾을 수 없음: {}", e.getMessage());
-        return buildErrorResponse("스팀 유저를 찾을 수 없음", HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ResponseDto<String>> handleIllegalArgumentException(IllegalArgumentException e) {
-        log.warn("잘못된 요청: {}", e.getMessage());
+    @ExceptionHandler(IdAlreadyExistsException.class)
+    public ResponseEntity<ResponseDto<String>> handleIdAlreadyExistsException(IdAlreadyExistsException e) {
+        log.warn("ID 중복 오류: {}", e.getMessage());
         return buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ResponseDto<String>> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         log.warn("데이터 중복 오류: {}", e.getMessage());
-        return buildErrorResponse("중복된 닉네임 혹은 스팀 키", HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AvatarNotFoundException.class)
     public ResponseEntity<ResponseDto<String>> handleAvatarNotFoundException(AvatarNotFoundException e) {
         log.warn("아바타 찾을 수 없음: {}", e.getMessage());
-        return buildErrorResponse("플레이어 아바타를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NicknameAlreadyExistsException.class)
     public ResponseEntity<ResponseDto<String>> handleNicknameAlreadyExistsException(NicknameAlreadyExistsException e) {
         log.warn("닉네임 중복 오류: {}", e.getMessage());
-        return ResponseEntity.badRequest().body(ResponseDto.error("이미 사용 중인 닉네임입니다."));
+        return buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(CreatorMapNotFoundException.class)
     public ResponseEntity<ResponseDto<String>> handleCreatorMapNotFoundException(CreatorMapNotFoundException e) {
         log.warn("크리에이터맵 찾을 수 없음: {}", e.getMessage());
-        return ResponseEntity.badRequest().body(ResponseDto.error(e.getMessage()));
+        return buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(RankingNotFoundException.class)
+    public ResponseEntity<ResponseDto<String>> handleRankingNotFoundExceptionException(RankingNotFoundException e) {
+        log.warn("랭킹을 찾을 수 없음 : {}", e.getMessage());
+        return buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
