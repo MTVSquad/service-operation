@@ -79,7 +79,7 @@ public class PlayerService {
         Avatar avatar = new Avatar(playerId, maskColor);
         Avatar addedAvatar = avatarRepository.save(avatar);
 
-        Player player = playerRepository.findById(playerId).orElseThrow(() -> new NoSuchElementException("플레이어 정보를 찾을 수 없습니다."));
+        Player player = playerRepository.findById(playerId).orElseThrow(() -> new PlayerNotFoundException("플레이어 정보를 찾을 수 없습니다."));
 
         player.setPlayerAvatar(addedAvatar.getAvatarId());
     }

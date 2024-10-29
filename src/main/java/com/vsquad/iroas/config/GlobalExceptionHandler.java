@@ -1,10 +1,7 @@
 package com.vsquad.iroas.config;
 
 import com.vsquad.iroas.aggregate.dto.response.ResponseDto;
-import com.vsquad.iroas.config.exception.AvatarNotFoundException;
-import com.vsquad.iroas.config.exception.NicknameAlreadyExistsException;
-import com.vsquad.iroas.config.exception.PlayerNotFoundException;
-import com.vsquad.iroas.config.exception.SteamUserNotFoundException;
+import com.vsquad.iroas.config.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,13 +16,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PlayerNotFoundException.class)
     public ResponseEntity<ResponseDto<String>> handlePlayerNotFoundException(PlayerNotFoundException e) {
-        log.warn("플레이어를 찾을 수 없음: {}", e.getMessage());
+        log.warn("플레이어 찾을 수 없음: {}", e.getMessage());
         return buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SteamUserNotFoundException.class)
     public ResponseEntity<ResponseDto<String>> handleSteamUserNotFoundException(SteamUserNotFoundException e) {
-        log.warn("스팀 유저를 찾을 수 없음: {}", e.getMessage());
+        log.warn("스팀 유저 찾을 수 없음: {}", e.getMessage());
         return buildErrorResponse("스팀 유저를 찾을 수 없음", HttpStatus.BAD_REQUEST);
     }
 
@@ -43,7 +40,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AvatarNotFoundException.class)
     public ResponseEntity<ResponseDto<String>> handleAvatarNotFoundException(AvatarNotFoundException e) {
-        log.warn("아바타를 찾을 수 없음: {}", e.getMessage());
+        log.warn("아바타 찾을 수 없음: {}", e.getMessage());
         return buildErrorResponse("플레이어 아바타를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
     }
 
@@ -53,12 +50,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ResponseDto.error("이미 사용 중인 닉네임입니다."));
     }
 
+    @ExceptionHandler(CreatorMapNotFoundException.class)
+    public ResponseEntity<ResponseDto<String>> handleCreatorMapNotFoundException(CreatorMapNotFoundException e) {
+        log.warn("크리에이터맵 찾을 수 없음: {}", e.getMessage());
+        return ResponseEntity.badRequest().body(ResponseDto.error(e.getMessage()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGenericException(Exception e) {
         log.error("서버 오류 발생: {}", e.getMessage(), e);
 
         if (e instanceof IllegalArgumentException) {
-            ResponseDto<String> resDto = new ResponseDto<>("서버 오류가 발생했습니다.");
+            ResponseDto<String> resDto = new ResponseDto<>("잘못된 인자 전달");
             return new ResponseEntity<>(resDto, HttpStatus.INTERNAL_SERVER_ERROR);
         } else {
             ResponseDto<String> resDto = new ResponseDto<>("서버 오류가 발생했습니다.");

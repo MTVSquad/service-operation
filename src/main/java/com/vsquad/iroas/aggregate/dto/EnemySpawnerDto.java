@@ -39,7 +39,7 @@ public class EnemySpawnerDto {
     @Schema(name = "enemyPower", description = "에네미 공격력", example = "10")
     private Long enemyPower;
 
-    public static EnemySpawner convertToEntity(EnemySpawnerDto enemySpawnerDto) throws JsonProcessingException {
+    public static EnemySpawner convertToEntity(EnemySpawnerDto enemySpawnerDto) {
 
         if(enemySpawnerDto == null) {
             return null;
