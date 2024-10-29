@@ -27,7 +27,7 @@ jobs:
 
       - name: Make application.yml executable
         run: |
-          mkdir ./src/main/resources
+#          mkdir ./src/main/resources
           cd ./src/main/resources
       #        touch ./application.yml
       #        touch ./application-dev.yml
