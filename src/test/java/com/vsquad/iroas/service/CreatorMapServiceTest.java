@@ -6,7 +6,6 @@ import com.vsquad.iroas.aggregate.dto.PropDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqCreatorMapDto;
 import com.vsquad.iroas.aggregate.entity.CreatorMap;
 import com.vsquad.iroas.repository.CreatorMapRepository;
-import com.vsquad.iroas.repository.PlayerRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,13 +35,8 @@ class CreatorMapServiceTest {
     @Autowired
     private CreatorMapRepository creatorMapRepository;
 
-    @Autowired
-    private PlayerRepository playerRepository;
-
     @Mock
     private CreatorMap creatorMap;
-
-    private PlayerServiceTest playerServiceTest;
 
     private static Stream<Arguments> getInfo() {
         return Stream.of(
@@ -55,26 +49,23 @@ class CreatorMapServiceTest {
     }
 
     @BeforeTransaction
-    void beforeTransaction() throws JsonProcessingException {
+    void beforeTransaction() {
 
         // given
-        List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
-        enemySpawnerList.addAll(List.of(
+        List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>(List.of(
                 new EnemySpawnerDto(100.00D, 160.00D, 90.00D, 100, 10D, 10D, "Melee", 100L, 10L)
         ));
 
-        List<PropDto> propList = new ArrayList<>();
-        propList.addAll(List.of(
+        List<PropDto> propList = new ArrayList<>(List.of(
                 new PropDto("prop1", "prop", 100.00D, 160.00D, 90.00D, 90.00D),
                 new PropDto("prop2", "prop", 100.00D, 160.00D, 90.00D, 90.00D),
                 new PropDto("prop3", "prop", 100.00D, 160.00D, 90.00D, 90.00D)
         ));
 
-        List<Double> startPoint = new ArrayList<>();
-        startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
+        List<Double> startPoint = new ArrayList<>(List.of(100.00D, 160.00D, 90.00D));
 
         ReqCreatorMapDto mapDto = new ReqCreatorMapDto("MELEE", LocalDateTime.now(),
-                90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
+                90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList, 1L);
 
         String creator = "testNick";
 
@@ -93,26 +84,23 @@ class CreatorMapServiceTest {
 
     @Test
     @DisplayName("크리에이터 맵 추가 성공")
-    void addCreatorMapSuccessTest() throws JsonProcessingException {
+    void addCreatorMapSuccessTest() {
 
         // given
-        List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
-        enemySpawnerList.addAll(List.of(
+        List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>(List.of(
                 new EnemySpawnerDto(100.00D, 160.00D, 90.00D, 100, 10D, 10D, "Melee", 100L, 10L)
         ));
 
-        List<PropDto> propList = new ArrayList<>();
-        propList.addAll(List.of(
+        List<PropDto> propList = new ArrayList<>(List.of(
                 new PropDto("prop1", "prop", 100.00D, 160.00D, 100.00D, 90.00D),
                 new PropDto("prop2", "prop", 100.00D, 160.00D, 100.00D, 90.00D),
                 new PropDto("prop3", "prop", 100.00D, 160.00D, 100.00D, 90.00D)
         ));
 
-        List<Double> startPoint = new ArrayList<>();
-        startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
+        List<Double> startPoint = new ArrayList<>(List.of(100.00D, 160.00D, 90.00D));
 
         ReqCreatorMapDto mapDto = new ReqCreatorMapDto("MELEE", LocalDateTime.now(),
-                90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
+                90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList, 1L);
 
 
         CreatorMap map = mapDto.convertToEntity(mapDto);
@@ -143,25 +131,22 @@ class CreatorMapServiceTest {
     }
 
     @DisplayName("크리에이터 맵 51개 추가 성공")
-    void add51CreatorMapSuccessTest() throws JsonProcessingException {
+    void add51CreatorMapSuccessTest() {
 
-        List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
-        enemySpawnerList.addAll(List.of(
+        List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>(List.of(
                 new EnemySpawnerDto(100.00D, 160.00D, 90.00D, 100, 10D, 10D, "Melee", 100L, 10L)
         ));
 
-        List<PropDto> propList = new ArrayList<>();
-        propList.addAll(List.of(
+        List<PropDto> propList = new ArrayList<>(List.of(
                 new PropDto("prop1", "prop", 100.00D, 160.00D, 100.00D, 90.00D),
                 new PropDto("prop2", "prop", 100.00D, 160.00D, 100.00D, 90.00D),
                 new PropDto("prop3", "prop", 100.00D, 160.00D, 100.00D, 90.00D)
         ));
 
-        List<Double> startPoint = new ArrayList<>();
-        startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
+        List<Double> startPoint = new ArrayList<>(List.of(100.00D, 160.00D, 90.00D));
 
         ReqCreatorMapDto mapDto = new ReqCreatorMapDto("MELEE", LocalDateTime.now(),
-                90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
+                90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList, 1L);
 
         String creator = "testNick";
 
@@ -174,25 +159,22 @@ class CreatorMapServiceTest {
         creatorMapRepository.save(map);
     }
 
-    private CreatorMap addMap() throws JsonProcessingException {
+    private CreatorMap addMap() {
 
-        List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>();
-        enemySpawnerList.addAll(List.of(
+        List<EnemySpawnerDto> enemySpawnerList = new ArrayList<>(List.of(
                 new EnemySpawnerDto(100.00D, 160.00D, 90.00D, 100, 10D, 10D, "Melee", 100L, 10L)
         ));
 
-        List<PropDto> propList = new ArrayList<>();
-        propList.addAll(List.of(
+        List<PropDto> propList = new ArrayList<>(List.of(
                 new PropDto("prop1", "prop", 100.00D, 160.00D, 100.00D, 90.00D),
                 new PropDto("prop2", "prop", 100.00D, 160.00D, 100.00D, 90.00D),
                 new PropDto("prop3", "prop", 100.00D, 160.00D, 100.00D, 90.00D)
         ));
 
-        List<Double> startPoint = new ArrayList<>();
-        startPoint.addAll(List.of(100.00D, 160.00D, 90.00D));
+        List<Double> startPoint = new ArrayList<>(List.of(100.00D, 160.00D, 90.00D));
 
         ReqCreatorMapDto mapDto = new ReqCreatorMapDto("MELEE", LocalDateTime.now(),
-                90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList);
+                90.00D, 90.00D, 90.00D, 90.00D, "Morning", enemySpawnerList, propList, 1L);
 
         String creator = "testNick";
 
@@ -205,10 +187,8 @@ class CreatorMapServiceTest {
         creatorMapRepository.save(map);
 
         // then
-        CreatorMap foundMap = creatorMapRepository.findById(map.getCreatorMapId())
+        return creatorMapRepository.findById(map.getCreatorMapId())
                 .orElseThrow(() -> new IllegalArgumentException("맵을 찾을 수 없습니다."));
-
-        return foundMap;
     }
 
     @Test
@@ -236,7 +216,7 @@ class CreatorMapServiceTest {
 
     @Test
     @DisplayName("크리에이터 맵 제거 성공")
-    void removeMapSuccessTest() throws JsonProcessingException {
+    void removeMapSuccessTest() {
 
         // given
         CreatorMap addedMap = addMap();
