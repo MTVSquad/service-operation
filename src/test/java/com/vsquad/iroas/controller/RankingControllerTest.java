@@ -2,12 +2,8 @@ package com.vsquad.iroas.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.vsquad.iroas.aggregate.dto.EnemySpawnerDto;
 import com.vsquad.iroas.aggregate.dto.PlayerDto;
-import com.vsquad.iroas.aggregate.dto.PropDto;
-import com.vsquad.iroas.aggregate.dto.request.ReqCreatorMapDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqRankingDto;
-import com.vsquad.iroas.aggregate.entity.CreatorMap;
 import com.vsquad.iroas.aggregate.entity.Player;
 import com.vsquad.iroas.aggregate.vo.Nickname;
 import com.vsquad.iroas.repository.PlayerRepository;
@@ -108,7 +104,7 @@ class RankingControllerTest {
         boolean clearYn = true;
 
         // dto 객체 생성
-        dto = new ReqRankingDto(1L, oneHourAgo, currentDateTime, clearYn, playElapsedTime);
+        dto = new ReqRankingDto(1L, oneHourAgo, currentDateTime, clearYn, playElapsedTime, player.getPlayerId());
 
         // dto 객체 json으로 변환
         ObjectMapper objectMapper = new ObjectMapper();
@@ -121,7 +117,7 @@ class RankingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                 )
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andDo(MockMvcResultHandlers.print());
     }
 }

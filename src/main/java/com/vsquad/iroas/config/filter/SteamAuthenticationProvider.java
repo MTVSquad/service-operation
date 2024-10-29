@@ -18,7 +18,6 @@ public class SteamAuthenticationProvider implements AuthenticationProvider {
         // steamId 검증 로직
         // steamId가 유효하지 않으면 null을 반환하고, 유효하면 steamId를 반환한다.
 
-
         return new UsernamePasswordAuthenticationToken(steamId, null);
     }
 

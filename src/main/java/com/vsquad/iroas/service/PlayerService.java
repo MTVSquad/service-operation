@@ -4,9 +4,7 @@ import com.vsquad.iroas.aggregate.dto.PlayerDto;
 import com.vsquad.iroas.aggregate.dto.response.ResPlayerInfoDto;
 import com.vsquad.iroas.aggregate.entity.Avatar;
 import com.vsquad.iroas.aggregate.entity.Player;
-import com.vsquad.iroas.config.exception.AvatarNotFoundException;
-import com.vsquad.iroas.config.exception.NicknameAlreadyExistsException;
-import com.vsquad.iroas.config.exception.PlayerNotFoundException;
+import com.vsquad.iroas.config.exception.*;
 import com.vsquad.iroas.config.token.PlayerPrincipal;
 import com.vsquad.iroas.repository.AvatarRepository;
 import com.vsquad.iroas.repository.PlayerRepository;
@@ -30,7 +28,7 @@ public class PlayerService {
 
         // 스팀 키 중복 체크
         playerRepository.findByKeyAndType(key, type).ifPresent(player -> {
-            throw new IllegalArgumentException("중복된 스팀 키");
+            throw new SteamUserNotFoundException("중복된 스팀 키");
         });
 
         // 닉네임 중복 체크
@@ -44,7 +42,7 @@ public class PlayerService {
 
         // 아이디 중복 체크
         playerRepository.findByKeyAndType(key, type).ifPresent(player -> {
-            throw new IllegalArgumentException("중복된 아이디");
+            throw new IdAlreadyExistsException("중복된 아이디");
         });
 
         // 닉네임 중복 체크

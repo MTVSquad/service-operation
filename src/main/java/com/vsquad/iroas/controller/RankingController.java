@@ -35,18 +35,15 @@ public class RankingController {
             @ApiResponse(responseCode = "200", description = "랭킹 추가 성공", content = @Content(schema = @Schema(implementation = ResMessageDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "랭킹 추가 실패", content = @Content(schema = @Schema(implementation = ResErrorMessage.class), mediaType = "application/json"))
     })
-    public ResponseEntity<ResMessageDto> addRanking(@RequestBody ReqRankingDto req) {
-        try {
-            log.info("랭킹 추가");
+    public ResponseEntity<ResponseDto<?>> addRanking(@RequestBody ReqRankingDto req) {
+        log.info("랭킹 추가 시도 : {}", req.getCreator());
 
-            rankingService.addRanking(req);
-            ResMessageDto resDto = new ResMessageDto("랭킹 추가 완료");
-            return new ResponseEntity<>(resDto, HttpStatus.OK);
-        } catch (Exception e) {
-            log.warn("랭킹 추가 실패");
+        ResRankingDto body = rankingService.addRanking(req);
 
-            return ResponseEntity.badRequest().body(new ResMessageDto("랭킹 추가 실패"));
-        }
+        log.info("랭킹 추가 성공 : {}", req.getCreator());
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ResponseDto.success(body, "랭킹 추가 성공"));
     }
 
     @GetMapping
@@ -57,28 +54,19 @@ public class RankingController {
                             mediaType = "application/json"))
     })
     @Parameters({
-            @Parameter(name = "creatorMapId", description = "커스텀 모드 유즈맵 식별자", required = true),
+            @Parameter(name = "creatorMapId", description = "커스텀 모드 유즈맵 식별자", required = true, example = "1"),
             @Parameter(name = "page", description = "페이지 번호", example = "0"),
             @Parameter(name = "size", description = "페이지 크기", example = "10"),
             @Parameter(name = "sort", description = "정렬 기준(playCount : 플레이 횟수, clearCount : 클리어 횟수, playTime.playElapsedTime : 플레이 시간)", schema = @Schema(allowableValues = {"playCount", "clearCount", "playTime.playElapsedTime"}),
                     example = "playTime.playElapsedTime", in = ParameterIn.QUERY),
             @Parameter(name = "direction", description = "정렬 방향", schema = @Schema(allowableValues = {"asc", "desc"}), example = "asc")
     })
-    public ResponseEntity<ResponseDto<Page<ResRankingDto>>> getRanking(@RequestParam @Parameter(hidden = true) Long creatorMapId, @PageableDefault(sort = {"playTime.playElapsedTime"}) @Parameter(hidden = true) Pageable pageable) {
-        try {
-            log.info("랭킹 조회");
+    public ResponseEntity<ResponseDto<Page<?>>> getRanking(@RequestParam @Parameter(hidden = true) Long creatorMapId, @PageableDefault(sort = {"playTime.playElapsedTime"}) @Parameter(hidden = true) Pageable pageable) {
+        log.info("크리에이터맵 랭킹 조회 시도 : {}", creatorMapId);
 
-            Page<ResRankingDto> ranking = rankingService.getRanking(creatorMapId, pageable);
+        Page<ResRankingDto> body = rankingService.getRanking(creatorMapId, pageable);
 
-            ResponseDto resDto = new ResponseDto(ranking, "랭킹 조회 완료");
-
-            log.info("랭킹 조회 성공");
-            return new ResponseEntity<>(resDto, HttpStatus.OK);
-        } catch (Exception e) {
-            log.warn("랭킹 조회 실패");
-
-            ResponseDto resDto = new ResponseDto(null, "랭킹 조회 실패");
-            return ResponseEntity.badRequest().body(resDto);
-        }
+        log.info("랭킹 조회 성공");
+        return ResponseEntity.ok(ResponseDto.success(body, "랭킹 조회 성공"));
     }
 }

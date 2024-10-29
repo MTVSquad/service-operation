@@ -104,9 +104,7 @@ class RankingServiceTest {
     @DisplayName("랭킹 추가 성공 테스트")
     void addRankingSuccessTest() {
         // given
-        // 플레이어 추가
         Player player = addPlayer();
-        // 크리에이터 맵 추가
         CreatorMap map = addMap();
 
         LocalDateTime currentDateTime = LocalDateTime.now();
@@ -127,9 +125,6 @@ class RankingServiceTest {
         // 랭킹 추가
         Ranking ranking = new Ranking(foundPlayer, map.getCreatorMapId(),
                 new PlayTime(oneHourAgo, currentDateTime, playElapsedTime), playTotalCount, clearTotalCount);
-
-        // 페이징 정보 추가
-        Pageable pageable = PageRequest.of(0, 10); // 페이징 정보 설정
 
         // when
         rankingRepository.findByPlayerAndCreatorMapId(foundPlayer, map.getCreatorMapId())
@@ -158,10 +153,7 @@ class RankingServiceTest {
     void readRankingSuccessTest() {
 
         // given
-        // 플레이어 추가
         Player player = addPlayer();
-
-        // 크리에이터 맵 추가
         CreatorMap map = addMap();
 
         LocalDateTime currentDateTime = LocalDateTime.now();
@@ -181,7 +173,7 @@ class RankingServiceTest {
 
         // 플레이어 조회
         Player foundPlayer = playerRepository.findById(player.getPlayerId())
-                .orElseThrow(() -> new IllegalArgumentException("플레이어를 찾을 수 없습니다."));
+                .orElseThrow(() -> new PlayerNotFoundException("플레이어를 찾을 수 없습니다."));
 
         // 랭킹 추가
         Ranking ranking = new Ranking(foundPlayer, map.getCreatorMapId(), new PlayTime(oneHourAgo, currentDateTime, playElapsedTime), playTotalCount, clearTotalCount);
@@ -214,7 +206,7 @@ class RankingServiceTest {
 
     @Test
     @DisplayName("랭킹 추가 시간 차 구하기")
-    void caculateTimeSuccessTest() {
+    void calculateTimeSuccessTest() {
         LocalDateTime startTime = LocalDateTime.now().minusMinutes(5).minusSeconds(30);
         LocalDateTime endTime = LocalDateTime.now();
 
@@ -222,7 +214,6 @@ class RankingServiceTest {
 
         long minutes = duration.toMinutes();
         long seconds = duration.getSeconds() % 60;
-        long milliSec = duration.toMillis();
 
         String result = minutes + "분" + seconds + "초";
 
