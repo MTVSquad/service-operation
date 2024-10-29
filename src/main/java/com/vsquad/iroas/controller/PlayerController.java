@@ -1,9 +1,12 @@
 package com.vsquad.iroas.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vsquad.iroas.aggregate.dto.*;
 import com.vsquad.iroas.aggregate.dto.request.ReqAvatarDto;
 import com.vsquad.iroas.aggregate.dto.request.ReqPlayerDto;
 import com.vsquad.iroas.aggregate.dto.response.*;
+import com.vsquad.iroas.config.exception.PlayerNotFoundException;
 import com.vsquad.iroas.config.exception.SteamUserNotFoundException;
 import com.vsquad.iroas.service.PlayerService;
 import com.vsquad.iroas.service.auth.CustomTokenProviderService;
@@ -15,16 +18,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.io.IOException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/player")
@@ -41,10 +43,13 @@ public class PlayerController {
 
     private final WebClient webClient;
 
-    public PlayerController(PlayerService playerService, CustomTokenProviderService customTokenProviderService, WebClient.Builder webClientBuilder) {
+    private final ObjectMapper objectMapper;
+
+    public PlayerController(PlayerService playerService, CustomTokenProviderService customTokenProviderService, WebClient.Builder webClientBuilder, ObjectMapper objectMapper) {
         this.webClient = webClientBuilder.baseUrl("http://api.steampowered.com").build();
         this.playerService = playerService;
         this.customTokenProviderService = customTokenProviderService;
+        this.objectMapper = objectMapper;
     }
 
     @PostMapping("/login")
@@ -77,11 +82,13 @@ public class PlayerController {
             @ApiResponse(responseCode = "400", description = "플레이어 추가 실패", content = @Content(schema = @Schema(implementation = ResponseError.class), mediaType = "application/json"))
     })
     public ResponseEntity<ResponseDto<?>> addPlayer(@RequestBody ReqPlayerDto reqBody) {
+        log.info("플레이어 추가 시도");
+
         String key = reqBody.getKey();
         String type = reqBody.getType();
 
         if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("회원 식별 정보가 없습니다.");
+            throw new PlayerNotFoundException("회원 식별 정보가 없습니다.");
         }
 
         PlayerDto player;
@@ -98,7 +105,7 @@ public class PlayerController {
         log.info("플레이어 추가 성공");
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ResponseDto.success(body, "로그인 성공"));
+                .body(ResponseDto.success(body, "플레이어 추가 성공"));
     }
 
     // 스팀 닉네임 조회 메서드
@@ -117,24 +124,27 @@ public class PlayerController {
         return parseSteamResponseForNickname(response);
     }
 
-    // JSON 응답에서 닉네임 파싱
+    // 닉네임 꺼내기
     private String parseSteamResponseForNickname(String response) {
+        JsonNode rootNode = parseJson(response)
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 JSON 응답입니다."));
+
+        JsonNode playersArray = rootNode.path("response").path("players");
+
+        if (!playersArray.isArray() || playersArray.isEmpty()) {
+            throw new SteamUserNotFoundException("스팀 유저를 찾을 수 없음");
+        }
+
+        return playersArray.get(0).path("personaname").asText();
+    }
+
+    // JSON 파싱
+    private Optional<JsonNode> parseJson(String response) {
         try {
-            JSONParser parser = new JSONParser();
-            JSONObject obj = (JSONObject) parser.parse(response);
-            JSONObject responseObject = (JSONObject) obj.get("response");
-            JSONArray playersArray = (JSONArray) responseObject.get("players");
-
-            if (playersArray.isEmpty()) {
-                throw new SteamUserNotFoundException("스팀 유저를 찾을 수 없음");
-            }
-
-            JSONObject playerObject = (JSONObject) playersArray.get(0);
-            return (String) playerObject.get("personaname");
-
-        } catch (ParseException e) {
-            log.warn("Json Parser Error :: {}", e.getMessage());
-            throw new IllegalArgumentException("잘못된 JSON 응답입니다.");
+            return Optional.of(objectMapper.readTree(response));
+        } catch (IOException e) {
+            log.warn("JSON 파싱 오류 :: {}", e.getMessage());
+            return Optional.empty();
         }
     }
 
@@ -144,10 +154,9 @@ public class PlayerController {
             @ApiResponse(responseCode = "400", description = "플레이어 아바타 추가 실패", content = @Content(schema = @Schema(name = "플레이어 아바타 추가 실패", example = "에러 메시지(플레이어 정보 없음 등)"), mediaType = "application/json"))
     })
     public ResponseEntity<ResponseDto<String>> addPlayerAvatar(@RequestBody ReqAvatarDto reqBody) {
+        log.info("플레이어 아바타 추가 시도");
 
         String maskColor = reqBody.getMaskColor();
-
-        log.info("플레이어 아바타 추가 시도");
 
         playerService.addPlayerAvatar(maskColor);
 
@@ -163,9 +172,10 @@ public class PlayerController {
             @ApiResponse(responseCode = "400", description = "플레이어 아바타 변경 실패", content = @Content(schema = @Schema(name = "플레이어 아바타 변경 실패", example = "에러 메시지(플레이어 정보 없음 등)"), mediaType = "application/json"))
     })
     public ResponseEntity<ResponseDto<?>> changePlayerAvatar(@RequestBody ReqAvatarDto reqBody) {
+        log.info("플레이어 아바타 변경 시도");
+
         String maskColor = reqBody.getMaskColor();
 
-        log.info("플레이어 아바타 변경 시도");
         ResPlayerInfoDto body = playerService.changePlayerAvatar(maskColor);
 
         log.info("플레이어 아바타 변경 성공");
