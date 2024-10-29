@@ -25,15 +25,6 @@ jobs:
       - name: print env
         run: echo "${{ secrets.OCCUPY_SECRET }}"
 
-      - name: Make application.yml executable
-        run: |
-      #   mkdir ./src/main/resources
-          cd ./src/main/resources
-      #        touch ./application.yml
-      #        touch ./application-dev.yml
-      #        chmod +x src/main/resources/application.yml
-      #        chmod +x src/main/resources/application-dev.yml
-
       - name: Copy Secret
         env:
           OCCUPY_SECRETS: ${{ secrets.OCCUPY_SECRET }}
